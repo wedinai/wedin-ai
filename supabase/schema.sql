@@ -9,8 +9,14 @@
 create table if not exists sessions (
   id         uuid        default gen_random_uuid() primary key,
   answers    jsonb       not null,
+  is_paid    boolean     default false not null,
+  paid_at    timestamptz,
   created_at timestamptz default now() not null
 );
+
+-- Migration: run this if the sessions table already exists
+-- alter table sessions add column if not exists is_paid boolean default false not null;
+-- alter table sessions add column if not exists paid_at timestamptz;
 
 alter table sessions enable row level security;
 
