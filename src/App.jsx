@@ -108,6 +108,7 @@ export default function App() {
       <MusicPortrait
         answers={sessionAnswers}
         sessionId={sessionId}
+        coupleName={coupleName}
         onStartOver={handleStartOver}
         onViewMomentMap={handleViewMomentMap}
       />

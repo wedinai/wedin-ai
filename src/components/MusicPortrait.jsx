@@ -20,7 +20,7 @@ async function generateNarrative(answers) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function MusicPortrait({ answers, sessionId, onStartOver, onViewMomentMap }) {
+export default function MusicPortrait({ answers, sessionId, coupleName, onStartOver, onViewMomentMap }) {
   const [narrative, setNarrative] = useState(null)
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState('')
@@ -42,7 +42,12 @@ export default function MusicPortrait({ answers, sessionId, onStartOver, onViewM
       await fetch('/.netlify/functions/save-contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), session_id: sessionId }),
+        body: JSON.stringify({
+          email: email.trim(),
+          session_id: sessionId,
+          couple_name: coupleName,
+          narrative: narrative,
+        }),
       })
     } catch (e) {
       console.error('Contact save failed:', e)
