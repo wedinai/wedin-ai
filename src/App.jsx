@@ -73,6 +73,7 @@ export default function App() {
   }
 
   function handleMomentStart(momentId) {
+    console.log('onMomentStart called with:', momentId)
     // Only Ceremony is built in Phase 2 so far
     if (momentId === 'ceremony') {
       setInProgressMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])

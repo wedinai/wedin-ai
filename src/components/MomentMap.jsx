@@ -436,7 +436,10 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
           </button>
         ) : (
           <button
-            onClick={onStart}
+            onClick={() => {
+              console.log('Plan this moment button clicked, onStart:', onStart)
+              onStart?.()
+            }}
             style={{
               all: "unset",
               cursor: "pointer",
@@ -923,6 +926,7 @@ export default function MomentMap({
               onClose={() => setActiveMoment(null)}
               onUnlock={onUnlock}
               onMomentStart={() => {
+                console.log('MomentMap onMomentStart callback fired, activeMoment:', activeMoment?.id)
                 setActiveMoment(null)
                 onMomentStart(activeMoment.id)
               }}
