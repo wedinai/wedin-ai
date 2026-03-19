@@ -918,21 +918,6 @@ export default function MomentMap({
             })}
           </div>
 
-          {activeMoment && (
-            <MomentOverlay
-              moment={activeMoment}
-              status={getStatus(activeMoment.id)}
-              isPaid={isPaid}
-              onClose={() => setActiveMoment(null)}
-              onUnlock={onUnlock}
-              onMomentStart={() => {
-                console.log('MomentMap onMomentStart callback fired, activeMoment:', activeMoment?.id)
-                setActiveMoment(null)
-                onMomentStart(activeMoment.id)
-              }}
-            />
-          )}
-          
           {/* ── Unlock CTA (pre-payment only) ───────────────────────── */}
           {!isPaid && (
             <div
@@ -1001,6 +986,21 @@ export default function MomentMap({
           <div style={{ height: 48 }} />
         </div>
       </div>
+
+      {activeMoment && (
+        <MomentOverlay
+          moment={activeMoment}
+          status={getStatus(activeMoment.id)}
+          isPaid={isPaid}
+          onClose={() => setActiveMoment(null)}
+          onUnlock={onUnlock}
+          onMomentStart={() => {
+            console.log('MomentMap onMomentStart callback fired, activeMoment:', activeMoment?.id)
+            setActiveMoment(null)
+            onMomentStart(activeMoment.id)
+          }}
+        />
+      )}
     </>
   );
 }
