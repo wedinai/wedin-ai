@@ -285,7 +285,7 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
 
   return (
     <div
-      style={inOverlay ? { overflow: "hidden", flex: 1, display: "flex", flexDirection: "column" } : {
+      style={inOverlay ? { flex: 1, display: "flex", flexDirection: "column" } : {
         background: "#FFFFFF",
         borderRadius: 20,
         border: `1.5px solid ${color.node}33`,
@@ -436,12 +436,12 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
           </button>
         ) : (
           <button
-            onClick={() => {
-              console.log('Plan this moment button clicked, onStart:', onStart)
-              onStart?.()
-            }}
+            onClick={onStart}
             style={{
-              all: "unset",
+              appearance: "none",
+              WebkitAppearance: "none",
+              border: "none",
+              background: color.node,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
@@ -449,13 +449,13 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
               gap: 8,
               width: "100%",
               padding: "14px 24px",
-              background: color.node,
               color: "#FAF7F2",
               borderRadius: 10,
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 14,
               fontWeight: 500,
               boxSizing: "border-box",
+              pointerEvents: "auto",
             }}
           >
             {status === "complete" ? "Review this moment" : "Plan this moment"}
@@ -562,7 +562,7 @@ function MomentOverlay({ moment, status, isPaid, onClose, onUnlock, onMomentStar
           isPaid={isPaid}
           onClose={onClose}
           onUnlock={onUnlock}
-          onStart={onMomentStart}
+          onStart={() => onMomentStart(moment.id)}
           inOverlay={true}
         />
       </div>
@@ -994,11 +994,7 @@ export default function MomentMap({
           isPaid={isPaid}
           onClose={() => setActiveMoment(null)}
           onUnlock={onUnlock}
-          onMomentStart={() => {
-            console.log('MomentMap onMomentStart callback fired, activeMoment:', activeMoment?.id)
-            setActiveMoment(null)
-            onMomentStart(activeMoment.id)
-          }}
+          onMomentStart={onMomentStart}
         />
       )}
     </>
