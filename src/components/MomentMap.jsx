@@ -279,13 +279,13 @@ function MomentCard({ moment, status, isActive, isPaid, onClick, index }) {
 }
 
 // ─── Expanded moment detail panel ──────────────────────────────────────────
-function MomentDetail({ moment, status, isPaid, onClose, onUnlock }) {
+function MomentDetail({ moment, status, isPaid, onClose, onUnlock, inOverlay = false }) {
   const color = WARMTH_COLORS[moment.warmth];
   const isLocked = !isPaid && status === "locked";
 
   return (
     <div
-      style={{
+      style={inOverlay ? { overflow: "hidden", flex: 1, display: "flex", flexDirection: "column" } : {
         background: "#FFFFFF",
         borderRadius: 20,
         border: `1.5px solid ${color.node}33`,
@@ -468,6 +468,100 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock }) {
         )}
       </div>
     </div>
+  );
+}
+
+// ─── Overlay wrapper — bottom sheet (mobile) / right drawer (desktop) ──────
+function MomentOverlay({ moment, status, isPaid, onClose, onUnlock }) {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Lock body scroll while overlay is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  const panelStyle = isMobile
+    ? {
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: "65vh",
+        background: "#FFFFFF",
+        borderRadius: "20px 20px 0 0",
+        zIndex: 101,
+        animation: "slideUp 300ms ease both",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+      }
+    : {
+        position: "fixed",
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: 400,
+        background: "#FFFFFF",
+        zIndex: 101,
+        animation: "slideInRight 300ms ease both",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+      };
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.4)",
+          zIndex: 100,
+          animation: "overlayFadeIn 300ms ease both",
+        }}
+      />
+
+      {/* Panel */}
+      <div style={panelStyle}>
+        {isMobile && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              padding: "12px 0 4px",
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                width: 40,
+                height: 4,
+                borderRadius: 2,
+                background: "rgba(28,43,58,0.15)",
+              }}
+            />
+          </div>
+        )}
+        <MomentDetail
+          moment={moment}
+          status={status}
+          isPaid={isPaid}
+          onClose={onClose}
+          onUnlock={onUnlock}
+          inOverlay={true}
+        />
+      </div>
+    </>
   );
 }
 
@@ -662,6 +756,18 @@ export default function MomentMap({
           from { opacity: 0; transform: scale(0.96); }
           to   { opacity: 1; transform: scale(1); }
         }
+        @keyframes overlayFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(100%); }
+          to   { transform: translateY(0); }
+        }
+        @keyframes slideInRight {
+          from { transform: translateX(100%); }
+          to   { transform: translateX(0); }
+        }
         * { box-sizing: border-box; }
         :root {
           --cream: #FAF7F2;
@@ -807,17 +913,15 @@ export default function MomentMap({
             })}
           </div>
 
-         {activeMoment && (
-            <div style={{ marginTop: 16 }}>
-              <MomentDetail
-                moment={activeMoment}
-                status={getStatus(activeMoment.id)}
-                isPaid={isPaid}
-                onClose={() => setActiveMoment(null)}
-                onUnlock={onUnlock}
-              />
-            </div>
-          )} 
+          {activeMoment && (
+            <MomentOverlay
+              moment={activeMoment}
+              status={getStatus(activeMoment.id)}
+              isPaid={isPaid}
+              onClose={() => setActiveMoment(null)}
+              onUnlock={onUnlock}
+            />
+          )}
           
           {/* ── Unlock CTA (pre-payment only) ───────────────────────── */}
           {!isPaid && (
