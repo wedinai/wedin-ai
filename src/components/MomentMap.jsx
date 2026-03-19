@@ -279,7 +279,7 @@ function MomentCard({ moment, status, isActive, isPaid, onClick, index }) {
 }
 
 // ─── Expanded moment detail panel ──────────────────────────────────────────
-function MomentDetail({ moment, status, isPaid, onClose, onUnlock, inOverlay = false }) {
+function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOverlay = false }) {
   const color = WARMTH_COLORS[moment.warmth];
   const isLocked = !isPaid && status === "locked";
 
@@ -436,6 +436,7 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, inOverlay = f
           </button>
         ) : (
           <button
+            onClick={onStart}
             style={{
               all: "unset",
               cursor: "pointer",
@@ -472,7 +473,7 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, inOverlay = f
 }
 
 // ─── Overlay wrapper — bottom sheet (mobile) / right drawer (desktop) ──────
-function MomentOverlay({ moment, status, isPaid, onClose, onUnlock }) {
+function MomentOverlay({ moment, status, isPaid, onClose, onUnlock, onMomentStart }) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   useEffect(() => {
@@ -558,6 +559,7 @@ function MomentOverlay({ moment, status, isPaid, onClose, onUnlock }) {
           isPaid={isPaid}
           onClose={onClose}
           onUnlock={onUnlock}
+          onStart={onMomentStart}
           inOverlay={true}
         />
       </div>
@@ -920,6 +922,10 @@ export default function MomentMap({
               isPaid={isPaid}
               onClose={() => setActiveMoment(null)}
               onUnlock={onUnlock}
+              onMomentStart={() => {
+                setActiveMoment(null)
+                onMomentStart(activeMoment.id)
+              }}
             />
           )}
           

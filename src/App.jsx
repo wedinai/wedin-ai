@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react'
 import DiscoverySession from './components/DiscoverySession.jsx'
 import MusicPortrait from './components/MusicPortrait.jsx'
 import MomentMap from './components/MomentMap.jsx'
+import CeremonyDeepDive from './components/CeremonyDeepDive.jsx'
 
 export default function App() {
-  const [view, setView] = useState('discovery') // 'discovery' | 'portrait' | 'momentMap'
+  const [view, setView] = useState('discovery') // 'discovery' | 'portrait' | 'momentMap' | 'ceremony'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
   const [isPaid, setIsPaid] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
+  const [completedMoments, setCompletedMoments] = useState([])
+  const [inProgressMoments, setInProgressMoments] = useState([])
 
   // Save session to Supabase whenever a completed set of answers arrives
   useEffect(() => {
@@ -69,6 +72,20 @@ export default function App() {
     setView('momentMap')
   }
 
+  function handleMomentStart(momentId) {
+    // Only Ceremony is built in Phase 2 so far
+    if (momentId === 'ceremony') {
+      setInProgressMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
+      setView('ceremony')
+    }
+  }
+
+  function handleCeremonyComplete(answers, summary) {
+    setCompletedMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
+    setInProgressMoments((prev) => prev.filter((id) => id !== 'ceremony'))
+    setView('momentMap')
+  }
+
   async function handleUnlock() {
     if (unlocking) return
     setUnlocking(true)
@@ -92,12 +109,27 @@ export default function App() {
     }
   }
 
+  if (view === 'ceremony') {
+    return (
+      <CeremonyDeepDive
+        sessionId={sessionId}
+        coupleName={coupleName}
+        sessionAnswers={sessionAnswers}
+        onComplete={handleCeremonyComplete}
+        onBack={() => setView('momentMap')}
+      />
+    )
+  }
+
   if (view === 'momentMap') {
     return (
       <MomentMap
         coupleName={coupleName}
         isPaid={isPaid}
+        completedMoments={completedMoments}
+        inProgressMoments={inProgressMoments}
         onUnlock={handleUnlock}
+        onMomentStart={handleMomentStart}
         onBack={() => setView('portrait')}
       />
     )
