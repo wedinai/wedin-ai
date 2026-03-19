@@ -4,7 +4,7 @@ import MusicPortrait from './components/MusicPortrait.jsx'
 import MomentMap from './components/MomentMap.jsx'
 
 export default function App() {
-  const [view, setView] = useState('discovery') // 'discovery' | 'portrait' | 'momentMap'
+const [view, setView] = useState('discovery')
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
