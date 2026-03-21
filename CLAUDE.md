@@ -16,35 +16,36 @@ The founder is Rus Nerwich — CEO of The Ear Academy (SA EdTech). He ran Tones 
 
 ## Current Build Status
 
-**Phase:** Phase 1 / transitioning to Phase 1.5
+**Phase:** Phase 1.5
 
-**✓ DONE — built and working:**
-- Discovery session — React app, 22 questions across 5 sections, running locally
+**✓ DONE — Phase 1 complete:**
+- Discovery session — React app, 22 questions across 5 sections
 - Two ceremony questions added — religious/cultural structure + ceremony feeling (chips)
 - Couple name capture — entered on welcome screen, passes through to Moment Map
 - Claude API connected server-side via Netlify Function — music portrait generates from answers
 - Music portrait screen — shows AI narrative + email capture
 - Email capture UI — styled correctly, copy locked
 - Supabase connected — sessions and contacts tables live, data storing correctly
-- Netlify Functions — three functions running locally via `netlify dev`
+- Netlify Functions — five functions live (generate-portrait, save-session, save-contact, create-checkout-session, verify-payment)
 - All API keys secure — no browser exposure, all server-side
 - Landing page — live at wedinai.github.io/wedin-ai
 - Google Search Console verified
-- Moment Map UI — wired into App.jsx, full flow working locally
+- Moment Map UI — wired into App.jsx, full flow working
 - Last Song card renders full width at bottom of Moment Map
+- Stripe Checkout integration — wired to Moment Map unlock CTA
+- Netlify deployment — live at wedin-ai-app.netlify.app
+- Moment Map overlay — bottom sheet (mobile) / right drawer (desktop) replaces inline panel
 
 **✗ NOT YET BUILT:**
-- Resend email sending — Netlify Function exists but Resend not yet connected
-- Netlify deployment — app still running locally only
-- Stripe payment integration — Phase 1.5
-- Deep-dive sessions — Phase 2 (start with 3 core moments: Ceremony, Pre-drinks, First Dance)
+- Resend email sending — code built, awaiting Resend account + RESEND_API_KEY + verified domain
+- Deep-dive sessions — Phase 2 (start with Ceremony, then Pre-drinks, First Dance)
 - Music Intelligence Layer — Phase 2
 - Brief assembly engine — Phase 2
 - Spotify + Apple Music APIs — Phase 2
 
 **Next build priority:**
-1. Netlify deployment — app still running locally only
-2. Stripe integration — payment unlocks deep-dive sessions
+1. Resend setup — create account, verify domain, add RESEND_API_KEY to Netlify env vars
+2. Ceremony deep-dive session — first Phase 2 paid moment
 
 ---
 
