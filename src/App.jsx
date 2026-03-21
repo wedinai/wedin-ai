@@ -4,6 +4,7 @@ import MusicPortrait from './components/MusicPortrait.jsx'
 import MomentMap from './components/MomentMap.jsx'
 import CeremonyDeepDive from './components/CeremonyDeepDive.jsx'
 import GuestArrivalsDeepDive from './components/GuestArrivalsDeepDive.jsx'
+import PreDrinksDeepDive from './components/PreDrinksDeepDive.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -12,7 +13,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'ceremony' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -84,10 +85,20 @@ export default function App() {
     if (momentId === 'arrivals') {
       setInProgressMoments((prev) => prev.includes('arrivals') ? prev : [...prev, 'arrivals'])
       setView('arrivals')
+    } else if (momentId === 'predrinks') {
+      setInProgressMoments((prev) => prev.includes('predrinks') ? prev : [...prev, 'predrinks'])
+      setView('predrinks')
     } else if (momentId === 'ceremony') {
       setInProgressMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
       setView('ceremony')
     }
+  }
+
+  function handlePreDrinksComplete(answers) {
+    setMomentAnswers((prev) => ({ ...prev, predrinks: answers }))
+    setCompletedMoments((prev) => prev.includes('predrinks') ? prev : [...prev, 'predrinks'])
+    setInProgressMoments((prev) => prev.filter((id) => id !== 'predrinks'))
+    setView('momentMap')
   }
 
   function handleArrivalsComplete(answers) {
@@ -124,6 +135,17 @@ export default function App() {
       console.error('Unlock failed:', e)
       setUnlocking(false)
     }
+  }
+
+  if (view === 'predrinks') {
+    return (
+      <PreDrinksDeepDive
+        sessionId={sessionId}
+        coupleName={coupleName}
+        onComplete={handlePreDrinksComplete}
+        onBack={() => setView('momentMap')}
+      />
+    )
   }
 
   if (view === 'arrivals') {
