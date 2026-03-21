@@ -82,7 +82,7 @@ export default function DiscoverySession({ onComplete, onSetCoupleName }) {
     }
 
     // Check for acknowledgement
-    const ack = !skipAck ? getAcknowledgement(current, answer) : null
+    const ack = !skipAck ? (current.followUp?.(answer) ?? null) : null
 
     if (ack && answer) {
       setAckText(ack)
