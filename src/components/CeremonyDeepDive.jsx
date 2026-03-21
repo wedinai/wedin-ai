@@ -1,91 +1,289 @@
 import React, { useState, useEffect } from 'react'
 
-// ── Question data ─────────────────────────────────────────────────────────────
+// ── Standard step definitions ──────────────────────────────────────────────
 
-const ALL_STEPS = [
+const STEP_CEREMONY_STRUCTURE = {
+  id: 'ceremony_structure',
+  type: 'chips',
+  educate: "Every ceremony has its own musical soul — shaped by tradition, faith, culture, or a couple's own instinct for what feels right. Before we plan the music, we need to understand what your ceremony is rooted in.",
+  question: "How would you describe your ceremony?",
+  chips: [
+    'Fully religious',
+    'Blend of religious and personal',
+    'Cultural but not religious',
+    'Entirely secular',
+    'Something else entirely',
+  ],
+}
+
+const STEP_CEREMONY_FAITH = {
+  id: 'ceremony_faith',
+  type: 'chips_with_other',
+  question: "What tradition or faith is your ceremony rooted in?",
+  chips: ['Christian', 'Jewish', 'Muslim', 'Hindu', 'Afrikaans Reformed', 'Catholic', 'Greek Orthodox', 'Interfaith', 'Other'],
+}
+
+const STEP_PROCESSIONAL_SONG = {
+  id: 'processional_song',
+  type: 'text',
+  educate: "The processional is the moment the whole room holds its breath. What plays as you walk in will set the emotional register for your entire ceremony.",
+  question: "Is there a song already in your head for walking down the aisle — or is that still completely open?",
+  placeholder: "A song title, an artist, or just a feeling — anything helps.",
+}
+
+const STEP_PROCESSIONAL_TONE = {
+  id: 'processional_tone',
+  type: 'chips',
+  question: "When you imagine that walk, what does the space feel like?",
+  chips: [
+    'Sacred and still',
+    'Joyful and alive',
+    'Warm and intimate',
+    'Unexpected — we want to catch people off guard',
+  ],
+}
+
+const STEP_SIGNING_MUSIC = {
+  id: 'signing_music',
+  type: 'text',
+  educate: "The signing moment is 3–5 minutes most couples forget to plan. You're seated, close to each other, and the room goes quieter than anywhere else in the day.",
+  question: "Have you thought about music for the signing — or is that still a blank? It can be the most beautiful space in the ceremony to fill.",
+  placeholder: "A song, a feeling, or 'hadn't thought about it' — all useful.",
+}
+
+const STEP_RECESSIONAL_SONG = {
+  id: 'recessional_song',
+  type: 'text',
+  educate: "The recessional is your first 60 seconds as a married couple. It's the last thing your guests hear before they pour out behind you.",
+  question: "Have you thought about your recessional song? This is the moment most couples want to feel most like themselves.",
+  placeholder: "A song title, an artist, or the feeling you want.",
+}
+
+const STEP_CEREMONY_FORMAT = {
+  id: 'ceremony_format',
+  type: 'chips',
+  educate: "Ceremony music can be live — a string quartet, a solo vocalist, a guitarist — or played from a well-prepared recording. Each creates a different atmosphere, and the cost difference is significant.",
+  question: "Do you have a preference — live musicians for your ceremony, or a curated recording?",
+  chips: [
+    'Live musicians',
+    'Curated recording',
+    'Open to either',
+    'Depends on budget',
+    'We already have someone in mind',
+  ],
+}
+
+const STEP_OFFICIANT_REQUIREMENTS = {
+  id: 'officiant_requirements',
+  type: 'chips',
+  educate: "Some officiants have specific requirements or restrictions around ceremony music — religious, cultural, or personal. It's worth knowing this before you plan anything.",
+  question: "Does your officiant have any input on your ceremony music?",
+  chips: [
+    "Yes, they've given us guidelines",
+    "No, it's entirely our choice",
+    "We're not sure yet",
+  ],
+}
+
+// ── Faith tradition sub-flow steps ────────────────────────────────────────
+
+const JEWISH_STEPS = [
   {
-    id: 'ceremony_structure',
+    id: 'jewish_denomination',
     type: 'chips',
-    educate: "Every ceremony has its own musical soul — shaped by tradition, faith, culture, or a couple's own instinct for what feels right. Before we plan the music, we need to understand what your ceremony is rooted in.",
-    question: "How would you describe your ceremony?",
-    chips: [
-      'Fully religious',
-      'Blend of religious and personal',
-      'Cultural but not religious',
-      'Entirely secular',
-      'Something else entirely',
-    ],
+    question: "Orthodox, Conservative, or Reform — which best describes how you're approaching the ceremony? This shapes everything from the structure of the service to which music moments need planning.",
+    chips: ['Orthodox', 'Conservative', 'Reform', 'Not sure — somewhere in between'],
   },
   {
-    id: 'ceremony_faith',
-    type: 'chips_with_other',
-    question: "What tradition or faith is your ceremony rooted in?",
-    chips: ['Christian', 'Jewish', 'Muslim', 'Hindu', 'Afrikaans Reformed', 'Catholic', 'Interfaith', 'Other'],
-    conditional: (answers) => {
-      const s = answers['ceremony_structure']
-      return s === 'Fully religious' || s === 'Blend of religious and personal'
-    },
-  },
-  {
-    id: 'processional_song',
+    id: 'jewish_moments',
     type: 'text',
-    educate: "The processional is the moment the whole room holds its breath. What plays as you walk in will set the emotional register for your entire ceremony.",
-    question: "Is there a song already in your head for walking down the aisle — or is that still completely open?",
-    placeholder: "A song title, an artist, or just a feeling — anything helps.",
-  },
-  {
-    id: 'processional_tone',
-    type: 'chips',
-    question: "When you imagine that walk, what does the space feel like?",
-    chips: [
-      'Sacred and still',
-      'Joyful and alive',
-      'Warm and intimate',
-      'Unexpected — we want to catch people off guard',
-    ],
-  },
-  {
-    id: 'signing_music',
-    type: 'text',
-    educate: "The signing moment is 3–5 minutes most couples forget to plan. You're seated, close to each other, and the room goes quieter than anywhere else in the day.",
-    question: "Have you thought about music for the signing — or is that still a blank? It can be the most beautiful space in the ceremony to fill.",
-    placeholder: "A song, a feeling, or 'hadn't thought about it' — all useful.",
-  },
-  {
-    id: 'recessional_song',
-    type: 'text',
-    educate: "The recessional is your first 60 seconds as a married couple. It's the last thing your guests hear before they pour out behind you.",
-    question: "Have you thought about your recessional song? This is the moment most couples want to feel most like themselves.",
-    placeholder: "A song title, an artist, or the feeling you want.",
-  },
-  {
-    id: 'ceremony_format',
-    type: 'chips',
-    educate: "Ceremony music can be live — a string quartet, a solo vocalist, a guitarist — or played from a well-prepared recording. Each creates a different atmosphere, and the cost difference is significant.",
-    question: "Do you have a preference — live musicians for your ceremony, or a curated recording?",
-    chips: [
-      'Live musicians',
-      'Curated recording',
-      'Open to either',
-      'Depends on budget',
-      'We already have someone in mind',
-    ],
-  },
-  {
-    id: 'officiant_requirements',
-    type: 'chips',
-    educate: "Some officiants have specific requirements or restrictions around ceremony music — religious, cultural, or personal. It's worth knowing this before you plan anything.",
-    question: "Does your officiant have any input on your ceremony music?",
-    chips: [
-      "Yes, they've given us guidelines",
-      "No, it's entirely our choice",
-      "We're not sure yet",
-    ],
+    question: "Jewish ceremonies have several distinct music moments — the Badeken, the processional, music through the seven circles, the ketubah signing, and the recessional after the glass is broken. Which of these have you thought about, and which need the most help?",
+    placeholder: "Tell us which moments you've thought about and where you need the most help.",
   },
 ]
 
-function getApplicableSteps(answers) {
-  return ALL_STEPS.filter((step) => !step.conditional || step.conditional(answers))
+const MUSLIM_STEPS = [
+  {
+    id: 'muslim_nikah_location',
+    type: 'chips',
+    question: "Is your Nikah taking place at a mosque or at your venue? This changes the music brief significantly — mosque ceremonies typically have no music, while venue ceremonies often welcome it.",
+    chips: ['At a mosque', 'At our venue', 'Combination of both', 'Not sure yet'],
+  },
+  {
+    id: 'muslim_cape_malay',
+    type: 'chips',
+    infoText: "Cape Malay Muslim weddings in South Africa have distinct musical traditions — Die Afhaal (the formal fetching of the bride), the Salawaat (praise choir), and Nagaul music — that are specific to this community.",
+    question: "Are you incorporating any of these Cape Malay traditions — or is the musical focus mainly on the reception?",
+    chips: ['Yes, Cape Malay traditions are central', 'Some elements, not all', 'No — mainly reception focus', 'Tell me more about these'],
+  },
+]
+
+const HINDU_STEPS = [
+  {
+    id: 'hindu_tradition',
+    type: 'chips',
+    question: "Are you Tamil, or North Indian/Gujarati? The ceremony structure and music moments are quite different between these traditions — I want to make sure we plan for the right ones.",
+    chips: ['Tamil', 'North Indian', 'Gujarati', 'Mixed — both traditions in the family', 'Other'],
+  },
+  {
+    id: 'hindu_moments',
+    type: 'text',
+    question: "The Baraat, the Varmala, the Pheras, and the Vidaai are each distinct music moments. Which of these are part of your ceremony, and is there anything — especially the Vidaai — that hasn't been planned yet?",
+    placeholder: "Tell us which of these are part of your ceremony and what still needs planning.",
+  },
+]
+
+const CATHOLIC_STEPS = [
+  {
+    id: 'catholic_mass_type',
+    type: 'chips',
+    question: "Are you having a full Nuptial Mass, or a Rite of Marriage outside of Mass? This determines how long the ceremony runs and which sung elements are required — the priest will have confirmed this with you.",
+    chips: ['Full Nuptial Mass', 'Rite of Marriage', 'Not sure yet — need to confirm with priest'],
+  },
+  {
+    id: 'catholic_church_requirements',
+    type: 'chips',
+    question: "Catholic ceremonies have required sung elements — the Sanctus, Agnus Dei, and responses — plus the common Ave Maria moment. Has the church given you a music brief, and is there a church organist you're expected to use?",
+    chips: ["Yes, we have the church's requirements", 'No, we have full freedom', "There's an organist we need to work with", 'Not sure yet'],
+  },
+]
+
+const ORTHODOX_STEPS = [
+  {
+    id: 'orthodox_choir_status',
+    type: 'chips',
+    question: "Greek Orthodox ceremonies are a cappella only — no instruments in the church. Is the chanting and choir arrangement already in place with your priest and choir director, or does this need to be organised?",
+    chips: ['Yes, all arranged', 'We have a priest but no choir director yet', 'Still to be organised', "We weren't aware of this — thank you"],
+  },
+  {
+    id: 'orthodox_reception_music',
+    type: 'chips',
+    question: "The reception after a Greek Orthodox ceremony is often the moment where the musical energy completely transforms. Is there a traditional Greek element you want to include at the reception, or are you moving into a fully contemporary reception?",
+    chips: ['Yes, traditional Greek music at the reception', 'A blend of traditional and contemporary', 'Fully contemporary', 'Not sure yet'],
+  },
+]
+
+const NGKERK_STEPS = [
+  {
+    id: 'ngkerk_dominee',
+    type: 'chips',
+    question: "NG Kerk ceremonies are fully in the dominee's hands — organ, Liedboek, and his approval on all music. Has he given you any guidance on what's possible, or is that conversation still ahead of you?",
+    chips: ["Yes, we know exactly what's allowed", 'Still to speak to him', 'We have some flexibility but mostly traditional', "It's a civil ceremony at a venue, not the church"],
+  },
+  {
+    id: 'ngkerk_focus',
+    type: 'chips',
+    question: "NG Kerk couples often treat the ceremony and the reception as completely separate musical worlds. Are you planning anything specific for the ceremony music, or is your energy mainly on the reception?",
+    chips: ['The ceremony is planned — focus on reception', 'Both need equal attention', 'Mainly the ceremony', 'Tell me what we should be thinking about'],
+  },
+]
+
+const INTERFAITH_STEPS = [
+  {
+    id: 'interfaith_traditions',
+    type: 'text',
+    question: "Which traditions are coming together in your ceremony? This helps us navigate where Wagner's Bridal Chorus and other tradition-specific pieces might need to be reconsidered.",
+    placeholder: "Tell us which traditions are part of your ceremony.",
+  },
+  {
+    id: 'interfaith_structure',
+    type: 'chips',
+    question: "Interfaith ceremonies need to feel unified rather than divided. Do you have a clear sense of which tradition's structure takes precedence — or are you building something entirely your own?",
+    chips: ["One tradition leads, the other is honoured", 'Equally blended', 'Something entirely our own', 'Still figuring this out'],
+  },
+]
+
+// ── Protestant steps — conditional Q2 + Q3 ────────────────────────────────
+
+const PROTESTANT_Q1 = {
+  id: 'protestant_denomination',
+  type: 'chips',
+  question: "Which denomination are you? This helps us understand how much flexibility you have with the music — it varies significantly between Anglican, Methodist, Baptist, and Pentecostal.",
+  chips: ['Anglican', 'Methodist', 'Baptist', 'Pentecostal/Charismatic', 'Other'],
+}
+
+const PROTESTANT_Q3 = {
+  id: 'protestant_detail',
+  type: 'text',
+  question: "Anything else about the church's music requirements we should know — specific songs the family is expecting, anything that's off the table, or anything the minister has already approved?",
+  placeholder: "Family expectations, songs the minister has approved, anything that's off the table…",
+}
+
+// Derives the conditional Q2 question object from the denomination answer
+function resolveProtestantQ2(denomination) {
+  if (denomination === 'Anglican') {
+    return {
+      id: 'protestant_structure',
+      type: 'chips',
+      question: "Anglican ceremonies are typically formal, with the vicar approving all music. Have you had that conversation yet — and is there an organist at the church you're working with or replacing?",
+      chips: ["Yes, vicar has approved our choices", "Not yet — still to confirm", "There's an organist we need to factor in", "We have full freedom"],
+    }
+  }
+  if (denomination === 'Methodist' || denomination === 'Baptist') {
+    return {
+      id: 'protestant_structure',
+      type: 'chips',
+      question: "Methodist and Baptist ceremonies generally welcome hymn-based music and congregational singing. Are there specific hymns the family is expecting, and do you want the music to lean traditional or contemporary Christian?",
+      chips: ['Traditional hymns', 'Contemporary Christian', 'A mix', 'Open to guidance'],
+    }
+  }
+  // Pentecostal/Charismatic
+  return {
+    id: 'protestant_structure',
+    type: 'chips',
+    question: "Pentecostal ceremonies often include a worship band and a significant praise section. Is that the plan here — and does your church have its own worship team, or do you need one arranged?",
+    chips: ['Yes, full worship band', 'Praise songs but more contained', 'We want a blend', 'The church has their team'],
+  }
+}
+
+// Protestant sub-flow: Q1 always; Q2 + Q3 only if denomination is not 'Other'
+function getProtestantSteps(answers) {
+  const denom = answers['protestant_denomination']
+  const steps = [PROTESTANT_Q1]
+  if (denom && denom !== 'Other') {
+    steps.push(resolveProtestantQ2(denom))
+    steps.push(PROTESTANT_Q3)
+  }
+  return steps
+}
+
+// ── Faith sub-flow injection ───────────────────────────────────────────────
+
+// Maps ceremony_faith answer → tradition-specific step array
+function getFaithSubFlowSteps(answers) {
+  switch (answers['ceremony_faith']) {
+    case 'Jewish':             return JEWISH_STEPS
+    case 'Muslim':             return MUSLIM_STEPS
+    case 'Hindu':              return HINDU_STEPS
+    case 'Catholic':           return CATHOLIC_STEPS
+    case 'Greek Orthodox':     return ORTHODOX_STEPS
+    case 'Christian':          return getProtestantSteps(answers)
+    case 'Afrikaans Reformed': return NGKERK_STEPS
+    case 'Interfaith':         return INTERFAITH_STEPS
+    default:                   return []
+  }
+}
+
+// ── Step builder ───────────────────────────────────────────────────────────
+
+// Builds the complete ordered step list for the current answer state.
+// Faith sub-flow steps are injected between ceremony_faith and processional_song.
+function buildAllSteps(answers) {
+  const steps = [STEP_CEREMONY_STRUCTURE]
+  const s = answers['ceremony_structure']
+  if (s === 'Fully religious' || s === 'Blend of religious and personal') {
+    steps.push(STEP_CEREMONY_FAITH)
+    steps.push(...getFaithSubFlowSteps(answers))
+  }
+  steps.push(
+    STEP_PROCESSIONAL_SONG,
+    STEP_PROCESSIONAL_TONE,
+    STEP_SIGNING_MUSIC,
+    STEP_RECESSIONAL_SONG,
+    STEP_CEREMONY_FORMAT,
+    STEP_OFFICIANT_REQUIREMENTS,
+  )
+  return steps
 }
 
 // ── Chip button ───────────────────────────────────────────────────────────────
@@ -143,7 +341,7 @@ export default function CeremonyDeepDive({
 
   useEffect(() => { setMounted(true) }, [])
 
-  const applicableSteps = getApplicableSteps(answers)
+  const applicableSteps = buildAllSteps(answers)
   const currentStep = applicableSteps[stepIndex]
   const totalSteps = applicableSteps.length
 
@@ -158,8 +356,8 @@ export default function CeremonyDeepDive({
     const newAnswers = { ...answers, [currentStep.id]: value }
     setAnswers(newAnswers)
 
-    // Recompute applicable steps with the new answer (in case it unlocks a conditional)
-    const nextApplicable = getApplicableSteps(newAnswers)
+    // Recompute applicable steps with the new answer (in case it unlocks sub-flow steps)
+    const nextApplicable = buildAllSteps(newAnswers)
     const nextIndex = stepIndex + 1
 
     if (nextIndex >= nextApplicable.length) {
@@ -492,7 +690,23 @@ export default function CeremonyDeepDive({
             key={currentStep.id}
             style={{ animation: 'fadeUp 300ms ease both' }}
           >
-            {/* Educate */}
+            {/* Info text — DM Sans, 14px, italic, warm grey (used for Cape Malay educate) */}
+            {currentStep.infoText && (
+              <p
+                style={{
+                  margin: '0 0 16px',
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 14,
+                  fontStyle: 'italic',
+                  color: '#6B6560',
+                  lineHeight: 1.6,
+                }}
+              >
+                {currentStep.infoText}
+              </p>
+            )}
+
+            {/* Educate — Cormorant Garamond, 16px, italic, warm grey */}
             {currentStep.educate && (
               <p
                 style={{
