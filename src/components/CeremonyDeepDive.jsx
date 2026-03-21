@@ -6,7 +6,7 @@ const ALL_STEPS = [
   {
     id: 'ceremony_structure',
     type: 'chips',
-    educate: "Every ceremony has its own musical logic — shaped by tradition, faith, culture, or a complete rejection of all three. Before we plan the music, we need to understand the framework your ceremony lives inside.",
+    educate: "Every ceremony has its own musical soul — shaped by tradition, faith, culture, or a couple's own instinct for what feels right. Before we plan the music, we need to understand what your ceremony is rooted in.",
     question: "How would you describe your ceremony?",
     chips: [
       'Fully religious',
@@ -36,7 +36,7 @@ const ALL_STEPS = [
   {
     id: 'processional_tone',
     type: 'chips',
-    question: "When you imagine that walk, what does the room feel like?",
+    question: "When you imagine that walk, what does the space feel like?",
     chips: [
       'Sacred and still',
       'Joyful and alive',
