@@ -3,6 +3,7 @@ import DiscoverySession from './components/DiscoverySession.jsx'
 import MusicPortrait from './components/MusicPortrait.jsx'
 import MomentMap from './components/MomentMap.jsx'
 import CeremonyDeepDive from './components/CeremonyDeepDive.jsx'
+import GuestArrivalsDeepDive from './components/GuestArrivalsDeepDive.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -11,7 +12,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'ceremony' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'ceremony' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -19,6 +20,7 @@ export default function App() {
   const [unlocking, setUnlocking] = useState(false)
   const [completedMoments, setCompletedMoments] = useState([])
   const [inProgressMoments, setInProgressMoments] = useState([])
+  const [momentAnswers, setMomentAnswers] = useState({}) // { guestArrivals: {…}, ceremony: {…}, … }
 
   // Save session to Supabase whenever a completed set of answers arrives
   useEffect(() => {
@@ -79,11 +81,20 @@ export default function App() {
   }
 
   function handleMomentStart(momentId) {
-    // Only Ceremony is built so far
-    if (momentId === 'ceremony') {
+    if (momentId === 'arrivals') {
+      setInProgressMoments((prev) => prev.includes('arrivals') ? prev : [...prev, 'arrivals'])
+      setView('arrivals')
+    } else if (momentId === 'ceremony') {
       setInProgressMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
       setView('ceremony')
     }
+  }
+
+  function handleArrivalsComplete(answers) {
+    setMomentAnswers((prev) => ({ ...prev, guestArrivals: answers }))
+    setCompletedMoments((prev) => prev.includes('arrivals') ? prev : [...prev, 'arrivals'])
+    setInProgressMoments((prev) => prev.filter((id) => id !== 'arrivals'))
+    setView('momentMap')
   }
 
   function handleCeremonyComplete(answers, summary) {
@@ -113,6 +124,17 @@ export default function App() {
       console.error('Unlock failed:', e)
       setUnlocking(false)
     }
+  }
+
+  if (view === 'arrivals') {
+    return (
+      <GuestArrivalsDeepDive
+        sessionId={sessionId}
+        coupleName={coupleName}
+        onComplete={handleArrivalsComplete}
+        onBack={() => setView('momentMap')}
+      />
+    )
   }
 
   if (view === 'ceremony') {
