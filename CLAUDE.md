@@ -35,17 +35,21 @@ The founder is Rus Nerwich — CEO of The Ear Academy (SA EdTech). He ran Tones 
 - Stripe Checkout integration — wired to Moment Map unlock CTA
 - Netlify deployment — live at wedin-ai-app.netlify.app
 - Moment Map overlay — bottom sheet (mobile) / right drawer (desktop) replaces inline panel
+- Resend email — Netlify function built and wired, not yet confirmed delivered (needs account + key)
+- CeremonyDeepDive session — 8-step conversational flow, AI summary via Netlify function, completion screen
 
 **✗ NOT YET BUILT:**
-- Resend email sending — code built, awaiting Resend account + RESEND_API_KEY + verified domain
-- Deep-dive sessions — Phase 2 (start with Ceremony, then Pre-drinks, First Dance)
+- Resend email sending — code wired but email not confirmed delivered; needs Resend account, RESEND_API_KEY, verified domain
+- CeremonyDeepDive view transition — confirm 'Plan this moment' button triggers view change after Netlify deploy
+- Pre-drinks deep-dive session — Phase 2
 - Music Intelligence Layer — Phase 2
 - Brief assembly engine — Phase 2
 - Spotify + Apple Music APIs — Phase 2
 
 **Next build priority:**
-1. Resend setup — create account, verify domain, add RESEND_API_KEY to Netlify env vars
-2. Ceremony deep-dive session — first Phase 2 paid moment
+1. Confirm Ceremony flow end-to-end on wedin-ai-app.netlify.app — discovery → portrait → moment map → Plan this moment → CeremonyDeepDive loads
+2. Resend setup — create account, verify domain, add RESEND_API_KEY to Netlify env vars
+3. Pre-drinks deep-dive session — second Phase 2 moment
 
 ---
 
