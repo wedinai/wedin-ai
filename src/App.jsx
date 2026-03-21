@@ -5,7 +5,13 @@ import MomentMap from './components/MomentMap.jsx'
 import CeremonyDeepDive from './components/CeremonyDeepDive.jsx'
 
 export default function App() {
-  const [view, setView] = useState('discovery') // 'discovery' | 'portrait' | 'momentMap' | 'ceremony'
+  const [view, setView] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('payment') === 'success' && params.get('stripe_session_id')) {
+      return 'paymentConfirming'
+    }
+    return 'discovery'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'ceremony' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -144,6 +150,39 @@ export default function App() {
         onStartOver={handleStartOver}
         onViewMomentMap={handleViewMomentMap}
       />
+    )
+  }
+
+  if (view === 'paymentConfirming') {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: 'var(--cream)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '32px',
+      }}>
+        <span style={{
+          fontFamily: 'DM Sans, sans-serif',
+          fontSize: '13px',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: 'var(--navy)',
+        }}>
+          wedin.ai
+        </span>
+        <p style={{
+          fontFamily: 'Cormorant Garamond, serif',
+          fontStyle: 'italic',
+          fontSize: '24px',
+          color: 'var(--navy)',
+          margin: 0,
+        }}>
+          Setting up your music map…
+        </p>
+      </div>
     )
   }
 
