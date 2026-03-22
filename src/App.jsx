@@ -31,6 +31,19 @@ export default function App() {
   const [momentAnswers, setMomentAnswers] = useState({}) // { guestArrivals: {…}, ceremony: {…}, … }
   const [portrait, setPortrait] = useState(null)
 
+  // Persist completedMoments and momentAnswers to localStorage whenever they change
+  useEffect(() => {
+    if (completedMoments.length > 0) {
+      localStorage.setItem('wedin_completed_moments', JSON.stringify(completedMoments))
+    }
+  }, [completedMoments])
+
+  useEffect(() => {
+    if (Object.keys(momentAnswers).length > 0) {
+      localStorage.setItem('wedin_moment_answers', JSON.stringify(momentAnswers))
+    }
+  }, [momentAnswers])
+
   // Save session to Supabase whenever a completed set of answers arrives
   useEffect(() => {
     if (Object.keys(sessionAnswers).length === 0) return
@@ -97,6 +110,13 @@ export default function App() {
       setSessionId(sessionToRestore)
       setSessionAnswers(JSON.parse(savedAnswers))
       setPortrait(savedPortrait)
+
+      const savedCompleted = localStorage.getItem('wedin_completed_moments')
+      if (savedCompleted) setCompletedMoments(JSON.parse(savedCompleted))
+
+      const savedMomentAnswers = localStorage.getItem('wedin_moment_answers')
+      if (savedMomentAnswers) setMomentAnswers(JSON.parse(savedMomentAnswers))
+
       setView('momentMap') // skip discovery and portrait, go straight to the map
     }
   }, [])
@@ -110,10 +130,14 @@ export default function App() {
     localStorage.removeItem('wedin_session_id')
     localStorage.removeItem('wedin_session_answers')
     localStorage.removeItem('wedin_portrait')
+    localStorage.removeItem('wedin_completed_moments')
+    localStorage.removeItem('wedin_moment_answers')
     setSessionAnswers({})
     setSessionId(null)
     setPortrait(null)
     setIsPaid(false)
+    setCompletedMoments([])
+    setMomentAnswers({})
     setView('discovery')
   }
 
