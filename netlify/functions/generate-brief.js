@@ -172,6 +172,7 @@ Return ONLY valid JSON in this exact format:
 Both values are plain text strings. Use \\n\\n to separate paragraphs. Mark each moment section with **MOMENT NAME** on its own line — nothing else on that line. No markdown bullet points or lists anywhere in the output.`
 
   try {
+    console.log('Starting Claude API call')
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -186,6 +187,7 @@ Both values are plain text strings. Use \\n\\n to separate paragraphs. Mark each
         messages: [{ role: 'user', content: prompt }],
       }),
     })
+    console.log('Claude API call complete, status:', res.status)
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}))
