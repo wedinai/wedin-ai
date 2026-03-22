@@ -42,6 +42,13 @@ export const handler = async (event) => {
   if (process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY)
+      // Session-aware return URL — picked up by App.jsx restore logic on return visit
+      // On a different device, the session param is present but localStorage won't be,
+      // so full cross-device restore requires fetching answers from Supabase by session ID — deferred TODO
+      const returnUrl = session_id
+        ? `https://wedin-ai-app.netlify.app?session=${session_id}`
+        : 'https://wedin-ai-app.netlify.app'
+
       const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -51,10 +58,12 @@ export const handler = async (event) => {
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;padding:48px 24px;font-family:'DM Sans',sans-serif;">
     <tr>
       <td>
-        <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;color:#1C2B3A;margin:0 0 24px 0;line-height:1.2;">Your Moment Map is ready.</p>
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">You've mapped the musical identity of your wedding day. Your portrait is saved.</p>
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 32px 0;">Your Moment Map is waiting — nine musical moments, each one ready to be shaped around exactly how you want the day to feel. Step inside and start building the soundtrack to your day.</p>
-        <a href="https://wedin-ai-app.netlify.app" style="display:inline-block;background:#1C2B3A;color:#FAF7F2;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;text-decoration:none;padding:14px 28px;border-radius:8px;min-height:44px;line-height:1.6;">Open my Moment Map →</a>
+        <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;color:#1C2B3A;margin:0 0 24px 0;line-height:1.2;">Your music portrait is ready.</p>
+        ${narrative ? `<div style="background:#FFFFFF;border-left:3px solid #C4922A;padding:20px 24px;margin:0 0 32px 0;border-radius:0 8px 8px 0;"><p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;color:#1C2B3A;line-height:1.6;margin:0;font-style:italic;">${narrative}</p></div>` : ''}
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">Your wedding day has nine musical moments — from the first song guests hear as they arrive, to the last song that sends everyone home. Each one shapes how the day feels. Most couples never plan them. You're about to.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 24px 0;">Your Moment Map walks you through every moment in a conversation, not a form. When you're done, you'll have a complete music brief — one your coordinator can act on and your acts can deliver from.</p>
+        <p style="font-size:14px;color:#6B6560;margin:0 0 32px 0;">Unlock your Moment Map for R699 — a one-time fee for your complete wedding music plan.</p>
+        <a href="${returnUrl}" style="display:inline-block;background:#1C2B3A;color:#FAF7F2;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;text-decoration:none;padding:14px 28px;border-radius:8px;min-height:44px;line-height:1.6;">Open my Moment Map →</a>
         <p style="font-size:13px;color:#6B6560;margin:40px 0 0 0;">wedin.ai — Start with the music.</p>
       </td>
     </tr>

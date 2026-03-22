@@ -30,6 +30,7 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
     generateNarrative(answers).then((text) => {
       setNarrative(text)
       setLoading(false)
+      if (text) localStorage.setItem('wedin_portrait', text)
     })
   }, [])
 

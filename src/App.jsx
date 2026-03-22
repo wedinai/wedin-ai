@@ -22,10 +22,12 @@ export default function App() {
   const [completedMoments, setCompletedMoments] = useState([])
   const [inProgressMoments, setInProgressMoments] = useState([])
   const [momentAnswers, setMomentAnswers] = useState({}) // { guestArrivals: {…}, ceremony: {…}, … }
+  const [portrait, setPortrait] = useState(null)
 
   // Save session to Supabase whenever a completed set of answers arrives
   useEffect(() => {
     if (Object.keys(sessionAnswers).length === 0) return
+    if (sessionId) return // already have a session ID — restored from storage, do not re-save
 
     fetch('/.netlify/functions/save-session', {
       method: 'POST',
@@ -34,7 +36,13 @@ export default function App() {
     })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data?.session_id) setSessionId(data.session_id)
+        if (data?.session_id) {
+          setSessionId(data.session_id)
+          localStorage.setItem('wedin_session_id', data.session_id)
+          localStorage.setItem('wedin_session_answers', JSON.stringify(sessionAnswers))
+          // Portrait is generated in MusicPortrait and written to localStorage there
+          // once the narrative is ready — see MusicPortrait.jsx
+        }
       })
       .catch((e) => console.error('Session save failed:', e))
   }, [sessionAnswers])
@@ -65,14 +73,39 @@ export default function App() {
     }
   }, [])
 
+  // Restore session for returning couples — from localStorage or ?session= URL param
+  // Cross-device restore (fetching answers from Supabase by session ID) is deferred — TODO Phase 2
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('payment') === 'success') return // payment flow takes priority
+
+    const savedSessionId = localStorage.getItem('wedin_session_id')
+    const savedAnswers = localStorage.getItem('wedin_session_answers')
+    const savedPortrait = localStorage.getItem('wedin_portrait')
+    const urlSessionId = params.get('session')
+
+    const sessionToRestore = urlSessionId || savedSessionId
+
+    if (sessionToRestore && savedAnswers && savedPortrait) {
+      setSessionId(sessionToRestore)
+      setSessionAnswers(JSON.parse(savedAnswers))
+      setPortrait(savedPortrait)
+      setView('momentMap') // skip discovery and portrait, go straight to the map
+    }
+  }, [])
+
   function handleComplete(answers) {
     setSessionAnswers(answers)
     setView('portrait')
   }
 
   function handleStartOver() {
+    localStorage.removeItem('wedin_session_id')
+    localStorage.removeItem('wedin_session_answers')
+    localStorage.removeItem('wedin_portrait')
     setSessionAnswers({})
     setSessionId(null)
+    setPortrait(null)
     setIsPaid(false)
     setView('discovery')
   }
