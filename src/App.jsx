@@ -11,6 +11,7 @@ import DinnerDeepDive from './components/DinnerDeepDive.jsx'
 import SpeechesDeepDive from './components/SpeechesDeepDive.jsx'
 import DancingDeepDive from './components/DancingDeepDive.jsx'
 import LastSongDeepDive from './components/LastSongDeepDive.jsx'
+import BriefScreen from './components/BriefScreen.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -19,7 +20,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'brief' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -166,9 +167,14 @@ export default function App() {
   }
 
   function handleCeremonyComplete(answers, summary) {
+    setMomentAnswers((prev) => ({ ...prev, ceremony: answers }))
     setCompletedMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'ceremony'))
     setView('momentMap')
+  }
+
+  function handleGenerateBrief() {
+    setView('brief')
   }
 
   function handleEntranceComplete(answers) {
@@ -336,6 +342,18 @@ export default function App() {
     )
   }
 
+  if (view === 'brief') {
+    return (
+      <BriefScreen
+        momentAnswers={momentAnswers}
+        portrait={portrait}
+        coupleName={coupleName}
+        sessionAnswers={sessionAnswers}
+        onBack={() => setView('momentMap')}
+      />
+    )
+  }
+
   if (view === 'momentMap') {
     return (
       <MomentMap
@@ -345,6 +363,7 @@ export default function App() {
         inProgressMoments={inProgressMoments}
         onUnlock={handleUnlock}
         onMomentStart={handleMomentStart}
+        onGenerateBrief={handleGenerateBrief}
         onBack={() => setView('portrait')}
       />
     )

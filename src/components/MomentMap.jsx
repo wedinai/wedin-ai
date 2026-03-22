@@ -721,6 +721,7 @@ export default function MomentMap({
   isPaid = false, // false = show locked state + unlock CTA
   onUnlock = () => {}, // called when couple clicks unlock / pay
   onMomentStart = () => {}, // called with moment.id when a paid moment is started
+  onGenerateBrief = () => {}, // called when all moments complete and couple clicks generate
 }) {
   const [activeMoment, setActiveMoment] = useState(null);
   const [mounted, setMounted] = useState(false);
@@ -954,6 +955,7 @@ export default function MomentMap({
                 All 9 moments complete.
               </p>
               <button
+                onClick={onGenerateBrief}
                 style={{
                   all: "unset",
                   cursor: "pointer",
