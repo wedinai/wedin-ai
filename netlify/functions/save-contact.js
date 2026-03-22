@@ -38,6 +38,7 @@ export const handler = async (event) => {
   }
 
   // ── Send portrait email via Resend ──────────────────────────────────────
+  console.log('RESEND_API_KEY present:', !!process.env.RESEND_API_KEY)
   if (process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY)
