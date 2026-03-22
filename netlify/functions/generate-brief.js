@@ -120,6 +120,8 @@ function formatMomentAnswers(ma) {
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export const handler = async (event) => {
+  console.log('generate-brief invoked at', new Date().toISOString())
+
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
@@ -135,6 +137,7 @@ export const handler = async (event) => {
   let body
   try {
     body = JSON.parse(event.body)
+    console.log('Body parsed successfully, keys:', Object.keys(body))
   } catch {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }
   }
