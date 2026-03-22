@@ -4,6 +4,8 @@
 
 [functions]
   directory = "netlify/functions"
+
+[functions."generate-brief"]
   timeout = 26
 
 [dev]
