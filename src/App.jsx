@@ -10,6 +10,7 @@ import FirstDanceDeepDive from './components/FirstDanceDeepDive.jsx'
 import DinnerDeepDive from './components/DinnerDeepDive.jsx'
 import SpeechesDeepDive from './components/SpeechesDeepDive.jsx'
 import DancingDeepDive from './components/DancingDeepDive.jsx'
+import LastSongDeepDive from './components/LastSongDeepDive.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -18,7 +19,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -144,6 +145,9 @@ export default function App() {
     } else if (momentId === 'dancing') {
       setInProgressMoments((prev) => prev.includes('dancing') ? prev : [...prev, 'dancing'])
       setView('dancing')
+    } else if (momentId === 'lastsong') {
+      setInProgressMoments((prev) => prev.includes('lastsong') ? prev : [...prev, 'lastsong'])
+      setView('lastsong')
     }
   }
 
@@ -202,6 +206,13 @@ export default function App() {
     setView('momentMap')
   }
 
+  function handleLastSongComplete(answers) {
+    setMomentAnswers((prev) => ({ ...prev, lastSong: answers }))
+    setCompletedMoments((prev) => prev.includes('lastsong') ? prev : [...prev, 'lastsong'])
+    setInProgressMoments((prev) => prev.filter((id) => id !== 'lastsong'))
+    setView('momentMap')
+  }
+
   async function handleUnlock() {
     if (unlocking) return
     setUnlocking(true)
@@ -242,6 +253,17 @@ export default function App() {
         sessionId={sessionId}
         coupleName={coupleName}
         onComplete={handleArrivalsComplete}
+        onBack={() => setView('momentMap')}
+      />
+    )
+  }
+
+  if (view === 'lastsong') {
+    return (
+      <LastSongDeepDive
+        sessionId={sessionId}
+        coupleName={coupleName}
+        onComplete={handleLastSongComplete}
         onBack={() => setView('momentMap')}
       />
     )
