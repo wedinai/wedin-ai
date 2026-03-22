@@ -5,6 +5,7 @@ import MomentMap from './components/MomentMap.jsx'
 import CeremonyDeepDive from './components/CeremonyDeepDive.jsx'
 import GuestArrivalsDeepDive from './components/GuestArrivalsDeepDive.jsx'
 import PreDrinksDeepDive from './components/PreDrinksDeepDive.jsx'
+import EntranceDeepDive from './components/EntranceDeepDive.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -13,7 +14,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -124,6 +125,9 @@ export default function App() {
     } else if (momentId === 'ceremony') {
       setInProgressMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
       setView('ceremony')
+    } else if (momentId === 'entrance') {
+      setInProgressMoments((prev) => prev.includes('entrance') ? prev : [...prev, 'entrance'])
+      setView('entrance')
     }
   }
 
@@ -144,6 +148,13 @@ export default function App() {
   function handleCeremonyComplete(answers, summary) {
     setCompletedMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'ceremony'))
+    setView('momentMap')
+  }
+
+  function handleEntranceComplete(answers) {
+    setMomentAnswers((prev) => ({ ...prev, entrance: answers }))
+    setCompletedMoments((prev) => prev.includes('entrance') ? prev : [...prev, 'entrance'])
+    setInProgressMoments((prev) => prev.filter((id) => id !== 'entrance'))
     setView('momentMap')
   }
 
@@ -187,6 +198,17 @@ export default function App() {
         sessionId={sessionId}
         coupleName={coupleName}
         onComplete={handleArrivalsComplete}
+        onBack={() => setView('momentMap')}
+      />
+    )
+  }
+
+  if (view === 'entrance') {
+    return (
+      <EntranceDeepDive
+        sessionId={sessionId}
+        coupleName={coupleName}
+        onComplete={handleEntranceComplete}
         onBack={() => setView('momentMap')}
       />
     )
