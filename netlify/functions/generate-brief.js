@@ -65,7 +65,6 @@ function formatMomentAnswers(ma) {
   push(section('YOUR ENTRANCE', [
     line('Entry style', en.entrance_style),
     line('Space transition', en.entrance_transition),
-    line('Transition note', en.entrance_transition_context),
     line('Live musicians for entrance', en.entrance_live_musicians),
   ]))
 
@@ -74,7 +73,6 @@ function formatMomentAnswers(ma) {
     line('Atmosphere', di.dinner_atmosphere),
     line('Musical style or mood', di.dinner_style),
     line('Live or recorded', di.dinner_live_or_recorded),
-    line('Live act note', di.dinner_live_context),
     line('Energy toward speeches', di.dinner_energy_shift),
   ]))
 
@@ -85,9 +83,7 @@ function formatMomentAnswers(ma) {
     line('Intro song details', sp.speeches_intro_details),
     line('Between speeches', sp.speeches_between),
     line('Outro transition', sp.speeches_outro),
-    line('Outro context', sp.speeches_outro_context),
     line('Surprise moments', sp.speeches_surprises),
-    line('Surprise context', sp.speeches_surprises_context),
   ]))
 
   const fd = ma.firstDance || {}
@@ -95,7 +91,6 @@ function formatMomentAnswers(ma) {
     line('Song or feeling', fd.firstdance_song),
     line('What it should do to the room', fd.firstdance_room_feeling),
     line('Live or recorded', fd.firstdance_live_or_recorded),
-    line('Live performance note', fd.firstdance_live_context),
     line('Additional dances', fd.firstdance_additional),
     line('Who dances', fd.firstdance_additional_who),
     line('Dance sequence', fd.firstdance_additional_sequence),
@@ -105,7 +100,6 @@ function formatMomentAnswers(ma) {
   const da = ma.dancing || {}
   push(section('DANCING', [
     line('Energy arc', da.dancing_energy_arc),
-    line('Energy arc note', da.dancing_energy_context),
     line('Guest mix priority', da.dancing_guest_mix),
     line('Songs or genres to avoid', da.dancing_avoid),
     line('Avoidance details', da.dancing_avoid_details),
@@ -167,7 +161,7 @@ DISCOVERY CONTEXT:
 - Cultural background: ${sessionAnswers['cultural_background'] || 'not provided'}
 
 MUSIC PORTRAIT:
-${portrait || 'Not available'}
+${portrait ? portrait.slice(0, 600) : 'Not available'}
 
 MOMENT ANSWERS:
 ${momentBlock || 'No moment answers provided'}
@@ -187,7 +181,7 @@ Both values are plain text strings. Use \\n\\n to separate paragraphs. Mark each
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 4096,
+        max_tokens: 2048,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: prompt }],
       }),
