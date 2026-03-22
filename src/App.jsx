@@ -8,6 +8,7 @@ import PreDrinksDeepDive from './components/PreDrinksDeepDive.jsx'
 import EntranceDeepDive from './components/EntranceDeepDive.jsx'
 import FirstDanceDeepDive from './components/FirstDanceDeepDive.jsx'
 import DinnerDeepDive from './components/DinnerDeepDive.jsx'
+import SpeechesDeepDive from './components/SpeechesDeepDive.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -16,7 +17,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -136,6 +137,9 @@ export default function App() {
     } else if (momentId === 'dinner') {
       setInProgressMoments((prev) => prev.includes('dinner') ? prev : [...prev, 'dinner'])
       setView('dinner')
+    } else if (momentId === 'speeches') {
+      setInProgressMoments((prev) => prev.includes('speeches') ? prev : [...prev, 'speeches'])
+      setView('speeches')
     }
   }
 
@@ -180,6 +184,13 @@ export default function App() {
     setView('momentMap')
   }
 
+  function handleSpeechesComplete(answers) {
+    setMomentAnswers((prev) => ({ ...prev, speeches: answers }))
+    setCompletedMoments((prev) => prev.includes('speeches') ? prev : [...prev, 'speeches'])
+    setInProgressMoments((prev) => prev.filter((id) => id !== 'speeches'))
+    setView('momentMap')
+  }
+
   async function handleUnlock() {
     if (unlocking) return
     setUnlocking(true)
@@ -220,6 +231,17 @@ export default function App() {
         sessionId={sessionId}
         coupleName={coupleName}
         onComplete={handleArrivalsComplete}
+        onBack={() => setView('momentMap')}
+      />
+    )
+  }
+
+  if (view === 'speeches') {
+    return (
+      <SpeechesDeepDive
+        sessionId={sessionId}
+        coupleName={coupleName}
+        onComplete={handleSpeechesComplete}
         onBack={() => setView('momentMap')}
       />
     )
