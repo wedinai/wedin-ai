@@ -40,22 +40,39 @@ The founder is Rus Nerwich — CEO of The Ear Academy (SA EdTech). He ran Tones 
 - Resend email — fully live, hello@wedin.ai verified and delivering, RESEND_API_KEY in Netlify
 - GuestArrivalsDeepDive — 3-question linear flow, momentAnswers.guestArrivals state, wired into App.jsx and MomentMap.jsx
 - PreDrinksDeepDive — 4-question flow with conditional presence context note, momentAnswers.predrinks state, wired into App.jsx and MomentMap.jsx
+- EntranceDeepDive — 3-question flow with conditional transition note, momentAnswers.entrance, live
+- FirstDanceDeepDive — 6-question flow with additional dances branch, dynamic step counter, momentAnswers.firstDance, live
+- DinnerDeepDive — 4-question linear flow with conditional live music note, momentAnswers.dinner, live
+- SpeechesDeepDive — 5-question flow with intro songs branch, dynamic step counter, momentAnswers.speeches, live
+- DancingDeepDive — 5-question flow with avoidance branch, dynamic step counter, momentAnswers.dancing, live
+- LastSongDeepDive — 3-question linear flow, custom completion screen, momentAnswers.lastSong, live
+- Session restore — localStorage persistence of sessionId, sessionAnswers, portrait; URL parameter restore; return link in email carries session ID
+- Email updated — portrait in gold-bordered block, Moment Map explanation, R699 pricing, CTA links directly to Moment Map
+- momentAnswers state — all 9 moments saving to named objects, ready for brief assembly engine
+- Brief assembly engine — generate-brief.js Netlify function, single Claude API call, Haiku model, generates couple brief and coordinator brief, live and working
+- BriefScreen.jsx — two-tab brief display, copy to clipboard, wired into App.jsx
+- momentAnswers.ceremony — fixed, now correctly saved alongside all other moments
+- localStorage persistence — completedMoments and momentAnswers persisted, session fully restores on refresh or return visit
 
 **✗ NOT YET BUILT:**
-- Deep-dive sessions — Your Entrance, First Dance, Dinner, Speeches, Dancing, Last Song
-- Music Intelligence Layer — Phase 2
-- Brief assembly engine — Phase 2
+- Music Intelligence Layer — runs after brief is generated, asks budget + existing bookings, generates act recommendations per moment with reasoning and budget ranges
+- Coordinator brief — generated only after MIL decisions are confirmed, not before
+- Couple brief post-brief screen — "Your music portrait is complete" screen with MIL CTA
+- Diagnostic console.log lines — remove from generate-brief.js before launch
+- "Plan this moment" button styling — regression fix on MomentMap overlay
+- Copy audit — full product copy review against brand voice and conversion copy skills
+- Stripe live mode
 - Spotify + Apple Music APIs — Phase 2
 
-**Next build priority:**
-1. Your Entrance deep-dive
-2. First Dance deep-dive
-3. Dinner deep-dive
-4. Speeches deep-dive
-5. Dancing deep-dive
-6. Last Song deep-dive
-7. Music Intelligence Layer — after all deep-dives complete
-8. Brief assembly engine — after MIL
+**Next build priorities:**
+1. Remove diagnostic console.log lines from generate-brief.js
+2. Fix "Plan this moment" button styling regression on MomentMap overlay
+3. Post-brief screen — "Your music portrait is complete" with MIL CTA
+4. Music Intelligence Layer — generate-mil.js, budget + booking questions, per-moment act recommendations
+5. Coordinator brief — generated after MIL decisions confirmed
+6. Copy audit — full product review session
+7. Stripe live mode
+8. Spotify + Apple Music APIs
 
 ---
 
@@ -155,6 +172,15 @@ wedin.ai/
       CompletionScreen.jsx
       MusicPortrait.jsx      — portrait + email capture
       MomentMap.jsx          — Phase 1.5, built and wired
+      GuestArrivalsDeepDive.jsx
+      PreDrinksDeepDive.jsx
+      EntranceDeepDive.jsx
+      FirstDanceDeepDive.jsx
+      DinnerDeepDive.jsx
+      SpeechesDeepDive.jsx
+      DancingDeepDive.jsx
+      LastSongDeepDive.jsx
+      BriefScreen.jsx        — two-tab brief display, copy to clipboard
     data/
       questions.js           — 22 questions, 5 sections
     App.jsx
@@ -190,15 +216,17 @@ wedin.ai/
 3. ~~Dynamic acknowledgements UI wiring~~ DONE
 4. ~~Guest Arrivals deep-dive~~ DONE
 5. ~~Pre-drinks deep-dive~~ DONE
-6. Your Entrance deep-dive — NEXT
-7. First Dance deep-dive
-8. Dinner deep-dive
-9. Speeches deep-dive
-10. Dancing deep-dive
-11. Last Song deep-dive
-12. Music Intelligence Layer — after all deep-dives complete
-13. Brief assembly engine — after MIL
-14. Brief delivered to couple + coordinator via Resend
+6. ~~Your Entrance deep-dive~~ DONE
+7. ~~First Dance deep-dive~~ DONE
+8. ~~Dinner deep-dive~~ DONE
+9. ~~Speeches deep-dive~~ DONE
+10. ~~Dancing deep-dive~~ DONE
+11. ~~Last Song deep-dive~~ DONE
+12. ~~Brief assembly engine~~ DONE
+13. Post-brief screen + MIL CTA — NEXT
+14. Music Intelligence Layer
+15. Coordinator brief — after MIL
+16. Copy audit
 
 ### Phase 3 — Marketplace (post-revenue)
 - Curated artist directory
@@ -302,6 +330,34 @@ This document is what makes planners want to recommend wedin.ai to every couple 
 
 **Consistency across both documents**
 Both briefs are generated in a single AI call — one system prompt, all completed moment answers, full discovery portrait. This ensures consistent language, tone, and voice across all 9 moments. Deep-dive sessions save answers to momentAnswers state (one named object per moment) specifically to support this single-pass generation.
+
+---
+
+## Brief Output Architecture
+
+The brief is generated in two stages. Do not collapse these into one.
+
+**Stage 1 — The Couple's Brief (built)**
+Generated immediately after all moments are complete. Reflects the couple's emotional intent back to them. Does not make act or budget recommendations — that is not its job. The couple reads it and thinks "yes, that's exactly us."
+
+Shown to the couple immediately. Coordinator brief is NOT sent at this stage.
+
+**Stage 2 — Music Intelligence Layer (not yet built)**
+Runs after the couple has reviewed their brief. Asks two practical questions:
+- What is your total music budget?
+- Have you already booked any acts?
+
+Then generates per-moment recommendations: act type, specific reasoning tied to their answers, budget range, hidden costs (stage, PA, sound engineer, travel).
+
+Only after the couple confirms or adjusts these recommendations is the coordinator brief generated and sent.
+
+**Why this sequencing matters:**
+A coordinator brief sent before decisions are made is worse than no brief — it creates confusion and makes the product look unfinished. The coordinator brief is a confirmed plan, not a set of possibilities.
+
+**Coordinator brief triggers:**
+- Couple clicks "Send to my coordinator" after reviewing MIL recommendations
+- Or couple explicitly requests it from the brief screen
+- Never automatically generated or sent without couple confirmation
 
 ---
 
