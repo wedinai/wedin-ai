@@ -16,49 +16,46 @@ The founder is Rus Nerwich — CEO of The Ear Academy (SA EdTech). He ran Tones 
 
 ## Current Build Status
 
-**Phase:** Phase 2 — actively in progress
+**Phase:** Phase 1.5
 
-**✓ DONE — built and working:**
+**✓ DONE — Phase 1 complete:**
 - Discovery session — React app, 22 questions across 5 sections
 - Two ceremony questions added — religious/cultural structure + ceremony feeling (chips)
 - Couple name capture — entered on welcome screen, passes through to Moment Map
-- Dynamic acknowledgements — followUp functions written for all 22 questions in questions.js (UI wiring still pending — see NOT YET BUILT)
 - Claude API connected server-side via Netlify Function — music portrait generates from answers
 - Music portrait screen — shows AI narrative + email capture
 - Email capture UI — styled correctly, copy locked
 - Supabase connected — sessions and contacts tables live, data storing correctly
-- Netlify Functions — five functions live: generate-portrait, save-session, save-contact, create-checkout-session, verify-payment, generate-ceremony-summary
+- Netlify Functions — five functions live (generate-portrait, save-session, save-contact, create-checkout-session, verify-payment)
 - All API keys secure — no browser exposure, all server-side
 - Landing page — live at wedinai.github.io/wedin-ai
 - Google Search Console verified
 - Moment Map UI — wired into App.jsx, full flow working
-- Moment Map overlay — bottom sheet (mobile) / right drawer (desktop) replaces inline panel
 - Last Song card renders full width at bottom of Moment Map
-- Stripe test integration — R999 ZAR payment flow working end to end, unlocks Moment Map
-- Payment confirmation screen — "Setting up your music map…" shown on Stripe return, no flash to welcome screen
+- Stripe Checkout integration — wired to Moment Map unlock CTA
 - Netlify deployment — live at wedin-ai-app.netlify.app
-- CeremonyDeepDive — 8-step conversational flow with religious/cultural branching, AI summary, completion screen, live and working
-- Ceremony knowledge base v2.0 — tradition-aware system prompt embedded in generate-ceremony-summary covering Jewish (Orthodox/Conservative/Reform), Muslim (inc. Cape Malay), Hindu (Tamil + North Indian/Gujarati), Catholic, Greek Orthodox, Protestant denominations (Anglican/Methodist/Baptist/Pentecostal), NG Kerk, Interfaith
-- Resend email — Netlify function built and wired (not yet confirmed delivered — needs account setup)
+- Moment Map overlay — bottom sheet (mobile) / right drawer (desktop) replaces inline panel
+- Dynamic acknowledgements — followUp functions wired into DiscoverySession.jsx, replace getAcknowledgement confirmed
+- Ceremony faith tradition sub-flows — Jewish, Muslim/Cape Malay, Hindu, Catholic, Greek Orthodox, Protestant (with conditional sub-denomination Q2), NG Kerk, Interfaith — live and working
+- Resend email — fully live, hello@wedin.ai verified and delivering, RESEND_API_KEY in Netlify
+- GuestArrivalsDeepDive — 3-question linear flow, momentAnswers.guestArrivals state, wired into App.jsx and MomentMap.jsx
+- PreDrinksDeepDive — 4-question flow with conditional presence context note, momentAnswers.predrinks state, wired into App.jsx and MomentMap.jsx
 
 **✗ NOT YET BUILT:**
-- Dynamic acknowledgements UI wiring — replace `getAcknowledgement` in DiscoverySession.jsx with `question.followUp?.(answer)`
-- Ceremony faith tradition sub-flows — tradition-specific branching questions for Jewish, Muslim (inc. Cape Malay), Hindu, Catholic, Greek Orthodox, Protestant denominations, NG Kerk not yet built into CeremonyDeepDive
-- Resend email — code wired but not confirmed delivered; needs Resend account, RESEND_API_KEY, verified domain
-- Stripe live mode — swap test keys for live keys when ready to charge real money
-- Pre-drinks deep-dive session — Phase 2
-- First Dance deep-dive session — Phase 2
-- Remaining 6 moment deep-dives — Guest Arrivals, Your Entrance, Dinner, Speeches, Dancing, Last Song
-- Music Intelligence Layer — Phase 2, after first 3 deep-dives complete
-- Brief assembly engine — Phase 2, after MIL
+- Deep-dive sessions — Your Entrance, First Dance, Dinner, Speeches, Dancing, Last Song
+- Music Intelligence Layer — Phase 2
+- Brief assembly engine — Phase 2
 - Spotify + Apple Music APIs — Phase 2
 
 **Next build priority:**
-1. Dynamic acknowledgements UI wiring — DiscoverySession.jsx
-2. Ceremony faith tradition sub-flows — Jewish, Muslim/Cape Malay, Hindu, Catholic, Orthodox, Protestant, NG Kerk
-3. Pre-drinks deep-dive session
-4. First Dance deep-dive session
-5. Resend email setup
+1. Your Entrance deep-dive
+2. First Dance deep-dive
+3. Dinner deep-dive
+4. Speeches deep-dive
+5. Dancing deep-dive
+6. Last Song deep-dive
+7. Music Intelligence Layer — after all deep-dives complete
+8. Brief assembly engine — after MIL
 
 ---
 
@@ -158,20 +155,12 @@ wedin.ai/
       CompletionScreen.jsx
       MusicPortrait.jsx      — portrait + email capture
       MomentMap.jsx          — Phase 1.5, built and wired
-      CeremonyDeepDive.jsx   — Phase 2, built and live
     data/
-      questions.js           — 22 questions, 5 sections, all with followUp functions
-      ceremonyKnowledge.js   — ceremony music knowledge base v2.0, system prompt context
+      questions.js           — 22 questions, 5 sections
     App.jsx
     index.css
   netlify/
-    functions/
-      generate-portrait.js
-      save-session.js
-      save-contact.js
-      create-checkout-session.js
-      verify-payment.js
-      generate-ceremony-summary.js
+    functions/               — three functions live (running locally)
   netlify.toml
 ```
 
@@ -183,26 +172,33 @@ wedin.ai/
 1. ~~Conversational discovery session~~ DONE
 2. ~~Claude API music portrait~~ DONE
 3. ~~Supabase — sessions and contacts tables~~ DONE
-4. ~~Netlify deployment~~ DONE
-5. Resend email sending — pending account setup (not blocking)
+4. Netlify deployment — TODO
+5. Resend email sending — TODO (deprioritised until Moment Map is live)
 
-### Phase 1.5 — Moment Map + Payment
-1. ~~Moment Map UI~~ DONE
-2. ~~Stripe integration~~ DONE — R999 ZAR, test mode
-3. ~~Payment confirmation screen~~ DONE
-4. ~~Moment Map overlay~~ DONE
-5. Resend email — pending
+### Phase 1.5 — Moment Map + Payment (CURRENT PRIORITY)
+1. **Moment Map UI** — horizontal visual timeline of 8–9 musical moments
+   - Each moment: name, one-line purpose, status chip (not started / in progress / complete)
+   - Personalised from discovery session — cultural moments appear only if flagged
+   - Teaser: "Your music plan covers [X] moments. Complete each one to build your full brief."
+   - This screen triggers payment — couple sees the value before they pay
+2. **Stripe integration** — payment unlocks the deep-dive sessions
+3. **Resend email** — music portrait delivered to couple's inbox after saving
 
-### Phase 2 — Deep-Dive Sessions (IN PROGRESS)
-1. ~~Ceremony deep-dive~~ DONE — 8 steps, AI summary, knowledge base embedded
-2. Ceremony faith tradition sub-flows — IN PROGRESS
-3. Dynamic acknowledgements UI wiring — NEXT
-4. Pre-drinks deep-dive — NEXT
-5. First Dance deep-dive — NEXT
-6. Remaining 6 moments — Guest Arrivals, Your Entrance, Dinner, Speeches, Dancing, Last Song
-7. Music Intelligence Layer — after first 3 deep-dives complete
-8. Brief assembly engine — after MIL
-9. Brief delivered to couple + planner via Resend
+### Phase 2 — Deep-Dive Sessions (paid)
+1. ~~Ceremony deep-dive~~ DONE
+2. ~~Ceremony faith tradition sub-flows~~ DONE
+3. ~~Dynamic acknowledgements UI wiring~~ DONE
+4. ~~Guest Arrivals deep-dive~~ DONE
+5. ~~Pre-drinks deep-dive~~ DONE
+6. Your Entrance deep-dive — NEXT
+7. First Dance deep-dive
+8. Dinner deep-dive
+9. Speeches deep-dive
+10. Dancing deep-dive
+11. Last Song deep-dive
+12. Music Intelligence Layer — after all deep-dives complete
+13. Brief assembly engine — after MIL
+14. Brief delivered to couple + coordinator via Resend
 
 ### Phase 3 — Marketplace (post-revenue)
 - Curated artist directory
@@ -218,18 +214,21 @@ wedin.ai/
 ## Product Architecture — Three Flows
 
 **Flow 1: Discovery (free)**
-Welcome → 22 questions → Music portrait → Email capture → Moment Map preview
+Welcome → 22 questions → Music portrait → Email capture → Moment Map preview (teased)
 
 **Flow 2: Moment Map (post-email, pre-payment)**
-Full Moment Map revealed → Each moment shown as locked → Payment CTA → Stripe → Payment confirmation screen → Moment Map unlocked
+Full Moment Map revealed → Each moment shown as locked → Payment CTA → Stripe
 
 **Flow 3: Deep-Dive (paid)**
-One conversation per moment → AI summary generated → Music Intelligence Layer processes → Brief section assembles → Full brief generated
+One conversation per moment → Music Intelligence Layer processes → Brief section assembles → Full brief generated
 
 ---
 
-## The Moment Map — 9 Standard Moments
+## The Moment Map — Build Spec
 
+The Moment Map is the most important screen to build next. It is the product's primary conversion mechanism.
+
+**9 standard moments (always shown):**
 1. Guest Arrivals — "The first musical impression of the day"
 2. Ceremony — "The moment everyone watches in silence"
 3. Pre-drinks — "Where the day's energy is set"
@@ -238,65 +237,34 @@ One conversation per moment → AI summary generated → Music Intelligence Laye
 6. Speeches — "Where personalisation lives"
 7. First Dance — "Your first 3 minutes as a married couple"
 8. Dancing — "The arc that guests remember most"
-9. Last Song — "The emotional punctuation mark of the day" (renders full width)
+9. Last Song — "The emotional punctuation mark of the day"
 
 **Optional moments (appear only if flagged in discovery):**
 - Cultural Moment / Traditional Ceremony
 - Cool-down / Wind-down
 - Day-after event
 
----
-
-## Ceremony Deep-Dive — Architecture
-
-**Standard flow (secular couples): 7 questions**
-1. Ceremony structure (chips) — fully religious / blend / cultural / secular / other
-2. Processional song (text)
-3. Processional tone (chips) — sacred and still / joyful / warm / unexpected
-4. Signing music (text)
-5. Recessional song (text)
-6. Live or recorded (chips)
-7. Officiant requirements (chips)
-
-**Religious/cultural branching: +1 question**
-If ceremony_structure = "Fully religious" or "Blend of religious and personal":
-- Faith tradition (chips with Other) — Christian / Jewish / Muslim / Hindu / Afrikaans Reformed / Catholic / Greek Orthodox / Interfaith / Other
-
-**Tradition sub-flows (NOT YET BUILT): +2 questions per tradition**
-Each faith selection triggers 2 targeted questions drawing from the ceremony knowledge base. These are the next build priority after acknowledgements wiring.
-
-**AI summary:** Generated via Claude API after all steps complete. System prompt includes full ceremony knowledge base v2.0. Summary is tradition-aware, flags planning gaps, feeds into the planner brief.
-
----
-
-## Ceremony Knowledge Base — What It Covers
-
-`src/data/ceremonyKnowledge.js` — embedded as system prompt in generate-ceremony-summary.js
-
-Covers with full musical structure, common mistakes, and planner requirements for:
-- Jewish (Orthodox / Conservative / Reform distinctions, 8 music moments, Yichud, Hora, Wagner avoidance)
-- Muslim (Nikah permissibility, Baraat, Zaffe, Walima, Cape Malay specific — Die Afhaal, Salawaat, Rosa, Nagaul)
-- Hindu (Tamil vs North Indian/Gujarati, Sangeet, Baraat, Varmala, Pheras, Kanyadaan, Vidaai)
-- Catholic (full Mass vs Rite of Marriage, required sung elements, Ave Maria moment)
-- Greek/Eastern Orthodox (a cappella only, no instruments, Crowning, Dance of Isaiah)
-- Protestant (Anglican / Methodist / Baptist / Pentecostal distinctions)
-- Afrikaans Reformed NG Kerk (Liedboek, dominee control, ceremony vs reception as separate worlds)
-- Interfaith (Wagner/Mendelssohn cautions, structural approaches, neutral music options)
-- Cross-cutting (prelude, seating of parents/grandmothers, register signing, rehearsal requirements)
+**UI requirements:**
+- Horizontal scroll on mobile, full width on desktop
+- Each moment is a card with: number, name, one-line description, status chip
+- Status chips: "Not started" (grey) → "In progress" (gold) → "Complete" (navy)
+- Locked state (pre-payment): all chips show "Not started", CTA button prominent
+- Progress indicator: "0 of 9 moments complete"
+- One primary action: "Unlock your music plan — [price]"
 
 ---
 
 ## Music Intelligence Layer — What It Does
 
-Runs after every completed deep-dive moment. Active from first paid session.
+Runs after every completed deep-dive moment. Not a Phase 2 feature — active from first paid session.
 
-**Input:** couple's emotional intent + discovery portrait + budget + band classification + cultural flags from knowledge base
+**Input:** couple's emotional intent for this moment + discovery portrait + budget + band classification + cultural flags
 
 **Output:** act recommendation + reasoning + budget reality + hidden cost disclosure + brief section content
 
 **Governing principle:** Emotional fidelity on any budget. A R15,000 DJ with a precise brief gets closer to the couple's dream than a R80,000 band with no brief.
 
-**Hidden costs to always surface:** stage hire (R8–18k), PA and sound engineer (R15–45k), generator if needed (R8–20k).
+**Hidden costs to always surface:** stage hire (R8–18k), PA and sound engineer (R15–45k), generator if needed (R8–20k). These are separate from act fees and are frequently not disclosed at quote stage.
 
 ---
 
@@ -306,8 +274,6 @@ Runs after every completed deep-dive moment. Active from first paid session.
 
 **The brief is the equaliser.** Quality of output is determined by clarity of intention, not size of spend.
 
-**Tradition-aware intelligence.** wedin.ai responds as a knowledgeable specialist in every religious and cultural wedding tradition active in the SA market. A Jewish couple should feel like they're talking to someone who has worked 50 Jewish weddings. Same for every tradition. Every AI output for ceremony moments draws from the ceremony knowledge base.
-
 **Account creation after value.** The music portrait is shown before the email is requested. Always.
 
 **Payment after the Moment Map.** The couple sees all 9 moments before they pay. They pay to unlock the conversations that complete them.
@@ -316,19 +282,38 @@ Runs after every completed deep-dive moment. Active from first paid session.
 
 **Save progress automatically.** Every answer saved as it's given. Closing and returning never loses work.
 
-**Acknowledgements must feel earned.** Every response to a couple's answer should reflect what they actually said — never generic, never the same for every answer. If it could apply to anyone, it applies to no one.
+---
+
+## The Two Brief Outputs
+
+wedin.ai produces two distinct documents from the brief assembly engine. They serve different people and different purposes.
+
+**The Couple's Brief — The Emotional Mirror**
+The couple's brief reflects their own clarity back to them, more articulately than they could have expressed it themselves. Most couples arrive uncertain — they have feelings they can't name and taste they can't describe. The discovery session and deep-dives surface that clarity through questions that don't feel clinical. The brief then organises it into something that makes them think: "yes, that's exactly us — how did it know that?"
+
+This is not a planning document. It is a mirror. It validates that they know who they are and what they want. That emotional experience is what gets shared, recommended, and remembered.
+
+wedin.ai surfaces a clarity the couple didn't know they had — and reflects it back to them more clearly than they could have expressed it themselves.
+
+**The Coordinator's Brief — The Operational Document**
+The coordinator's brief is built for a professional working fast. Every moment section ends with a specific operational instruction. It saves the coordinator 45 minutes of music discovery calls and makes her look good to the couple by demonstrating she received a professional, detailed handover.
+
+This document is what makes planners want to recommend wedin.ai to every couple they work with.
+
+**Consistency across both documents**
+Both briefs are generated in a single AI call — one system prompt, all completed moment answers, full discovery portrait. This ensures consistent language, tone, and voice across all 9 moments. Deep-dive sessions save answers to momentAnswers state (one named object per moment) specifically to support this single-pass generation.
 
 ---
 
 ## What NOT to Build Without Asking
 
+- Anything in Phase 2 or 3 while Phase 1.5 is incomplete
 - The brief generator before at least 3 deep-dive sessions are built
 - Alternative tech stack choices
 - Freemium or free tier pricing
 - Account creation before the portrait reveal
 - Payment before the Moment Map is shown
 - Any feature not in the phase plan
-- Tradition sub-flows without the knowledge base being embedded first (it is — do not rebuild it)
 
 ---
 
