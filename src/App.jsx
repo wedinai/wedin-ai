@@ -6,6 +6,7 @@ import CeremonyDeepDive from './components/CeremonyDeepDive.jsx'
 import GuestArrivalsDeepDive from './components/GuestArrivalsDeepDive.jsx'
 import PreDrinksDeepDive from './components/PreDrinksDeepDive.jsx'
 import EntranceDeepDive from './components/EntranceDeepDive.jsx'
+import FirstDanceDeepDive from './components/FirstDanceDeepDive.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -14,7 +15,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -128,6 +129,9 @@ export default function App() {
     } else if (momentId === 'entrance') {
       setInProgressMoments((prev) => prev.includes('entrance') ? prev : [...prev, 'entrance'])
       setView('entrance')
+    } else if (momentId === 'firstdance') {
+      setInProgressMoments((prev) => prev.includes('firstdance') ? prev : [...prev, 'firstdance'])
+      setView('firstdance')
     }
   }
 
@@ -155,6 +159,13 @@ export default function App() {
     setMomentAnswers((prev) => ({ ...prev, entrance: answers }))
     setCompletedMoments((prev) => prev.includes('entrance') ? prev : [...prev, 'entrance'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'entrance'))
+    setView('momentMap')
+  }
+
+  function handleFirstDanceComplete(answers) {
+    setMomentAnswers((prev) => ({ ...prev, firstDance: answers }))
+    setCompletedMoments((prev) => prev.includes('firstdance') ? prev : [...prev, 'firstdance'])
+    setInProgressMoments((prev) => prev.filter((id) => id !== 'firstdance'))
     setView('momentMap')
   }
 
@@ -198,6 +209,17 @@ export default function App() {
         sessionId={sessionId}
         coupleName={coupleName}
         onComplete={handleArrivalsComplete}
+        onBack={() => setView('momentMap')}
+      />
+    )
+  }
+
+  if (view === 'firstdance') {
+    return (
+      <FirstDanceDeepDive
+        sessionId={sessionId}
+        coupleName={coupleName}
+        onComplete={handleFirstDanceComplete}
         onBack={() => setView('momentMap')}
       />
     )
