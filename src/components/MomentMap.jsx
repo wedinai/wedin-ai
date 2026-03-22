@@ -438,10 +438,8 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
           <button
             onClick={onStart}
             style={{
-              appearance: "none",
-              WebkitAppearance: "none",
-              border: "none",
-              background: color.node,
+              all: "unset",
+              boxSizing: "border-box",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
@@ -449,13 +447,12 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
               gap: 8,
               width: "100%",
               padding: "14px 24px",
+              background: "#1C2B3A",
               color: "#FAF7F2",
               borderRadius: 10,
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 14,
               fontWeight: 500,
-              boxSizing: "border-box",
-              pointerEvents: "auto",
             }}
           >
             {status === "complete" ? "Review this moment" : "Plan this moment"}
