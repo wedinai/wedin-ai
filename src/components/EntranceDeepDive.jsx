@@ -339,16 +339,16 @@ export default function EntranceDeepDive({
             {transitionNote && (
               <p
                 style={{
-                  margin: '0 0 20px',
+                  marginBottom: 24,
                   fontFamily: "'DM Sans', sans-serif",
                   fontSize: 14,
                   fontStyle: 'italic',
                   color: '#6B6560',
                   lineHeight: 1.65,
-                  padding: '14px 16px',
-                  background: 'rgba(107,101,96,0.06)',
-                  borderRadius: 8,
-                  borderLeft: '2px solid rgba(107,101,96,0.2)',
+                  padding: '16px 20px',
+                  backgroundColor: 'rgba(196,146,42,0.06)',
+                  borderRadius: '0 8px 8px 0',
+                  borderLeft: '3px solid #C4922A',
                 }}
               >
                 {transitionNote}
