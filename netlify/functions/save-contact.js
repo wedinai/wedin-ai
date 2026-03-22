@@ -41,76 +41,20 @@ export const handler = async (event) => {
   if (process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY)
-      const heading = couple_name && couple_name !== 'Your Wedding' ? couple_name : null
-      const portraitText = narrative || 'Your music portrait has been saved.'
-      const appUrl = 'https://wedin-ai-app.netlify.app'
-
       const html = `<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your wedin.ai music portrait is ready</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body style="margin:0;padding:0;background:#ffffff;font-family:Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;padding:48px 24px;">
+<body style="margin:0;padding:0;background:#FAF7F2;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;padding:48px 24px;font-family:'DM Sans',sans-serif;">
     <tr>
-      <td align="center">
-        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
-
-          <!-- Wordmark -->
-          <tr>
-            <td style="padding-bottom:48px;">
-              <span style="font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#1C2B3A;letter-spacing:0.15em;text-transform:uppercase;">wedin.ai</span>
-            </td>
-          </tr>
-
-          <!-- Heading -->
-          <tr>
-            <td style="padding-bottom:24px;">
-              <h1 style="margin:0;font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;font-weight:400;line-height:1.25;color:#1C2B3A;">
-                Your music portrait is ready.
-              </h1>
-            </td>
-          </tr>
-
-          <!-- Body copy -->
-          <tr>
-            <td style="padding-bottom:16px;">
-              <p style="margin:0;font-family:'DM Sans',Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.7;color:#1C2B3A;">
-                You've taken the first step toward a wedding day where every musical moment is exactly right.
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding-bottom:40px;">
-              <p style="margin:0;font-family:'DM Sans',Arial,sans-serif;font-size:16px;font-weight:400;line-height:1.7;color:#1C2B3A;">
-                Your portrait is saved. When you're ready to continue, your Moment Map is waiting — nine musical moments, each one ready to be shaped around how you want the day to feel.
-              </p>
-            </td>
-          </tr>
-
-          <!-- CTA -->
-          <tr>
-            <td style="padding-bottom:48px;">
-              <a href="${appUrl}" style="display:inline-block;background:#1C2B3A;color:#FAF7F2;font-family:'DM Sans',Arial,sans-serif;font-size:15px;font-weight:500;text-decoration:none;padding:14px 28px;border-radius:8px;letter-spacing:0.01em;min-height:44px;line-height:16px;">
-                Continue planning →
-              </a>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="border-top:1px solid rgba(28,43,58,0.1);padding-top:24px;">
-              <p style="margin:0;font-family:'DM Sans',Arial,sans-serif;font-size:13px;color:#6B6560;line-height:1.6;">
-                wedin.ai — Start with the music.
-              </p>
-            </td>
-          </tr>
-
-        </table>
+      <td>
+        <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;color:#1C2B3A;margin:0 0 24px 0;line-height:1.2;">Your Moment Map is ready.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">You've mapped the musical identity of your wedding day. Your portrait is saved.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 32px 0;">Your Moment Map is waiting — nine musical moments, each one ready to be shaped around exactly how you want the day to feel. Step inside and start building the soundtrack to your day.</p>
+        <a href="https://wedin-ai-app.netlify.app" style="display:inline-block;background:#1C2B3A;color:#FAF7F2;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;text-decoration:none;padding:14px 28px;border-radius:8px;min-height:44px;line-height:1.6;">Open my Moment Map →</a>
+        <p style="font-size:13px;color:#6B6560;margin:40px 0 0 0;">wedin.ai — Start with the music.</p>
       </td>
     </tr>
   </table>

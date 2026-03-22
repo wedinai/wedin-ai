@@ -153,7 +153,7 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
                 className="font-sans font-medium uppercase mb-3"
                 style={{ color: 'var(--gold)', letterSpacing: '0.14em', fontSize: '0.6875rem' }}
               >
-                Your soundtrack begins
+                YOUR MUSIC PORTRAIT IS SAVED
               </p>
               <p
                 className="font-display mb-3"
@@ -164,21 +164,20 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
                   color: 'var(--navy)',
                 }}
               >
-                You've begun the soundtrack to your day.
+                Your Moment Map is ready.
               </p>
               <p
                 className="font-sans mb-6"
                 style={{ fontSize: '0.9375rem', color: 'var(--grey)', lineHeight: 1.6 }}
               >
-                Save this so we can keep building towards the music your wedding deserves.
-                Leave your email and we'll be in touch as your plan takes shape.
+                You've just mapped the musical identity of your wedding day. Leave your email and we'll send you your portrait — then step inside your Moment Map, where every moment of the day is waiting to be shaped around exactly how you want it to feel.
               </p>
               <form onSubmit={handleEmailSubmit}>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  placeholder="Email address"
                   required
                   className="w-full mb-3"
                   style={{
@@ -202,7 +201,7 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
                   disabled={saveState === 'submitting'}
                   style={{ opacity: saveState === 'submitting' ? 0.6 : 1 }}
                 >
-                  {saveState === 'submitting' ? 'Saving…' : 'Save my progress'}
+                  {saveState === 'submitting' ? 'Saving…' : 'Save my portrait →'}
                 </button>
               </form>
             </>
