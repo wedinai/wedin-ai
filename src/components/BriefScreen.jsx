@@ -81,11 +81,15 @@ export default function BriefScreen({
   sessionAnswers,
   onBack,
   onStartMIL,
+  milRecommendations = null,
+  initialTab = null,
 }) {
   const [status, setStatus] = useState('loading') // 'loading' | 'ready' | 'error'
   const [coupleBrief, setCoupleBrief] = useState('')
   const [coordinatorBrief, setCoordinatorBrief] = useState('')
-  const [activeTab, setActiveTab] = useState('couple') // 'couple' | 'coordinator'
+  const [activeTab, setActiveTab] = useState(
+    initialTab || (milRecommendations ? 'musicPlan' : 'couple')
+  ) // 'musicPlan' | 'couple' | 'coordinator'
   const [copyLabel, setCopyLabel] = useState('Copy to clipboard')
   const [mounted, setMounted] = useState(false)
 
@@ -251,7 +255,7 @@ export default function BriefScreen({
   }
 
   // ── Ready ────────────────────────────────────────────────────────────────
-  const activeBrief = activeTab === 'couple' ? coupleBrief : coordinatorBrief
+  const activeBrief = activeTab === 'couple' ? coupleBrief : activeTab === 'coordinator' ? coordinatorBrief : ''
 
   return (
     <>
@@ -337,8 +341,16 @@ export default function BriefScreen({
               display: 'flex',
               borderBottom: '1px solid rgba(28,43,58,0.1)',
               marginBottom: 32,
+              overflowX: 'auto',
             }}
           >
+            {milRecommendations && (
+              <Tab
+                label="Music Plan"
+                active={activeTab === 'musicPlan'}
+                onClick={() => setActiveTab('musicPlan')}
+              />
+            )}
             <Tab
               label="Your Brief"
               active={activeTab === 'couple'}
@@ -362,7 +374,14 @@ export default function BriefScreen({
             animation: 'fadeUp 250ms ease both',
           }}
         >
-          <BriefContent text={activeBrief} />
+          {activeTab === 'musicPlan' && milRecommendations ? (
+            <div
+              dangerouslySetInnerHTML={{ __html: milRecommendations }}
+              style={{ fontFamily: "'DM Sans', sans-serif" }}
+            />
+          ) : (
+            <BriefContent text={activeBrief} />
+          )}
 
           {/* ── Actions ───────────────────────────────────────────────── */}
           <div
@@ -374,7 +393,7 @@ export default function BriefScreen({
               marginBottom: 64,
             }}
           >
-            {onStartMIL && (
+            {onStartMIL && !milRecommendations && (
               <button
                 onClick={onStartMIL}
                 style={{
@@ -400,6 +419,7 @@ export default function BriefScreen({
               </button>
             )}
 
+            {activeTab !== 'musicPlan' && (
             <button
               onClick={handleCopy}
               style={{
@@ -432,6 +452,7 @@ export default function BriefScreen({
                 </svg>
               )}
             </button>
+            )}
 
             <button
               onClick={onBack}

@@ -13,6 +13,7 @@ import DancingDeepDive from './components/DancingDeepDive.jsx'
 import LastSongDeepDive from './components/LastSongDeepDive.jsx'
 import BriefScreen from './components/BriefScreen.jsx'
 import PostBriefScreen from './components/PostBriefScreen.jsx'
+import MILIntakeScreen from './components/MILIntakeScreen.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -31,6 +32,8 @@ export default function App() {
   const [inProgressMoments, setInProgressMoments] = useState([])
   const [momentAnswers, setMomentAnswers] = useState({}) // { guestArrivals: {…}, ceremony: {…}, … }
   const [portrait, setPortrait] = useState(null)
+  const [milAnswers, setMilAnswers] = useState({})
+  const [milRecommendations, setMilRecommendations] = useState(null)
 
   // Persist completedMoments and momentAnswers to localStorage whenever they change
   useEffect(() => {
@@ -200,6 +203,12 @@ export default function App() {
 
   function handleGenerateBrief() {
     setView('postBrief')
+  }
+
+  function handleMILComplete(answers, recommendations) {
+    setMilAnswers(answers)
+    setMilRecommendations(recommendations)
+    setView('brief')
   }
 
   function handleEntranceComplete(answers) {
@@ -385,73 +394,21 @@ export default function App() {
         sessionAnswers={sessionAnswers}
         onBack={() => setView('momentMap')}
         onStartMIL={() => setView('mil')}
+        milRecommendations={milRecommendations}
+        initialTab={milRecommendations ? 'musicPlan' : 'couple'}
       />
     )
   }
 
   if (view === 'mil') {
     return (
-      <>
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
-        `}</style>
-        <div
-          style={{
-            minHeight: '100vh',
-            background: '#FAF7F2',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '0 24px',
-            gap: 16,
-          }}
-        >
-          <h1
-            style={{
-              margin: 0,
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 32,
-              fontWeight: 400,
-              color: '#1C2B3A',
-              textAlign: 'center',
-            }}
-          >
-            Coming soon
-          </h1>
-          <p
-            style={{
-              margin: 0,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 15,
-              color: '#6B6560',
-              textAlign: 'center',
-              maxWidth: 360,
-              lineHeight: 1.6,
-            }}
-          >
-            Your music plan recommendations are being built. Check back soon.
-          </p>
-          <button
-            onClick={() => setView('brief')}
-            style={{
-              all: 'unset',
-              cursor: 'pointer',
-              marginTop: 8,
-              padding: '13px 28px',
-              background: '#1C2B3A',
-              color: '#FAF7F2',
-              borderRadius: 10,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 14,
-              fontWeight: 500,
-              boxSizing: 'border-box',
-            }}
-          >
-            Back to my brief
-          </button>
-        </div>
-      </>
+      <MILIntakeScreen
+        onComplete={handleMILComplete}
+        portrait={portrait}
+        sessionAnswers={sessionAnswers}
+        momentAnswers={momentAnswers}
+        coupleName={coupleName}
+      />
     )
   }
 

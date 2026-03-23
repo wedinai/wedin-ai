@@ -8,6 +8,9 @@
 [functions."generate-brief"]
   timeout = 26
 
+[functions."generate-mil"]
+  timeout = 26
+
 [dev]
   command = "npm run dev"
   targetPort = 5173
