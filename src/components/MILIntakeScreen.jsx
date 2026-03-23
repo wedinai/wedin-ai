@@ -81,15 +81,15 @@ export default function MILIntakeScreen({
     try {
       const payload = { portrait, sessionAnswers, momentAnswers, milAnswers: answers, coupleName }
       const [res1, res2] = await Promise.all([
-        fetch('/.netlify/functions/generate-mil', {
+        fetch('/.netlify/functions/generate-mil-a', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...payload, batch: 1 }),
+          body: JSON.stringify(payload),
         }),
-        fetch('/.netlify/functions/generate-mil', {
+        fetch('/.netlify/functions/generate-mil-b', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...payload, batch: 2 }),
+          body: JSON.stringify(payload),
         }),
       ])
       if (!res1.ok || !res2.ok) throw new Error('MIL generation failed')

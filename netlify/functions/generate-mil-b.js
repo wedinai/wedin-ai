@@ -1,3 +1,5 @@
+// generate-mil-b.js — Batch 2: Speeches, First Dance, Dancing, Last Song + productionCheck
+
 const SYSTEM_PROMPT_BASE = `You are wedin.ai's Music Intelligence Layer — SA wedding music specialist, 200+ weddings. Every recommendation is tied directly to what this specific couple said — never generic.
 
 GOVERNING PRINCIPLE: Emotional fidelity on any budget. Never upsell. Find the most direct path to the feeling they want within their real budget.
@@ -12,16 +14,11 @@ GENRE: Afrobeats/Amapiano→marimba+SA DJ | RnB/Hip-hop→neo-soul live+RnB DJ |
 
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
 
-const BATCH_1_INSTRUCTION = `
-Generate recommendations for these 5 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner.
-Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ] }
-No productionCheck.`
-
-const BATCH_2_INSTRUCTION = `
+const BATCH_INSTRUCTION = `
 Generate recommendations for these 4 moments only: Speeches, First Dance, Dancing, Last Song. Include productionCheck.
 Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ], "productionCheck": { "totalEstimate": "...", "bookFirst": "...", "hiddenCosts": "..." } }`
 
-// ── Answer formatter (mirrors generate-brief.js exactly) ──────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function val(v) {
   return v && v !== 'null' && v !== 'undefined' ? v : null
@@ -38,78 +35,42 @@ function section(heading, lines) {
   return `\n${heading}\n${present.join('\n')}`
 }
 
-
-function formatBatchAnswers(ma, batch) {
+function formatAnswers(ma) {
   const sections = []
   const push = (s) => { if (s) sections.push(s) }
 
-  if (batch === 1) {
-    const ga = ma.guestArrivals || {}
-    push(section('GUEST ARRIVALS', [
-      line('Musical approach', ga.arrivals_attention),
-      line('Style or reference', ga.arrivals_style),
-      line('Venue and duration', ga.arrivals_logistics),
-    ]))
-    const c = ma.ceremony || {}
-    push(section('CEREMONY', [
-      line('Ceremony type', c.ceremony_structure),
-      line('Faith tradition', c.ceremony_faith),
-      line('Processional song', c.processional_song),
-      line('Processional atmosphere', c.processional_tone),
-      line('Signing music', c.signing_music),
-      line('Recessional', c.recessional_song),
-      line('Live or recorded', c.ceremony_format),
-    ]))
-    const pd = ma.predrinks || {}
-    push(section('PRE-DRINKS', [
-      line('Musical impact', pd.predrinks_impact),
-      line('Energy shift to reception', pd.predrinks_energy_shift),
-      line('Cultural element', pd.predrinks_cultural),
-    ]))
-    const en = ma.entrance || {}
-    push(section('YOUR ENTRANCE', [
-      line('Entry style', en.entrance_style),
-      line('Space transition', en.entrance_transition),
-      line('Live musicians for entrance', en.entrance_live_musicians),
-    ]))
-    const di = ma.dinner || {}
-    push(section('DINNER', [
-      line('Atmosphere', di.dinner_atmosphere),
-      line('Musical style or mood', di.dinner_style),
-      line('Live or recorded', di.dinner_live_or_recorded),
-      line('Energy toward speeches', di.dinner_energy_shift),
-    ]))
-  } else {
-    const sp = ma.speeches || {}
-    push(section('SPEECHES', [
-      line('Number of speeches', sp.speeches_count),
-      line('Intro songs', sp.speeches_intro_songs),
-      line('Between speeches', sp.speeches_between),
-      line('Outro transition', sp.speeches_outro),
-    ]))
-    const fd = ma.firstDance || {}
-    push(section('FIRST DANCE', [
-      line('Song or feeling', fd.firstdance_song),
-      line('What it should do to the room', fd.firstdance_room_feeling),
-      line('Live or recorded', fd.firstdance_live_or_recorded),
-      line('Additional dances', fd.firstdance_additional),
-      line('Floor transition', fd.firstdance_transition),
-    ]))
-    const da = ma.dancing || {}
-    push(section('DANCING', [
-      line('Energy arc', da.dancing_energy_arc),
-      line('Guest mix priority', da.dancing_guest_mix),
-      line('Songs or genres to avoid', da.dancing_avoid),
-      line('Peak moment', da.dancing_peak_moment),
-      line('Wind-down', da.dancing_wind_down),
-    ]))
-    const ls = ma.lastSong || {}
-    push(section('LAST SONG', [
-      line('Song or feeling', ls.lastsong_song),
-      line('How to end the night', ls.lastsong_energy),
-      line('Instruction needed', ls.lastsong_instruction),
-    ]))
-  }
+  const sp = ma.speeches || {}
+  push(section('SPEECHES', [
+    line('Number of speeches', sp.speeches_count),
+    line('Intro songs', sp.speeches_intro_songs),
+    line('Between speeches', sp.speeches_between),
+    line('Outro transition', sp.speeches_outro),
+  ]))
+
+  const fd = ma.firstDance || {}
+  push(section('FIRST DANCE', [
+    line('Song or feeling', fd.firstdance_song),
+    line('What it should do to the room', fd.firstdance_room_feeling),
+    line('Live or recorded', fd.firstdance_live_or_recorded),
+    line('Additional dances', fd.firstdance_additional),
+    line('Floor transition', fd.firstdance_transition),
+  ]))
+
+  const da = ma.dancing || {}
+  push(section('DANCING', [
+    line('Energy arc', da.dancing_energy_arc),
+    line('Guest mix priority', da.dancing_guest_mix),
+    line('Songs or genres to avoid', da.dancing_avoid),
+    line('Peak moment', da.dancing_peak_moment),
+    line('Wind-down', da.dancing_wind_down),
+  ]))
+
+  const ls = ma.lastSong || {}
+  push(section('LAST SONG', [
+    line('Song or feeling', ls.lastsong_song),
+    line('How to end the night', ls.lastsong_energy),
+    line('Instruction needed', ls.lastsong_instruction),
+  ]))
 
   return sections.join('\n')
 }
@@ -123,10 +84,7 @@ export const handler = async (event) => {
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'API key not configured' }),
-    }
+    return { statusCode: 500, body: JSON.stringify({ error: 'API key not configured' }) }
   }
 
   let body
@@ -142,12 +100,11 @@ export const handler = async (event) => {
     momentAnswers = {},
     milAnswers = {},
     coupleName,
-    batch = 1,
   } = body
 
   const name = coupleName && coupleName !== 'Your Wedding' ? coupleName : 'this couple'
-  const momentBlock = formatBatchAnswers(momentAnswers, batch)
-  const systemPrompt = SYSTEM_PROMPT_BASE + (batch === 1 ? BATCH_1_INSTRUCTION : BATCH_2_INSTRUCTION)
+  const momentBlock = formatAnswers(momentAnswers)
+  const systemPrompt = SYSTEM_PROMPT_BASE + BATCH_INSTRUCTION
 
   const prompt = `Couple: ${name}
 Profile signals: listening=${sessionAnswers.home_listening || 'n/a'} | guilty=${sessionAnswers.guilty_pleasure || 'n/a'} | confidence=${sessionAnswers.musical_confidence || 'n/a'} | crowd_vs_taste=${sessionAnswers.crowd_vs_taste || 'n/a'} | live_vs_recorded=${sessionAnswers.live_vs_recorded || 'n/a'}
@@ -189,19 +146,11 @@ ${momentBlock || 'No moment answers provided'}`
         .filter(b => b.type === 'text')
         .map(b => b.text)
         .join('')
-
-      const clean = text
-        .replace(/```json\n?/g, '')
-        .replace(/```\n?/g, '')
-        .trim()
-
+      const clean = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
       milRecommendations = JSON.parse(clean)
     } catch (err) {
-      console.error('MIL parse error:', err.message)
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Failed to parse MIL response' }),
-      }
+      console.error('MIL-B parse error:', err.message)
+      return { statusCode: 500, body: JSON.stringify({ error: 'Failed to parse MIL-B response' }) }
     }
 
     return {
@@ -210,10 +159,7 @@ ${momentBlock || 'No moment answers provided'}`
       body: JSON.stringify({ milRecommendations }),
     }
   } catch (e) {
-    console.error('MIL generation failed:', e)
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'MIL generation failed' }),
-    }
+    console.error('MIL-B generation failed:', e)
+    return { statusCode: 500, body: JSON.stringify({ error: 'MIL-B generation failed' }) }
   }
 }

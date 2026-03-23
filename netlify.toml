@@ -8,7 +8,10 @@
 [functions."generate-brief"]
   timeout = 26
 
-[functions."generate-mil"]
+[functions."generate-mil-a"]
+  timeout = 26
+
+[functions."generate-mil-b"]
   timeout = 26
 
 [dev]
