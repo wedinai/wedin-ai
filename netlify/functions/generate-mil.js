@@ -58,6 +58,8 @@ FOR EACH OF THE 9 MOMENTS, generate a recommendation in this exact format:
 **The honest alternative:** [cheaper option if it achieves 80% of the impact at lower cost]
 **Brief instruction:** [specific operational instruction for the coordinator or act]
 
+Be concise. Each section should be 2-3 sentences maximum. The brief instruction should be one specific sentence. Do not pad responses.
+
 After all 9 moments, add:
 
 **PRODUCTION REALITY CHECK**
@@ -237,7 +239,7 @@ Generate specific act recommendations for all 9 moments following the format in 
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 4000,
+        max_tokens: 6000,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: prompt }],
       }),
@@ -252,16 +254,48 @@ Generate specific act recommendations for all 9 moments following the format in 
     }
 
     const data = await res.json()
-    const raw = data.content?.[0]?.text ?? ''
-    const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
-    const parsed = JSON.parse(text)
+
+    let milRecommendations = ''
+    try {
+      const text = data.content
+        .filter(b => b.type === 'text')
+        .map(b => b.text)
+        .join('')
+
+      const clean = text
+        .replace(/```json\n?/g, '')
+        .replace(/```\n?/g, '')
+        .trim()
+
+      // Try full parse first
+      try {
+        const parsed = JSON.parse(clean)
+        milRecommendations = parsed.milRecommendations
+      } catch (parseErr) {
+        // If truncated, extract the HTML directly from the string
+        const match = clean.match(/"milRecommendations"\s*:\s*"([\s\S]*?)(?:"\s*}?\s*$|$)/)
+        if (match) {
+          // Unescape the extracted HTML
+          milRecommendations = match[1]
+            .replace(/\\n/g, '\n')
+            .replace(/\\"/g, '"')
+            .replace(/\\\\/g, '\\')
+        } else {
+          throw new Error('Could not extract milRecommendations from response')
+        }
+      }
+    } catch (err) {
+      console.error('MIL parse error:', err.message)
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Failed to parse MIL response' }),
+      }
+    }
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        milRecommendations: parsed.milRecommendations ?? null,
-      }),
+      body: JSON.stringify({ milRecommendations }),
     }
   } catch (e) {
     console.error('MIL generation failed:', e)
