@@ -80,6 +80,7 @@ export default function BriefScreen({
   coupleName,
   sessionAnswers,
   onBack,
+  onStartMIL,
 }) {
   const [status, setStatus] = useState('loading') // 'loading' | 'ready' | 'error'
   const [coupleBrief, setCoupleBrief] = useState('')
@@ -373,6 +374,32 @@ export default function BriefScreen({
               marginBottom: 64,
             }}
           >
+            {onStartMIL && (
+              <button
+                onClick={onStartMIL}
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  padding: '14px 24px',
+                  background: '#1C2B3A',
+                  color: '#FAF7F2',
+                  borderRadius: 10,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  transition: 'background 180ms ease',
+                  boxSizing: 'border-box',
+                }}
+              >
+                Build my music plan →
+              </button>
+            )}
+
             <button
               onClick={handleCopy}
               style={{

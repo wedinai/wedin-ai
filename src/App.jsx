@@ -12,6 +12,7 @@ import SpeechesDeepDive from './components/SpeechesDeepDive.jsx'
 import DancingDeepDive from './components/DancingDeepDive.jsx'
 import LastSongDeepDive from './components/LastSongDeepDive.jsx'
 import BriefScreen from './components/BriefScreen.jsx'
+import PostBriefScreen from './components/PostBriefScreen.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -20,7 +21,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'brief' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'postBrief' | 'brief' | 'mil' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -198,7 +199,7 @@ export default function App() {
   }
 
   function handleGenerateBrief() {
-    setView('brief')
+    setView('postBrief')
   }
 
   function handleEntranceComplete(answers) {
@@ -366,6 +367,15 @@ export default function App() {
     )
   }
 
+  if (view === 'postBrief') {
+    return (
+      <PostBriefScreen
+        onStartMIL={() => setView('mil')}
+        onDownloadBrief={() => setView('brief')}
+      />
+    )
+  }
+
   if (view === 'brief') {
     return (
       <BriefScreen
@@ -374,7 +384,74 @@ export default function App() {
         coupleName={coupleName}
         sessionAnswers={sessionAnswers}
         onBack={() => setView('momentMap')}
+        onStartMIL={() => setView('mil')}
       />
+    )
+  }
+
+  if (view === 'mil') {
+    return (
+      <>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+        `}</style>
+        <div
+          style={{
+            minHeight: '100vh',
+            background: '#FAF7F2',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0 24px',
+            gap: 16,
+          }}
+        >
+          <h1
+            style={{
+              margin: 0,
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 32,
+              fontWeight: 400,
+              color: '#1C2B3A',
+              textAlign: 'center',
+            }}
+          >
+            Coming soon
+          </h1>
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 15,
+              color: '#6B6560',
+              textAlign: 'center',
+              maxWidth: 360,
+              lineHeight: 1.6,
+            }}
+          >
+            Your music plan recommendations are being built. Check back soon.
+          </p>
+          <button
+            onClick={() => setView('brief')}
+            style={{
+              all: 'unset',
+              cursor: 'pointer',
+              marginTop: 8,
+              padding: '13px 28px',
+              background: '#1C2B3A',
+              color: '#FAF7F2',
+              borderRadius: 10,
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 14,
+              fontWeight: 500,
+              boxSizing: 'border-box',
+            }}
+          >
+            Back to my brief
+          </button>
+        </div>
+      </>
     )
   }
 
