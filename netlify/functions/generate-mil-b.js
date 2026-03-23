@@ -147,7 +147,10 @@ ${momentBlock || 'No moment answers provided'}`
         .map(b => b.text)
         .join('')
       const clean = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
-      milRecommendations = JSON.parse(clean)
+      const start = clean.indexOf('{')
+      const end = clean.lastIndexOf('}')
+      if (start === -1 || end === -1) throw new Error('No JSON object found in response')
+      milRecommendations = JSON.parse(clean.slice(start, end + 1))
     } catch (err) {
       console.error('MIL-B parse error:', err.message)
       return { statusCode: 500, body: JSON.stringify({ error: 'Failed to parse MIL-B response' }) }
