@@ -446,13 +446,15 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
               justifyContent: "center",
               gap: 8,
               width: "100%",
-              padding: "14px 24px",
+              padding: "14px 28px",
+              minHeight: 44,
               background: "#1C2B3A",
               color: "#FAF7F2",
               borderRadius: 10,
               fontFamily: "'DM Sans', sans-serif",
               fontSize: 14,
               fontWeight: 500,
+              transition: "all 200ms ease",
             }}
           >
             {status === "complete" ? "Review this moment" : "Plan this moment"}
