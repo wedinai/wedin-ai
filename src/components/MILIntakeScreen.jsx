@@ -79,20 +79,29 @@ export default function MILIntakeScreen({
   async function generateMIL(answers) {
     setPhase('loading')
     try {
-      const res = await fetch('/.netlify/functions/generate-mil', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          portrait,
-          sessionAnswers,
-          momentAnswers,
-          milAnswers: answers,
-          coupleName,
+      const payload = { portrait, sessionAnswers, momentAnswers, milAnswers: answers, coupleName }
+      const [res1, res2] = await Promise.all([
+        fetch('/.netlify/functions/generate-mil', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, batch: 1 }),
         }),
-      })
-      if (!res.ok) throw new Error('MIL generation failed')
-      const data = await res.json()
-      onComplete(answers, data.milRecommendations || '')
+        fetch('/.netlify/functions/generate-mil', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, batch: 2 }),
+        }),
+      ])
+      if (!res1.ok || !res2.ok) throw new Error('MIL generation failed')
+      const [data1, data2] = await Promise.all([res1.json(), res2.json()])
+      const combined = {
+        moments: [
+          ...(data1.milRecommendations?.moments || []),
+          ...(data2.milRecommendations?.moments || []),
+        ],
+        productionCheck: data2.milRecommendations?.productionCheck || null,
+      }
+      onComplete(answers, combined)
     } catch (e) {
       console.error('MIL generation failed:', e)
       setPhase('error')
