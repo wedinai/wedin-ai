@@ -85,15 +85,6 @@ export const questions = [
 
   // ── MUSIC IDENTITY ───────────────────────────────────────────────────────
   {
-    id: 'relationship_song',
-    section: 'Music Identity',
-    type: 'text',
-    question: 'What song would play over a highlight reel of your relationship so far?',
-    placeholder: "Song name, artist \u2014 or describe the feeling if you can't name it",
-    hint: 'It doesn\'t have to be "appropriate for a wedding." Just honest.',
-    followUp: (answer) => answer ? "That one goes straight into your portrait." : null,
-  },
-  {
     id: 'stop_and_look',
     section: 'Music Identity',
     type: 'text',
@@ -101,14 +92,6 @@ export const questions = [
     placeholder: "The one that's yours...",
     skipLabel: 'Not yet \u2014 skip this',
     followUp: (answer) => answer ? "That song belongs somewhere in your day." : null,
-  },
-  {
-    id: 'energy_lift',
-    section: 'Music Identity',
-    type: 'text',
-    question: 'What music do you put on when you want the energy in a room to lift?',
-    placeholder: 'Artist, playlist, genre, era...',
-    followUp: (answer) => answer ? "That's your reception in a sentence." : null,
   },
   {
     id: 'guilty_pleasure',
@@ -120,13 +103,83 @@ export const questions = [
     followUp: (answer) => answer ? "Noted. And you'd be surprised how often these end up being the best moment of the night." : null,
   },
   {
-    id: 'perfect_music_memory',
+    id: 'home_listening',
     section: 'Music Identity',
     type: 'text',
-    question: 'Tell us about a wedding, concert, or event where the music was perfect. What made it that way?',
-    placeholder: 'What did it feel like? What did it do to the room?',
-    skipLabel: "Can't think of one \u2014 skip",
-    followUp: (answer) => answer ? "That's exactly the feeling we're building toward." : null,
+    question: "What's actually on when you're at home together \u2014 cooking on a Sunday, driving somewhere, just spending time at home? Not what sounds impressive. What actually comes on.",
+    placeholder: 'Artist, playlist, genre, mood...',
+    followUp: (answer) => answer ? "That tells us a lot. We'll use that as a reference point \u2014 not necessarily to play it at your wedding, but to understand the feeling you're drawn to." : null,
+  },
+  {
+    id: 'musical_confidence',
+    section: 'Music Identity',
+    type: 'single',
+    question: 'When it comes to the music for your wedding \u2014 do you have a strong sense of what you want, or is that something you\u2019d love help figuring out?',
+    options: [
+      { id: 'strong_sense',      label: 'We have a strong sense \u2014 we know our taste' },
+      { id: 'open_to_guidance',  label: 'Some ideas but genuinely open to guidance' },
+      { id: 'need_help',         label: "We\u2019d love someone to help us figure it out" },
+      { id: 'mixed',             label: 'One of us is into music, the other less so' },
+    ],
+    followUp: (answer) => {
+      const map = {
+        strong_sense:     "Good. That\u2019s exactly the kind of clarity that makes a brief sing.",
+        open_to_guidance: "That\u2019s a good place to be. Strong instincts plus an open mind \u2014 we can work with that.",
+        need_help:        "That\u2019s exactly what we\u2019re here for. Tell us how you want things to feel \u2014 we\u2019ll help you find the music.",
+        mixed:            "More common than you\u2019d think \u2014 and not a problem. We\u2019ll make sure both of you feel represented in the plan.",
+      }
+      return map[answer] || null
+    },
+  },
+  {
+    id: 'crowd_vs_taste',
+    section: 'Music Identity',
+    type: 'single',
+    question: 'When the floor is full at 10pm \u2014 what does that look like to you?',
+    options: [
+      { id: 'all_know',    label: 'Everyone dancing to songs they know and love' },
+      { id: 'our_taste',   label: 'Our taste leading \u2014 guests coming with us' },
+      { id: 'mix',         label: 'A mix \u2014 familiar enough to keep people moving, surprising enough to feel like us' },
+      { id: 'full_floor',  label: 'Honestly, we just want a full floor' },
+    ],
+    followUp: (answer) => {
+      const map = {
+        all_know:   "A full floor that feels like home. That\u2019s a clear brief.",
+        our_taste:  "Strong taste is an asset. We\u2019ll make sure it\u2019s working for the room, not against it.",
+        mix:        "That\u2019s the hardest balance to get right \u2014 and the most rewarding when it lands.",
+        full_floor: "Honest answer. That\u2019s actually the most useful one we could hear.",
+      }
+      return map[answer] || null
+    },
+    conditionalEducate: (answer) => {
+      if (answer === 'our_taste') {
+        return "The couples who get this most right usually set the tone with their taste early, then broaden deliberately as the floor fills. A DJ or band who understands that balance is worth more than one who just takes requests. We\u2019ll build that into your brief."
+      }
+      return null
+    },
+  },
+  {
+    id: 'live_vs_recorded',
+    section: 'Music Identity',
+    type: 'single',
+    question: 'Have you thought about whether you want live musicians at any point in the day \u2014 or is a great DJ and curated music more your style?',
+    options: [
+      { id: 'live',      label: 'Live music feels important to us' },
+      { id: 'dj',        label: "A great DJ is what we\u2019re imagining" },
+      { id: 'both',      label: "We\u2019d love both at different points" },
+      { id: 'undecided', label: "We haven\u2019t thought about it \u2014 help us decide" },
+    ],
+    followUp: (answer) => {
+      const map = {
+        live:      "It makes a difference \u2014 in the right moments. We\u2019ll show you exactly where.",
+        dj:        "A great DJ with a precise brief is often the smartest choice. We\u2019ll make sure the brief is precise.",
+        both:      "That\u2019s often the strongest approach. We\u2019ll map where each one earns its place.",
+        undecided: "That\u2019s what we\u2019re here for. Most couples only figure this out after the fact \u2014 you\u2019re getting ahead of it.",
+      }
+      return map[answer] || null
+    },
+    conditionalEducate: () =>
+      "Live music and recorded music do completely different things at different moments of the day. Most couples only discover this after they\u2019ve already made their choices \u2014 we\u2019ll make sure you understand the difference before you commit to anything.",
   },
 
   // ── GUEST EXPERIENCE ─────────────────────────────────────────────────────
@@ -147,27 +200,6 @@ export const questions = [
         talking: "The best atmosphere is one where no one needs to shout.",
         both: "The arc matters. We'll plan for both.",
         unsure: "That's honest. We'll help you figure it out.",
-      }
-      return map[answer] || null
-    },
-  },
-  {
-    id: 'familiar_vs_new',
-    section: 'Guest Experience',
-    type: 'single',
-    question: 'How important is it that everyone knows the songs, versus being surprised by something new?',
-    options: [
-      { id: 'all_familiar',  label: 'Every song should be singable' },
-      { id: 'mostly_known',  label: 'Mostly familiar, a few surprises' },
-      { id: 'half',          label: 'A genuine mix \u2014 old and new' },
-      { id: 'mostly_new',    label: 'I want them introduced to something' },
-    ],
-    followUp: (answer) => {
-      const map = {
-        all_familiar: "A room that sings together stays together.",
-        mostly_known: "A few surprises land harder when everything else is known.",
-        half: "The best DJs live in this space.",
-        mostly_new: "Those moments are the ones people talk about for years.",
       }
       return map[answer] || null
     },

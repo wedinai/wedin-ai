@@ -18,12 +18,8 @@ function getAcknowledgement(question, answer) {
       return `${answer}.`
     case 'most_anticipated_moment':
       return 'That moment will drive everything we build around it.'
-    case 'relationship_song':
-      return `${answer} — noted.`
     case 'stop_and_look':
       return 'That one matters.'
-    case 'energy_lift':
-      return 'That tells us a lot about your reception.'
     case 'guilty_pleasure':
       return 'This is often the most useful thing anyone tells us.'
     case 'perfect_music_memory':
@@ -45,8 +41,9 @@ export default function DiscoverySession({ onComplete, onSetCoupleName }) {
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState({})
   const [currentAnswer, setCurrentAnswer] = useState('')
-  const [phase, setPhase] = useState('question') // 'question' | 'ack'
+  const [phase, setPhase] = useState('question') // 'question' | 'ack' | 'educate'
   const [ackText, setAckText] = useState('')
+  const [educateText, setEducateText] = useState('')
 
   // Ref always holds the latest currentAnswer — prevents stale closures in
   // setTimeout-based auto-advance (single-select chips, scale questions).
@@ -81,12 +78,25 @@ export default function DiscoverySession({ onComplete, onSetCoupleName }) {
       setAnswers((prev) => ({ ...prev, [current.id]: answer }))
     }
 
-    // Check for acknowledgement
+    // Check for acknowledgement and conditional educate
     const ack = !skipAck ? (current.followUp?.(answer) ?? null) : null
+    const educate = current.conditionalEducate?.(answer) ?? null
 
     if (ack && answer) {
       setAckText(ack)
+      setEducateText(educate || '')
       setPhase('ack')
+    } else if (educate) {
+      setEducateText(educate)
+      setPhase('educate')
+    } else {
+      advance()
+    }
+  }
+
+  function advanceFromAck() {
+    if (educateText) {
+      setPhase('educate')
     } else {
       advance()
     }
@@ -164,7 +174,45 @@ export default function DiscoverySession({ onComplete, onSetCoupleName }) {
 
         {/* Acknowledgement phase */}
         {phase === 'ack' && (
-          <Acknowledgement text={ackText} onDone={advance} />
+          <Acknowledgement text={ackText} onDone={advanceFromAck} />
+        )}
+
+        {/* Educate phase — gold-bordered context block, requires explicit tap */}
+        {phase === 'educate' && (
+          <div className="animate-fade-in">
+            <div
+              style={{
+                borderLeft: '3px solid #C4922A',
+                background: 'rgba(196,146,42,0.06)',
+                borderRadius: '0 8px 8px 0',
+                padding: '16px 20px',
+                marginBottom: '32px',
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontStyle: 'italic',
+                  fontSize: '14px',
+                  lineHeight: 1.6,
+                  color: 'var(--navy)',
+                  margin: 0,
+                }}
+              >
+                {educateText}
+              </p>
+            </div>
+            <button
+              className="btn-back"
+              onClick={advance}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              Continue
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
         )}
 
         {/* Question phase */}
