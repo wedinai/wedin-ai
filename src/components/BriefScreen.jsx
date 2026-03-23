@@ -255,6 +255,7 @@ export default function BriefScreen({
   }
 
   // ── Ready ────────────────────────────────────────────────────────────────
+  const isMILJson = milRecommendations && typeof milRecommendations === 'object'
   const activeBrief = activeTab === 'couple' ? coupleBrief : activeTab === 'coordinator' ? coordinatorBrief : ''
 
   return (
@@ -375,10 +376,76 @@ export default function BriefScreen({
           }}
         >
           {activeTab === 'musicPlan' && milRecommendations ? (
-            <div
-              dangerouslySetInnerHTML={{ __html: milRecommendations }}
-              style={{ fontFamily: "'DM Sans', sans-serif" }}
-            />
+            <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              {isMILJson ? (
+                <>
+                  {milRecommendations.moments?.map((moment, i) => (
+                    <div key={i} style={{
+                      marginBottom: '32px',
+                      paddingBottom: '32px',
+                      borderBottom: i < milRecommendations.moments.length - 1 ? '1px solid rgba(28,43,58,0.08)' : 'none',
+                    }}>
+                      <h3 style={{
+                        fontFamily: "'Cormorant Garamond', Georgia, serif",
+                        fontSize: '22px',
+                        color: '#C4922A',
+                        margin: '0 0 12px 0',
+                        fontWeight: 400,
+                      }}>{moment.name}</h3>
+                      <div style={{ marginBottom: '8px' }}>
+                        <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Recommendation: </span>
+                        <span style={{ color: '#1C2B3A', fontSize: '14px' }}>{moment.recommendation}</span>
+                      </div>
+                      <div style={{ marginBottom: '8px' }}>
+                        <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Why: </span>
+                        <span style={{ color: '#6B6560', fontSize: '14px' }}>{moment.why}</span>
+                      </div>
+                      <div style={{ marginBottom: '8px' }}>
+                        <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Cost: </span>
+                        <span style={{ color: '#1C2B3A', fontSize: '14px' }}>{moment.cost}</span>
+                      </div>
+                      <div style={{
+                        background: 'rgba(196,146,42,0.06)',
+                        borderLeft: '3px solid #C4922A',
+                        borderRadius: '0 8px 8px 0',
+                        padding: '12px 16px',
+                        marginTop: '12px',
+                      }}>
+                        <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '13px' }}>Brief instruction: </span>
+                        <span style={{ color: '#1C2B3A', fontSize: '13px', fontStyle: 'italic' }}>{moment.instruction}</span>
+                      </div>
+                    </div>
+                  ))}
+                  {milRecommendations.productionCheck && (
+                    <div style={{
+                      background: '#1C2B3A',
+                      borderRadius: '12px',
+                      padding: '24px',
+                      marginTop: '8px',
+                    }}>
+                      <h3 style={{
+                        fontFamily: "'Cormorant Garamond', Georgia, serif",
+                        fontSize: '20px',
+                        color: '#FAF7F2',
+                        margin: '0 0 16px 0',
+                        fontWeight: 400,
+                      }}>Production Reality Check</h3>
+                      <div style={{ color: '#FAF7F2', fontSize: '14px', marginBottom: '8px' }}>
+                        <strong>Total estimate:</strong> {milRecommendations.productionCheck.totalEstimate}
+                      </div>
+                      <div style={{ color: '#FAF7F2', fontSize: '14px', marginBottom: '8px' }}>
+                        <strong>Book first:</strong> {milRecommendations.productionCheck.bookFirst}
+                      </div>
+                      <div style={{ color: 'rgba(250,247,242,0.7)', fontSize: '13px' }}>
+                        {milRecommendations.productionCheck.hiddenCosts}
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div dangerouslySetInnerHTML={{ __html: milRecommendations }} />
+              )}
+            </div>
           ) : (
             <BriefContent text={activeBrief} />
           )}
