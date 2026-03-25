@@ -133,19 +133,19 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
                   lineHeight: 1.5,
                 }}
               >
-                You've made a start.
+                Your portrait is saved.
               </p>
               <p
                 className="font-sans mb-6"
                 style={{ fontSize: '0.9375rem', color: 'var(--grey)', lineHeight: 1.6 }}
               >
-                We'll be in touch as your soundtrack comes together.
+                Your Moment Map is waiting — nine musical moments, each one ready to be planned. Open it whenever you're ready.
               </p>
               <button
                 onClick={onViewMomentMap}
                 className="btn-primary w-full"
               >
-                See your music map →
+                Open my Moment Map →
               </button>
             </div>
           ) : (
@@ -154,7 +154,7 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
                 className="font-sans font-medium uppercase mb-3"
                 style={{ color: 'var(--gold)', letterSpacing: '0.14em', fontSize: '0.6875rem' }}
               >
-                YOUR MUSIC PORTRAIT IS SAVED
+                YOUR MUSIC PORTRAIT IS READY
               </p>
               <p
                 className="font-display mb-3"
