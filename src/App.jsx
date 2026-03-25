@@ -201,6 +201,10 @@ export default function App() {
     setView('momentMap')
   }
 
+  function resetBrief() {
+    setMilRecommendations(null)
+  }
+
   function handleGenerateBrief() {
     setView('postBrief')
   }
@@ -380,7 +384,7 @@ export default function App() {
     return (
       <PostBriefScreen
         onStartMIL={() => setView('mil')}
-        onDownloadBrief={() => setView('brief')}
+        onDownloadBrief={() => { resetBrief(); setView('brief') }}
       />
     )
   }

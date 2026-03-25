@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 // ── Brief content renderer ─────────────────────────────────────────────────
 // Parses **HEADING** lines and \n\n paragraph breaks from AI output
@@ -92,32 +92,48 @@ export default function BriefScreen({
   ) // 'musicPlan' | 'couple' | 'coordinator'
   const [copyLabel, setCopyLabel] = useState('Copy to clipboard')
   const [mounted, setMounted] = useState(false)
+  const abortRef = useRef(null)
 
   useEffect(() => {
     setMounted(true)
     generateBrief()
+    return () => {
+      if (abortRef.current) abortRef.current.abort()
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function generateBrief() {
+    if (abortRef.current) abortRef.current.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    setStatus('loading')
+    setCoupleBrief('')
+    setCoordinatorBrief('')
+
     try {
       const [res1, res2] = await Promise.all([
         fetch('/.netlify/functions/generate-brief-a', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
+          signal: controller.signal,
         }),
         fetch('/.netlify/functions/generate-brief-b', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
+          signal: controller.signal,
         }),
       ])
       if (!res1.ok || !res2.ok) throw new Error('Brief generation failed')
       const [data1, data2] = await Promise.all([res1.json(), res2.json()])
+      if (controller.signal.aborted) return
       setCoupleBrief(data1.coupleBrief || '')
       setCoordinatorBrief(data2.coordinatorBrief || '')
       setStatus('ready')
     } catch (e) {
+      if (e.name === 'AbortError') return
       console.error('Brief generation failed:', e)
       setStatus('error')
     }
