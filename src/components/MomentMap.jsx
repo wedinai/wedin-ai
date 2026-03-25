@@ -886,6 +886,7 @@ export default function MomentMap({
             <div
               style={{
                 marginTop: 24,
+                marginBottom: 24,
                 animation: "fadeSlideIn 500ms ease 560ms both",
               }}
             >
