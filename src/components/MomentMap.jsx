@@ -951,7 +951,7 @@ export default function MomentMap({
                   color: "#1C2B3A",
                 }}
               >
-                All 9 moments complete.
+                All 9 moments complete. Your brief is ready to build.
               </p>
               <button
                 onClick={onGenerateBrief}
@@ -970,7 +970,7 @@ export default function MomentMap({
                   fontWeight: 500,
                 }}
               >
-                Generate your brief
+                Build my brief →
                 <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
                   <path
                     d="M8 1l7 7-7 7M1 8h14"
