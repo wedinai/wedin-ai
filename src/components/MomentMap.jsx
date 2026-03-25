@@ -696,7 +696,7 @@ function UnlockBanner({ onUnlock, completedCount }) {
           position: "relative",
         }}
       >
-        Unlock your music plan
+        Start planning →
         <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
           <path
             d="M8 1l7 7-7 7M1 8h14"
@@ -880,6 +880,18 @@ export default function MomentMap({
               ? "Your music plan is complete. Ready to generate your brief."
               : `${MOMENTS.length - completedCount} moments remaining. Your brief grows with each one.`}
           </p>
+
+          {/* ── Unlock CTA (pre-payment only) ───────────────────────── */}
+          {!isPaid && (
+            <div
+              style={{
+                marginTop: 24,
+                animation: "fadeSlideIn 500ms ease 560ms both",
+              }}
+            >
+              <UnlockBanner onUnlock={onUnlock} completedCount={completedCount} />
+            </div>
+          )}
         </div>
 
         {/* ── Moment cards ──────────────────────────────────────────── */}
@@ -917,18 +929,6 @@ export default function MomentMap({
               );
             })}
           </div>
-
-          {/* ── Unlock CTA (pre-payment only) ───────────────────────── */}
-          {!isPaid && (
-            <div
-              style={{
-                marginTop: 24,
-                animation: "fadeSlideIn 500ms ease 560ms both",
-              }}
-            >
-              <UnlockBanner onUnlock={onUnlock} completedCount={completedCount} />
-            </div>
-          )}
 
           {/* ── Generate brief CTA (post-payment, all complete) ─────── */}
           {isPaid && completedCount === MOMENTS.length && (
