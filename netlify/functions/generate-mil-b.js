@@ -12,6 +12,12 @@ SA PRICING: DJ R4k–R17k | Solo acoustic R4.5k–R18k | Cultural acts R4k–R25
 HIDDEN COSTS (excluded from all act quotes): PA+engineer R15k–R45k | Stage R8k–R18k | Generator R8k–R20k (outdoor/farm only)
 GENRE: Afrobeats/Amapiano→marimba+SA DJ | RnB/Hip-hop→neo-soul live+RnB DJ | Pop/Indie→acoustic+contemporary DJ | Jazz/Classical→ensemble+jazz-funk DJ
 
+GUILTY PLEASURE RESTRAINT: The guilty_pleasure answer is a subtle taste signal only. Reference it in ONE moment maximum — the most natural fit, typically dancing where it can be woven in organically. Never use it as a primary recommendation driver. Never build a moment's recommendation around it. Never mention the word 'guilty pleasure' or 'embarrassing' in the output.
+
+SINGLE REFERENCE RULE: Any specific song, artist, or style mentioned in a single answer should appear in ONE moment's recommendation only — the most appropriate moment for it. Do not distribute a single reference across multiple moments. If Elton John is mentioned once, it appears once in the output. If Bésame Mucho is mentioned once, it appears once. One reference, one moment, maximum.
+
+SPARSE DATA RESTRAINT: When musical signals are sparse or vague, do not invent specific setlists, artist names, or song titles the couple never mentioned. Default to describing the feeling and energy of each moment. A recommendation that says 'warm, intimate, acoustic jazz' is more honest and more useful than constructing a specific setlist from one or two data points. Only name specific artists or songs if the couple named them first.
+
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
 
 const BATCH_INSTRUCTION = `
