@@ -621,38 +621,23 @@ function UnlockBanner({ onUnlock, completedCount }) {
   return (
     <div
       style={{
-        background: "linear-gradient(135deg, #1C2B3A 0%, #2d4a63 100%)",
+        background: "#FFFFFF",
         borderRadius: 16,
         padding: "24px",
         marginTop: 8,
-        position: "relative",
-        overflow: "hidden",
+        border: "1px solid rgba(28,43,58,0.06)",
+        borderLeft: "3px solid #C4922A",
+        boxShadow: "0 4px 24px rgba(28,43,58,0.07), 0 1px 4px rgba(28,43,58,0.04)",
       }}
     >
-      {/* Subtle texture dots */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          width: 120,
-          height: 120,
-          background:
-            "radial-gradient(circle, rgba(196,146,42,0.15) 0%, transparent 70%)",
-          borderRadius: "50%",
-          transform: "translate(30%, -30%)",
-        }}
-      />
-
       <p
         style={{
           margin: "0 0 6px",
           fontFamily: "'Cormorant Garamond', serif",
           fontSize: 20,
           fontWeight: 500,
-          color: "#FAF7F2",
+          color: "#1C2B3A",
           lineHeight: 1.3,
-          position: "relative",
         }}
       >
         Your music plan covers 9 moments.
@@ -662,9 +647,8 @@ function UnlockBanner({ onUnlock, completedCount }) {
           margin: "0 0 20px",
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 13,
-          color: "rgba(250,247,242,0.6)",
+          color: "#6B6560",
           lineHeight: 1.5,
-          position: "relative",
         }}
       >
         Complete each one to build your full brief — the document your planner
@@ -682,7 +666,7 @@ function UnlockBanner({ onUnlock, completedCount }) {
           alignItems: "center",
           gap: 8,
           padding: "14px 24px",
-          background: hovered ? "#d4a030" : "#C4922A",
+          background: hovered ? "#2d4a63" : "#1C2B3A",
           color: "#FAF7F2",
           borderRadius: 10,
           fontFamily: "'DM Sans', sans-serif",
@@ -691,9 +675,8 @@ function UnlockBanner({ onUnlock, completedCount }) {
           transition: "all 200ms ease",
           transform: hovered ? "translateY(-1px)" : "translateY(0)",
           boxShadow: hovered
-            ? "0 8px 24px rgba(196,146,42,0.4)"
-            : "0 4px 12px rgba(196,146,42,0.25)",
-          position: "relative",
+            ? "0 8px 24px rgba(28,43,58,0.2)"
+            : "0 4px 12px rgba(28,43,58,0.12)",
         }}
       >
         Start planning →
