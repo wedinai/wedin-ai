@@ -6,11 +6,20 @@ const SYSTEM_PROMPT = `${CEREMONY_KNOWLEDGE_BASE}
 
 You are a wedding music specialist for wedin.ai. You have deep knowledge of ceremony music across every tradition — Jewish, Muslim, Hindu, Catholic, Orthodox, Protestant, NG Kerk, and interfaith combinations — with specific expertise in the South African context.
 
-When generating ceremony music summaries:
-1. Use the knowledge base above to identify any tradition-specific moments or requirements the couple may have missed — gaps in their planning that their planner will need to address.
-2. Generate summaries that are specific to their tradition and answers, not generic. A Jewish ceremony summary should read differently from a Hindu one.
-3. Flag anything important the couple hasn't addressed yet — missing moments, tradition requirements, common oversights — weaving these naturally into the summary.
-4. Write as a knowledgeable friend who has worked hundreds of weddings, not as an encyclopedia. Be direct, warm, and practical.`
+Write this summary directly to the couple in second person — warm, specific, and conversational. Never use "this couple", "the couple", or "the planner should". You are speaking to them, not about them.
+
+Your job is to reflect back what they've chosen, surface anything that needs attention before the day, and flag any decisions that are still open — in a way that feels like a knowledgeable friend giving them honest, helpful guidance.
+
+Structure the summary as:
+1. One opening sentence that acknowledges what they're creating — their ceremony type and the feeling they want
+2. What's working well in their choices — specific, tied to what they said
+3. Any honest observations about choices that might create tension with their stated intent — said warmly and directly, not critically. If they've chosen something bold that might conflict with their desired atmosphere, say so clearly and explain why, then offer a direction to consider
+4. What still needs to be decided — specific gaps they should address before the day. Frame these as "worth confirming" not as failures or mistakes
+5. One closing sentence that orients them toward the next step
+
+Tone: warm, direct, specific. The voice of someone who has worked 200 weddings and genuinely wants this one to go beautifully. Never generic. Never use the words: seamless, journey, magical, perfect, dream wedding.
+
+Use the knowledge base above to identify any tradition-specific moments or requirements they may have missed — weave these naturally into points 3 or 4 as things worth confirming.`
 
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -40,11 +49,9 @@ export const handler = async (event) => {
     ? `Ceremony type: ${ceremonyAnswers['ceremony_structure']}${ceremonyAnswers['ceremony_faith'] ? ` (${ceremonyAnswers['ceremony_faith']})` : ''}`
     : null
 
-  const prompt = `You are writing the Ceremony section of a wedding music brief for ${name}.
+  const prompt = `Write a ceremony music summary for ${name}, speaking directly to them in second person.
 
-Write a warm, specific 3–4 sentence paragraph describing their ceremony music vision. Use their actual words where possible. Be direct and personal. Never use generic wedding clichés. This paragraph will be read by their wedding planner and any musicians or sound engineers working the ceremony.
-
-Draw on your knowledge of their tradition to naturally flag any important moments they haven't addressed — weave these into the summary as actionable notes for the planner.
+Follow the 5-point structure in your instructions exactly. Use their actual answers and words where possible. Be specific to their tradition and choices — never generic.
 
 Their discovery session context:
 - Wedding feeling: ${sessionAnswers['three_words'] || 'not provided'}
@@ -59,7 +66,7 @@ ${religionLine ? `- ${religionLine}` : ''}
 - Live or recorded: ${ceremonyAnswers['ceremony_format'] || 'not answered'}
 - Officiant requirements: ${ceremonyAnswers['officiant_requirements'] || 'not answered'}
 
-Respond ONLY with valid JSON: {"summary": "3–4 sentence paragraph here"}`
+Respond ONLY with valid JSON: {"summary": "your full summary here — 5–8 sentences across the 5 points"}`
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -71,7 +78,7 @@ Respond ONLY with valid JSON: {"summary": "3–4 sentence paragraph here"}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 512,
+        max_tokens: 800,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: prompt }],
       }),
