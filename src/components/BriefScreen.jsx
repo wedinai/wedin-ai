@@ -91,6 +91,7 @@ export default function BriefScreen({
     initialTab || (milRecommendations ? 'musicPlan' : 'couple')
   ) // 'musicPlan' | 'couple' | 'coordinator'
   const [copyLabel, setCopyLabel] = useState('Copy to clipboard')
+  const [copyMusicPlanLabel, setCopyMusicPlanLabel] = useState('Copy to clipboard')
   const [mounted, setMounted] = useState(false)
   const abortRef = useRef(null)
 
@@ -137,6 +138,32 @@ export default function BriefScreen({
       console.error('Brief generation failed:', e)
       setStatus('error')
     }
+  }
+
+  function copyMusicPlan() {
+    if (!milRecommendations) return
+    const lines = []
+    if (milRecommendations.moments) {
+      milRecommendations.moments.forEach((m) => {
+        lines.push(m.name.toUpperCase())
+        if (m.recommendation) lines.push(`Recommendation: ${m.recommendation}`)
+        if (m.why)            lines.push(`Why: ${m.why}`)
+        if (m.cost)           lines.push(`Cost: ${m.cost}`)
+        if (m.instruction)    lines.push(`Brief instruction: ${m.instruction}`)
+        lines.push('')
+      })
+    }
+    if (milRecommendations.productionCheck) {
+      const pc = milRecommendations.productionCheck
+      lines.push('PRODUCTION REALITY CHECK')
+      if (pc.totalEstimate) lines.push(`Total estimate: ${pc.totalEstimate}`)
+      if (pc.bookFirst)     lines.push(`Book first: ${pc.bookFirst}`)
+      if (pc.hiddenCosts)   lines.push(`Hidden costs: ${pc.hiddenCosts}`)
+    }
+    navigator.clipboard.writeText(lines.join('\n').trim()).then(() => {
+      setCopyMusicPlanLabel('Copied')
+      setTimeout(() => setCopyMusicPlanLabel('Copy to clipboard'), 2000)
+    })
   }
 
   function handleCopy() {
@@ -507,6 +534,41 @@ export default function BriefScreen({
               >
                 Build my music plan →
               </button>
+            )}
+
+            {activeTab === 'musicPlan' && milRecommendations && (
+            <button
+              onClick={copyMusicPlan}
+              style={{
+                all: 'unset',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                padding: '14px 24px',
+                background: '#1C2B3A',
+                color: '#FAF7F2',
+                borderRadius: 10,
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 14,
+                fontWeight: 500,
+                textAlign: 'center',
+                transition: 'background 180ms ease',
+              }}
+            >
+              {copyMusicPlanLabel}
+              {copyMusicPlanLabel === 'Copied' ? (
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <path d="M3 8l4 4 6-7" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <rect x="5" y="1" width="9" height="11" rx="2" stroke="#FAF7F2" strokeWidth="1.5" />
+                  <path d="M11 12v2a1 1 0 01-1 1H2a1 1 0 01-1-1V6a1 1 0 011-1h2" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+              )}
+            </button>
             )}
 
             {activeTab !== 'musicPlan' && (
