@@ -88,12 +88,23 @@ Respond ONLY with valid JSON: {"summary": "3–4 sentence paragraph here"}`
     const data = await res.json()
     const raw = data.content?.[0]?.text ?? ''
     const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
-    const parsed = JSON.parse(text)
+
+    let summary = null
+    try {
+      const parsed = JSON.parse(text)
+      summary = parsed.summary ?? null
+    } catch (parseErr) {
+      // If JSON parsing fails, use the raw text directly as the summary
+      console.error('Ceremony summary JSON parse failed, using raw text:', parseErr)
+      summary = text || null
+    }
+
+    console.log('Ceremony summary result:', summary ? 'success' : 'empty', summary?.slice?.(0, 60))
 
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ summary: parsed.summary ?? null }),
+      body: JSON.stringify({ summary }),
     }
   } catch (e) {
     console.error('Ceremony summary generation failed:', e)

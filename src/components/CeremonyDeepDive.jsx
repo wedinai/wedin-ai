@@ -535,28 +535,6 @@ export default function CeremonyDeepDive({
             </div>
           )}
 
-          {/* Music Intelligence Layer stub */}
-          <div
-            style={{
-              background: '#1C2B3A',
-              borderRadius: 12,
-              padding: '20px 24px',
-              marginBottom: 40,
-            }}
-          >
-            <p
-              style={{
-                margin: 0,
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 13,
-                color: 'rgba(250,247,242,0.5)',
-                lineHeight: 1.5,
-              }}
-            >
-              Your Ceremony recommendations will appear here.
-            </p>
-          </div>
-
           {/* CTA */}
           <button
             onClick={() => onComplete?.(answers, summary)}
