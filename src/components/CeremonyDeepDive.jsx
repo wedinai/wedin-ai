@@ -441,7 +441,7 @@ export default function CeremonyDeepDive({
             lineHeight: 1.5,
           }}
         >
-          Building your Ceremony plan…
+          Writing your ceremony summary…
         </p>
       </div>
     )
