@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function PostBriefScreen({ onStartMIL, onDownloadBrief }) {
+export default function PostBriefScreen({ onStartMIL }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -305,24 +305,6 @@ export default function PostBriefScreen({ onStartMIL, onDownloadBrief }) {
             Build my music plan →
           </button>
 
-          <button
-            onClick={onDownloadBrief}
-            style={{
-              all: 'unset',
-              boxSizing: 'border-box',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              padding: '10px 0',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 14,
-              color: '#6B6560',
-            }}
-          >
-            Download my brief first →
-          </button>
         </div>
       </div>
     </>
