@@ -71,12 +71,13 @@ export const handler = async (event) => {
 </body>
 </html>`
 
-      await resend.emails.send({
+      const sendResult = await resend.emails.send({
         from: 'wedin.ai <hello@wedin.ai>',
         to: email.trim(),
         subject: 'Your wedin.ai music portrait is ready',
         html,
       })
+      console.log('Resend send result:', sendResult?.data?.id ? 'success' : 'failed', sendResult?.error || '')
     } catch (emailError) {
       // Log but don't fail the request — contact is already saved
       console.error('Resend error:', emailError)
