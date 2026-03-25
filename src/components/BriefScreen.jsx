@@ -100,15 +100,22 @@ export default function BriefScreen({
 
   async function generateBrief() {
     try {
-      const res = await fetch('/.netlify/functions/generate-brief', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
-      })
-      if (!res.ok) throw new Error('Brief generation failed')
-      const data = await res.json()
-      setCoupleBrief(data.coupleBrief || '')
-      setCoordinatorBrief(data.coordinatorBrief || '')
+      const [res1, res2] = await Promise.all([
+        fetch('/.netlify/functions/generate-brief-a', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
+        }),
+        fetch('/.netlify/functions/generate-brief-b', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
+        }),
+      ])
+      if (!res1.ok || !res2.ok) throw new Error('Brief generation failed')
+      const [data1, data2] = await Promise.all([res1.json(), res2.json()])
+      setCoupleBrief(data1.coupleBrief || '')
+      setCoordinatorBrief(data2.coordinatorBrief || '')
       setStatus('ready')
     } catch (e) {
       console.error('Brief generation failed:', e)
