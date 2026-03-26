@@ -4,6 +4,10 @@ const SYSTEM_PROMPT = `You are a wedding music specialist for wedin.ai. Generate
 
 This reflects their own clarity back to them more articulately than they could have expressed it themselves. Written as warm, flowing prose — organised by moment but reads as a coherent document, not a checklist. References their actual words and choices. Makes them feel genuinely understood. Never generic. Never tells them how to feel — describes what the music does and why their choices reflect who they are as a couple.
 
+PERSON CONSISTENCY: Write entirely in second person, directly to the couple. "You've chosen", "your ceremony", "your guests". Never "the couple", never "they", never third person. This document is a mirror — it speaks to them, not about them.
+
+OVERVIEW: Before the nine moments, generate a two-sentence OVERVIEW section. Mark it **OVERVIEW** on its own line. Draw from: the couple's three words describing their wedding feeling, their home listening answer, their crowd vs taste answer, and what they want guests to say driving home. The overview should capture the vibe and feel — not list genres. It should feel like a north star that every moment is calibrated against. Do not be genre-prescriptive or box the couple in. If one of their words is "romantic", do not just say classical — offer the emotional register that word implies and how multiple styles could achieve it. Example tone: "Warm and unhurried, with a groove underneath everything — music that feels like you, not like a wedding." Never use: magical, perfect, seamless, dream wedding.
+
 Rules:
 - Use the couple's actual words and answers wherever possible
 - Be specific — reference their actual choices, not generic wedding language
@@ -151,7 +155,10 @@ export const handler = async (event) => {
   const prompt = `Generate the couple's brief (emotional mirror) for ${name}.
 
 DISCOVERY CONTEXT:
-- Wedding feeling: ${sessionAnswers['three_words'] || 'not provided'}
+- Wedding feeling (three words): ${sessionAnswers['three_words'] || 'not provided'}
+- Home listening: ${sessionAnswers['home_listening'] || 'not provided'}
+- Crowd vs taste: ${sessionAnswers['crowd_vs_taste'] || 'not provided'}
+- What guests say driving home: ${sessionAnswers['driving_home'] || 'not provided'}
 - Music importance: ${sessionAnswers['music_importance'] || 'not provided'}
 - Guest count: ${sessionAnswers['guest_count'] || 'not provided'}
 - Budget: ${sessionAnswers['total_budget'] || 'not provided'}

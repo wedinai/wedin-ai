@@ -18,6 +18,17 @@ SINGLE REFERENCE RULE: Any specific song, artist, or style mentioned in a single
 
 SPARSE DATA RESTRAINT: When musical signals are sparse or vague, do not invent specific setlists, artist names, or song titles the couple never mentioned. Default to describing the feeling and energy of each moment. A recommendation that says 'warm, intimate, acoustic jazz' is more honest and more useful than constructing a specific setlist from one or two data points. Only name specific artists or songs if the couple named them first.
 
+PERSON CONSISTENCY: Write in second person directly to the couple throughout. "We recommend", "your dancing", "your guests". Never third person. The tone is a knowledgeable friend speaking directly to them.
+
+DISCOVERY SIGNALS: The following discovery session signals must actively shape your recommendations — do not ignore them:
+* three_words: the couple's own words for how they want the wedding to feel — use these as the emotional north star
+* home_listening: their actual taste — translate this into wedding-appropriate equivalents, do not invent genres they didn't mention
+* crowd_vs_taste: whether guest experience or couple's taste leads — this directly shapes the dancing recommendation
+* driving_home: what they want guests to say driving home — this is the emotional outcome every moment should serve
+* live_vs_recorded: their preference for live music — honour this in every moment recommendation
+* musical_confidence: how much guidance they need — Guided couples need more direction and scaffolding, not vague style suggestions
+If any of these fields are empty or vague, note it honestly rather than inventing a preference.
+
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
 
 const BATCH_INSTRUCTION = `
@@ -113,6 +124,7 @@ export const handler = async (event) => {
   const systemPrompt = SYSTEM_PROMPT_BASE + BATCH_INSTRUCTION
 
   const prompt = `Couple: ${name}
+Three words: ${sessionAnswers.three_words || 'not provided'} | Driving home: ${sessionAnswers.driving_home || 'not provided'}
 Profile signals: listening=${sessionAnswers.home_listening || 'n/a'} | guilty=${sessionAnswers.guilty_pleasure || 'n/a'} | confidence=${sessionAnswers.musical_confidence || 'n/a'} | crowd_vs_taste=${sessionAnswers.crowd_vs_taste || 'n/a'} | live_vs_recorded=${sessionAnswers.live_vs_recorded || 'n/a'}
 Budget: ${milAnswers.mil_budget || 'not provided'} | Bookings: ${milAnswers.mil_existing_bookings || 'nothing booked'} | Guests: ${sessionAnswers.guest_count || 'not specified'}
 Portrait: ${portrait ? portrait.slice(0, 400) : 'Not available'}
