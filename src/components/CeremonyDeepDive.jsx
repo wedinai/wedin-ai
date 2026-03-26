@@ -55,7 +55,7 @@ const STEP_RECESSIONAL_SONG = {
   id: 'recessional_song',
   type: 'text',
   educate: "The recessional is your first 60 seconds as a married couple. It's the last thing your guests hear before they pour out behind you.",
-  question: "Have you thought about your recessional song? This is the moment most couples want to feel most like themselves.",
+  question: "Have you thought about your recessional song (your walk back down the aisle as a married couple)? This is the moment most couples want to feel most like themselves.",
   placeholder: "A song title, an artist, or the feeling you want.",
 }
 
