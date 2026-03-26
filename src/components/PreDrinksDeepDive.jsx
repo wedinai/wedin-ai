@@ -6,7 +6,7 @@ const STEPS = [
   {
     id: 'predrinks_couple_presence',
     type: 'chips',
-    educate: "Pre-drinks is the most underplanned moment of the day. It often runs longer than expected — photos overrun, the couple disappears for 90 minutes — and the music has to carry the room entirely on its own. Get this right and guests arrive at dinner already feeling something. Get it wrong and the day loses momentum it never fully recovers.",
+    educate: "Pre-drinks (the drinks reception between your ceremony and dinner) is the most underplanned moment of the day. It often runs longer than expected — photos overrun, the couple disappears for 90 minutes — and the music has to carry the room entirely on its own. Get this right and guests arrive at dinner already feeling something. Get it wrong and the day loses momentum it never fully recovers.",
     question: "During pre-drinks, will you be with your guests — or away for photos?",
     chips: [
       'With our guests the whole time',

@@ -24,7 +24,7 @@ const MOMENTS = [
     id: "predrinks",
     number: 3,
     name: "Pre-drinks",
-    description: "Where the day's energy is set",
+    description: "Where the day's energy is set — the drinks reception between your ceremony and dinner",
     detail:
       "The first hour after the ceremony is where your day finds its rhythm. Live act or DJ? Background or featured? Are you there for photos, or mingling with your guests? Each answer changes the recommendation.",
     warmth: 3,
