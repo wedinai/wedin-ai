@@ -60,6 +60,7 @@ export const questions = [
       { id: 'transported', label: "Like they've arrived somewhere special" },
       { id: 'comfortable', label: 'Comfortable and at home' },
       { id: 'curious',     label: "Curious \u2014 wondering what's coming" },
+      { id: 'other_tell_us_more', label: 'Other \u2014 tell us more' },
     ],
     multiSelect: true,
     followUp: (answer) => {
@@ -277,6 +278,7 @@ export const questions = [
       { id: 'sacred',      label: 'Sacred and still' },
       { id: 'celebratory', label: 'Joyfully celebratory' },
       { id: 'in_between',  label: 'Somewhere in between' },
+      { id: 'other_tell_us_more', label: 'Other \u2014 tell us more' },
     ],
     multiSelect: false,
     followUp: (answer) => {

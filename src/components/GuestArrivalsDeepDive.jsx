@@ -12,6 +12,7 @@ const STEPS = [
       'Catch their attention — signal something special',
       'Warm and welcoming in the background',
       'Somewhere in between',
+      'Other — tell us more',
     ],
   },
   {
@@ -30,6 +31,7 @@ const STEPS = [
       'Indoor — under 30 minutes',
       'Indoor — 30 to 60 minutes',
       'Not sure yet',
+      'Other — tell us more',
     ],
   },
 ]
@@ -80,6 +82,8 @@ export default function GuestArrivalsDeepDive({
   const [answers, setAnswers] = useState({})
   const [stepIndex, setStepIndex] = useState(0)
   const [currentText, setCurrentText] = useState('')
+  const [otherSelected, setOtherSelected] = useState(false)
+  const [otherText, setOtherText] = useState('')
   const [screen, setScreen] = useState('question') // 'question' | 'complete'
   const [mounted, setMounted] = useState(false)
 
@@ -88,9 +92,11 @@ export default function GuestArrivalsDeepDive({
   const currentStep = STEPS[stepIndex]
   const totalSteps = STEPS.length
 
-  // Reset text input when step changes
+  // Reset text input and other state when step changes
   useEffect(() => {
     setCurrentText(answers[currentStep?.id] || '')
+    setOtherSelected(false)
+    setOtherText('')
   }, [stepIndex])
 
   function saveAndAdvance(value) {
@@ -114,6 +120,10 @@ export default function GuestArrivalsDeepDive({
   }
 
   function handleChipSelect(chip) {
+    if (chip === 'Other — tell us more') {
+      setOtherSelected(true)
+      return
+    }
     saveAndAdvance(chip)
   }
 
@@ -423,6 +433,57 @@ export default function GuestArrivalsDeepDive({
                     onClick={() => handleChipSelect(chip)}
                   />
                 ))}
+                {otherSelected && (
+                  <div style={{ marginTop: 8 }}>
+                    <input
+                      type="text"
+                      value={otherText}
+                      onChange={(e) => setOtherText(e.target.value)}
+                      placeholder="Tell us more…"
+                      autoFocus
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        background: '#FFFFFF',
+                        border: '1.5px solid #1C2B3A',
+                        borderRadius: 10,
+                        padding: '14px 16px',
+                        fontSize: 15,
+                        fontFamily: "'DM Sans', sans-serif",
+                        color: '#1C2B3A',
+                        outline: 'none',
+                        marginBottom: 12,
+                        boxSizing: 'border-box',
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && otherText.trim())
+                          saveAndAdvance('Other: ' + otherText.trim())
+                      }}
+                    />
+                    <button
+                      onClick={() => { if (otherText.trim()) saveAndAdvance('Other: ' + otherText.trim()) }}
+                      disabled={!otherText.trim()}
+                      style={{
+                        all: 'unset',
+                        boxSizing: 'border-box',
+                        cursor: otherText.trim() ? 'pointer' : 'default',
+                        display: 'block',
+                        width: '100%',
+                        padding: '14px 24px',
+                        background: '#1C2B3A',
+                        color: '#FAF7F2',
+                        borderRadius: 10,
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: 15,
+                        fontWeight: 500,
+                        textAlign: 'center',
+                        opacity: otherText.trim() ? 1 : 0.4,
+                      }}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -13,6 +13,7 @@ const STEP_CEREMONY_STRUCTURE = {
     'Cultural but not religious',
     'Entirely secular',
     'Something else entirely',
+    'Other — tell us more',
   ],
 }
 
@@ -40,6 +41,7 @@ const STEP_PROCESSIONAL_TONE = {
     'Joyful and alive',
     'Warm and intimate',
     'Unexpected — we want to catch people off guard',
+    'Other — tell us more',
   ],
 }
 
@@ -70,6 +72,7 @@ const STEP_CEREMONY_FORMAT = {
     'Open to either',
     'Depends on budget',
     'We already have someone in mind',
+    'Other — tell us more',
   ],
 }
 
@@ -82,6 +85,7 @@ const STEP_OFFICIANT_REQUIREMENTS = {
     "Yes, they've given us guidelines",
     "No, it's entirely our choice",
     "We're not sure yet",
+    'Other — tell us more',
   ],
 }
 
@@ -92,7 +96,7 @@ const JEWISH_STEPS = [
     id: 'jewish_denomination',
     type: 'chips',
     question: "Orthodox, Conservative, or Reform — which best describes how you're approaching the ceremony? This shapes everything from the structure of the service to which music moments need planning.",
-    chips: ['Orthodox', 'Conservative', 'Reform', 'Not sure — somewhere in between'],
+    chips: ['Orthodox', 'Conservative', 'Reform', 'Not sure — somewhere in between', 'Other — tell us more'],
   },
   {
     id: 'jewish_moments',
@@ -107,14 +111,14 @@ const MUSLIM_STEPS = [
     id: 'muslim_nikah_location',
     type: 'chips',
     question: "Is your Nikah taking place at a mosque or at your venue? This changes the music brief significantly — mosque ceremonies typically have no music, while venue ceremonies often welcome it.",
-    chips: ['At a mosque', 'At our venue', 'Combination of both', 'Not sure yet'],
+    chips: ['At a mosque', 'At our venue', 'Combination of both', 'Not sure yet', 'Other — tell us more'],
   },
   {
     id: 'muslim_cape_malay',
     type: 'chips',
     infoText: "Cape Malay Muslim weddings in South Africa have distinct musical traditions — Die Afhaal (the formal fetching of the bride), the Salawaat (praise choir), and Nagaul music — that are specific to this community.",
     question: "Are you incorporating any of these Cape Malay traditions — or is the musical focus mainly on the reception?",
-    chips: ['Yes, Cape Malay traditions are central', 'Some elements, not all', 'No — mainly reception focus', 'Tell me more about these'],
+    chips: ['Yes, Cape Malay traditions are central', 'Some elements, not all', 'No — mainly reception focus', 'Tell me more about these', 'Other — tell us more'],
   },
 ]
 
@@ -138,13 +142,13 @@ const CATHOLIC_STEPS = [
     id: 'catholic_mass_type',
     type: 'chips',
     question: "Are you having a full Nuptial Mass, or a Rite of Marriage outside of Mass? This determines how long the ceremony runs and which sung elements are required — the priest will have confirmed this with you.",
-    chips: ['Full Nuptial Mass', 'Rite of Marriage', 'Not sure yet — need to confirm with priest'],
+    chips: ['Full Nuptial Mass', 'Rite of Marriage', 'Not sure yet — need to confirm with priest', 'Other — tell us more'],
   },
   {
     id: 'catholic_church_requirements',
     type: 'chips',
     question: "Catholic ceremonies have required sung elements — the Sanctus, Agnus Dei, and responses — plus the common Ave Maria moment. Has the church given you a music brief, and is there a church organist you're expected to use?",
-    chips: ["Yes, we have the church's requirements", 'No, we have full freedom', "There's an organist we need to work with", 'Not sure yet'],
+    chips: ["Yes, we have the church's requirements", 'No, we have full freedom', "There's an organist we need to work with", 'Not sure yet', 'Other — tell us more'],
   },
 ]
 
@@ -153,13 +157,13 @@ const ORTHODOX_STEPS = [
     id: 'orthodox_choir_status',
     type: 'chips',
     question: "Greek Orthodox ceremonies are a cappella only — no instruments in the church. Is the chanting and choir arrangement already in place with your priest and choir director, or does this need to be organised?",
-    chips: ['Yes, all arranged', 'We have a priest but no choir director yet', 'Still to be organised', "We weren't aware of this — thank you"],
+    chips: ['Yes, all arranged', 'We have a priest but no choir director yet', 'Still to be organised', "We weren't aware of this — thank you", 'Other — tell us more'],
   },
   {
     id: 'orthodox_reception_music',
     type: 'chips',
     question: "The reception after a Greek Orthodox ceremony is often the moment where the musical energy completely transforms. Is there a traditional Greek element you want to include at the reception, or are you moving into a fully contemporary reception?",
-    chips: ['Yes, traditional Greek music at the reception', 'A blend of traditional and contemporary', 'Fully contemporary', 'Not sure yet'],
+    chips: ['Yes, traditional Greek music at the reception', 'A blend of traditional and contemporary', 'Fully contemporary', 'Not sure yet', 'Other — tell us more'],
   },
 ]
 
@@ -168,13 +172,13 @@ const NGKERK_STEPS = [
     id: 'ngkerk_dominee',
     type: 'chips',
     question: "NG Kerk ceremonies are fully in the dominee's hands — organ, Liedboek, and his approval on all music. Has he given you any guidance on what's possible, or is that conversation still ahead of you?",
-    chips: ["Yes, we know exactly what's allowed", 'Still to speak to him', 'We have some flexibility but mostly traditional', "It's a civil ceremony at a venue, not the church"],
+    chips: ["Yes, we know exactly what's allowed", 'Still to speak to him', 'We have some flexibility but mostly traditional', "It's a civil ceremony at a venue, not the church", 'Other — tell us more'],
   },
   {
     id: 'ngkerk_focus',
     type: 'chips',
     question: "NG Kerk couples often treat the ceremony and the reception as completely separate musical worlds. Are you planning anything specific for the ceremony music, or is your energy mainly on the reception?",
-    chips: ['The ceremony is planned — focus on reception', 'Both need equal attention', 'Mainly the ceremony', 'Tell me what we should be thinking about'],
+    chips: ['The ceremony is planned — focus on reception', 'Both need equal attention', 'Mainly the ceremony', 'Tell me what we should be thinking about', 'Other — tell us more'],
   },
 ]
 
@@ -189,7 +193,7 @@ const INTERFAITH_STEPS = [
     id: 'interfaith_structure',
     type: 'chips',
     question: "Interfaith ceremonies need to feel unified rather than divided. Do you have a clear sense of which tradition's structure takes precedence — or are you building something entirely your own?",
-    chips: ["One tradition leads, the other is honoured", 'Equally blended', 'Something entirely our own', 'Still figuring this out'],
+    chips: ["One tradition leads, the other is honoured", 'Equally blended', 'Something entirely our own', 'Still figuring this out', 'Other — tell us more'],
   },
 ]
 
@@ -216,7 +220,7 @@ function resolveProtestantQ2(denomination) {
       id: 'protestant_structure',
       type: 'chips',
       question: "Anglican ceremonies are typically formal, with the vicar approving all music. Have you had that conversation yet — and is there an organist at the church you're working with or replacing?",
-      chips: ["Yes, vicar has approved our choices", "Not yet — still to confirm", "There's an organist we need to factor in", "We have full freedom"],
+      chips: ["Yes, vicar has approved our choices", "Not yet — still to confirm", "There's an organist we need to factor in", "We have full freedom", 'Other — tell us more'],
     }
   }
   if (denomination === 'Methodist' || denomination === 'Baptist') {
@@ -224,7 +228,7 @@ function resolveProtestantQ2(denomination) {
       id: 'protestant_structure',
       type: 'chips',
       question: "Methodist and Baptist ceremonies generally welcome hymn-based music and congregational singing. Are there specific hymns the family is expecting, and do you want the music to lean traditional or contemporary Christian?",
-      chips: ['Traditional hymns', 'Contemporary Christian', 'A mix', 'Open to guidance'],
+      chips: ['Traditional hymns', 'Contemporary Christian', 'A mix', 'Open to guidance', 'Other — tell us more'],
     }
   }
   // Pentecostal/Charismatic
@@ -232,7 +236,7 @@ function resolveProtestantQ2(denomination) {
     id: 'protestant_structure',
     type: 'chips',
     question: "Pentecostal ceremonies often include a worship band and a significant praise section. Is that the plan here — and does your church have its own worship team, or do you need one arranged?",
-    chips: ['Yes, full worship band', 'Praise songs but more contained', 'We want a blend', 'The church has their team'],
+    chips: ['Yes, full worship band', 'Praise songs but more contained', 'We want a blend', 'The church has their team', 'Other — tell us more'],
   }
 }
 
@@ -402,12 +406,20 @@ export default function CeremonyDeepDive({
       setOtherSelected(true)
       return
     }
+    if (currentStep.type === 'chips' && chip === 'Other — tell us more') {
+      setOtherSelected(true)
+      return
+    }
     saveAndAdvance(chip)
   }
 
   function handleOtherConfirm() {
     if (!otherText.trim()) return
-    saveAndAdvance(otherText.trim())
+    if (currentStep.type === 'chips') {
+      saveAndAdvance('Other: ' + otherText.trim())
+    } else {
+      saveAndAdvance(otherText.trim())
+    }
   }
 
   function handleTextContinue() {
@@ -799,13 +811,13 @@ export default function CeremonyDeepDive({
                 ))}
 
                 {/* Other — text input */}
-                {currentStep.type === 'chips_with_other' && otherSelected && (
+                {otherSelected && (
                   <div style={{ marginTop: 8 }}>
                     <input
                       type="text"
                       value={otherText}
                       onChange={(e) => setOtherText(e.target.value)}
-                      placeholder="Tell us your tradition or faith"
+                      placeholder={currentStep.type === 'chips_with_other' ? "Tell us your tradition or faith" : "Tell us more…"}
                       autoFocus
                       style={{
                         display: 'block',

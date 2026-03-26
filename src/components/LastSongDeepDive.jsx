@@ -19,6 +19,7 @@ const STEPS = [
       'One final burst of energy — end on a high, together',
       'Something unmistakably us — a song that could only close our day',
       "We're not sure yet",
+      'Other — tell us more',
     ],
   },
   {
@@ -29,6 +30,7 @@ const STEPS = [
       "They know — it's already discussed",
       'It needs to be in the brief',
       "We haven't decided yet",
+      'Other — tell us more',
     ],
   },
 ]
@@ -128,16 +130,20 @@ export default function LastSongDeepDive({
   const [stepIndex, setStepIndex] = useState(0)
   const [screen, setScreen] = useState('question') // 'question' | 'complete'
   const [textValue, setTextValue] = useState('')
+  const [otherSelected, setOtherSelected] = useState(false)
+  const [otherText, setOtherText] = useState('')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
 
-  // Sync textarea value when navigating to a text step
+  // Sync textarea value and reset other state when step changes
   useEffect(() => {
     const step = STEPS[stepIndex]
     if (step?.type === 'text') {
       setTextValue(answers[step.id] || '')
     }
+    setOtherSelected(false)
+    setOtherText('')
   }, [stepIndex]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const totalSteps = STEPS.length
@@ -162,6 +168,14 @@ export default function LastSongDeepDive({
     } else {
       setStepIndex(nextIndex)
     }
+  }
+
+  function handleChipSelect(chip) {
+    if (chip === 'Other — tell us more') {
+      setOtherSelected(true)
+      return
+    }
+    saveAndAdvance(chip)
   }
 
   function handleTextSubmit() {
@@ -436,9 +450,60 @@ export default function LastSongDeepDive({
                     key={chip}
                     label={chip}
                     selected={answers[currentStep.id] === chip}
-                    onClick={() => saveAndAdvance(chip)}
+                    onClick={() => handleChipSelect(chip)}
                   />
                 ))}
+                {otherSelected && (
+                  <div style={{ marginTop: 8 }}>
+                    <input
+                      type="text"
+                      value={otherText}
+                      onChange={(e) => setOtherText(e.target.value)}
+                      placeholder="Tell us more…"
+                      autoFocus
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        background: '#FFFFFF',
+                        border: '1.5px solid #1C2B3A',
+                        borderRadius: 10,
+                        padding: '14px 16px',
+                        fontSize: 15,
+                        fontFamily: "'DM Sans', sans-serif",
+                        color: '#1C2B3A',
+                        outline: 'none',
+                        marginBottom: 12,
+                        boxSizing: 'border-box',
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && otherText.trim())
+                          saveAndAdvance('Other: ' + otherText.trim())
+                      }}
+                    />
+                    <button
+                      onClick={() => { if (otherText.trim()) saveAndAdvance('Other: ' + otherText.trim()) }}
+                      disabled={!otherText.trim()}
+                      style={{
+                        all: 'unset',
+                        boxSizing: 'border-box',
+                        cursor: otherText.trim() ? 'pointer' : 'default',
+                        display: 'block',
+                        width: '100%',
+                        padding: '14px 24px',
+                        background: '#1C2B3A',
+                        color: '#FAF7F2',
+                        borderRadius: 10,
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: 15,
+                        fontWeight: 500,
+                        textAlign: 'center',
+                        opacity: otherText.trim() ? 1 : 0.4,
+                      }}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
