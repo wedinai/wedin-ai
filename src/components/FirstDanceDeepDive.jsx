@@ -19,6 +19,7 @@ const STEPS_MAIN = [
       'Build slowly then open the floor with energy',
       'Start with energy and keep it going',
       "We're not sure yet",
+      'Other — tell us more',
     ],
   },
   {
@@ -30,6 +31,7 @@ const STEPS_MAIN = [
       'Original recording',
       'Open to either',
       "We don't have a band — DJ only",
+      'Other — tell us more',
     ],
   },
   {
@@ -40,6 +42,7 @@ const STEPS_MAIN = [
       'Yes — there are additional dances',
       'No — just our first dance',
       "We haven't thought about this yet",
+      'Other — tell us more',
     ],
   },
   {
@@ -52,6 +55,7 @@ const STEPS_MAIN = [
       'Another dance follows before the floor opens',
       'Leave it to the act or DJ to read the room',
       "We haven't thought about this",
+      'Other — tell us more',
     ],
   },
 ]
@@ -71,6 +75,7 @@ const STEPS_BRANCH = [
       'All together before the floor opens',
       'Spread through the evening',
       'Not sure yet',
+      'Other — tell us more',
     ],
   },
 ]
@@ -182,16 +187,20 @@ export default function FirstDanceDeepDive({
   const [stepIndex, setStepIndex] = useState(0)
   const [screen, setScreen] = useState('question') // 'question' | 'complete'
   const [textValue, setTextValue] = useState('')
+  const [otherSelected, setOtherSelected] = useState(false)
+  const [otherText, setOtherText] = useState('')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
 
-  // Sync textarea value when navigating to a text step
+  // Sync textarea value and reset other state when step changes
   useEffect(() => {
     const step = getActiveSteps(answers)[stepIndex]
     if (step?.type === 'text') {
       setTextValue(answers[step.id] || '')
     }
+    setOtherSelected(false)
+    setOtherText('')
   }, [stepIndex]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const activeSteps = getActiveSteps(answers)
@@ -220,6 +229,14 @@ export default function FirstDanceDeepDive({
     } else {
       setStepIndex(nextIndex)
     }
+  }
+
+  function handleChipSelect(chip) {
+    if (chip === 'Other — tell us more') {
+      setOtherSelected(true)
+      return
+    }
+    saveAndAdvance(chip)
   }
 
   function handleTextSubmit() {
@@ -485,9 +502,60 @@ export default function FirstDanceDeepDive({
                     key={chip}
                     label={chip}
                     selected={answers[currentStep.id] === chip}
-                    onClick={() => saveAndAdvance(chip)}
+                    onClick={() => handleChipSelect(chip)}
                   />
                 ))}
+                {otherSelected && (
+                  <div style={{ marginTop: 8 }}>
+                    <input
+                      type="text"
+                      value={otherText}
+                      onChange={(e) => setOtherText(e.target.value)}
+                      placeholder="Tell us more…"
+                      autoFocus
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        background: '#FFFFFF',
+                        border: '1.5px solid #1C2B3A',
+                        borderRadius: 10,
+                        padding: '14px 16px',
+                        fontSize: 15,
+                        fontFamily: "'DM Sans', sans-serif",
+                        color: '#1C2B3A',
+                        outline: 'none',
+                        marginBottom: 12,
+                        boxSizing: 'border-box',
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && otherText.trim())
+                          saveAndAdvance('Other: ' + otherText.trim())
+                      }}
+                    />
+                    <button
+                      onClick={() => { if (otherText.trim()) saveAndAdvance('Other: ' + otherText.trim()) }}
+                      disabled={!otherText.trim()}
+                      style={{
+                        all: 'unset',
+                        boxSizing: 'border-box',
+                        cursor: otherText.trim() ? 'pointer' : 'default',
+                        display: 'block',
+                        width: '100%',
+                        padding: '14px 24px',
+                        background: '#1C2B3A',
+                        color: '#FAF7F2',
+                        borderRadius: 10,
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: 15,
+                        fontWeight: 500,
+                        textAlign: 'center',
+                        opacity: otherText.trim() ? 1 : 0.4,
+                      }}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 

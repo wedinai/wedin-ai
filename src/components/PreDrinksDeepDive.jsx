@@ -13,6 +13,7 @@ const STEPS = [
       'Away for photos — probably 45–60 minutes',
       'Away for most of it — could be 90 minutes or more',
       'Not sure yet',
+      'Other — tell us more',
     ],
   },
   {
@@ -24,6 +25,7 @@ const STEPS = [
       'Atmosphere — present but not demanding attention',
       'Somewhere in between',
       'Not sure yet',
+      'Other — tell us more',
     ],
   },
   {
@@ -35,6 +37,7 @@ const STEPS = [
       'No — consistent energy throughout',
       'Only if photos run long and we need to fill time',
       'Not sure yet',
+      'Other — tell us more',
     ],
   },
   {
@@ -46,6 +49,7 @@ const STEPS = [
       'Possibly — worth considering',
       'No — keeping it consistent throughout',
       'Not sure yet',
+      'Other — tell us more',
     ],
   },
 ]
@@ -110,13 +114,28 @@ export default function PreDrinksDeepDive({
 }) {
   const [answers, setAnswers] = useState({})
   const [stepIndex, setStepIndex] = useState(0)
+  const [otherSelected, setOtherSelected] = useState(false)
+  const [otherText, setOtherText] = useState('')
   const [screen, setScreen] = useState('question') // 'question' | 'complete'
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
 
+  useEffect(() => {
+    setOtherSelected(false)
+    setOtherText('')
+  }, [stepIndex])
+
   const currentStep = STEPS[stepIndex]
   const totalSteps = STEPS.length
+
+  function handleChipSelect(chip) {
+    if (chip === 'Other — tell us more') {
+      setOtherSelected(true)
+      return
+    }
+    saveAndAdvance(chip)
+  }
 
   function saveAndAdvance(value) {
     let newAnswers = { ...answers, [currentStep.id]: value }
@@ -395,9 +414,60 @@ export default function PreDrinksDeepDive({
                     key={chip}
                     label={chip}
                     selected={answers[currentStep.id] === chip}
-                    onClick={() => saveAndAdvance(chip)}
+                    onClick={() => handleChipSelect(chip)}
                   />
                 ))}
+                {otherSelected && (
+                  <div style={{ marginTop: 8 }}>
+                    <input
+                      type="text"
+                      value={otherText}
+                      onChange={(e) => setOtherText(e.target.value)}
+                      placeholder="Tell us more…"
+                      autoFocus
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        background: '#FFFFFF',
+                        border: '1.5px solid #1C2B3A',
+                        borderRadius: 10,
+                        padding: '14px 16px',
+                        fontSize: 15,
+                        fontFamily: "'DM Sans', sans-serif",
+                        color: '#1C2B3A',
+                        outline: 'none',
+                        marginBottom: 12,
+                        boxSizing: 'border-box',
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && otherText.trim())
+                          saveAndAdvance('Other: ' + otherText.trim())
+                      }}
+                    />
+                    <button
+                      onClick={() => { if (otherText.trim()) saveAndAdvance('Other: ' + otherText.trim()) }}
+                      disabled={!otherText.trim()}
+                      style={{
+                        all: 'unset',
+                        boxSizing: 'border-box',
+                        cursor: otherText.trim() ? 'pointer' : 'default',
+                        display: 'block',
+                        width: '100%',
+                        padding: '14px 24px',
+                        background: '#1C2B3A',
+                        color: '#FAF7F2',
+                        borderRadius: 10,
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: 15,
+                        fontWeight: 500,
+                        textAlign: 'center',
+                        opacity: otherText.trim() ? 1 : 0.4,
+                      }}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
