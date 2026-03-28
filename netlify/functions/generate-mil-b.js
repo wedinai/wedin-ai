@@ -84,6 +84,7 @@ Return ONLY a valid JSON object — no markdown, no preamble, no explanation. On
 
 const BATCH_INSTRUCTION = `
 Generate recommendations for these 4 moments only: Speeches, First Dance, Dancing, Last Song. Include productionCheck.
+STRICT OUTPUT LIMIT: One sentence per field, maximum 20 words each. Total JSON output must stay under 1800 tokens. Do not pad or elaborate — brevity is required.
 Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ], "productionCheck": { "totalEstimate": "...", "bookFirst": "...", "hiddenCosts": "..." } }`
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
