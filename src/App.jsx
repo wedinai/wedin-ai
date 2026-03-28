@@ -32,7 +32,6 @@ export default function App() {
   const [inProgressMoments, setInProgressMoments] = useState([])
   const [momentAnswers, setMomentAnswers] = useState({}) // { guestArrivals: {…}, ceremony: {…}, … }
   const [portrait, setPortrait] = useState(null)
-  const [milAnswers, setMilAnswers] = useState({})
   const [milRecommendations, setMilRecommendations] = useState(null)
 
   // Persist completedMoments and momentAnswers to localStorage whenever they change
@@ -90,6 +89,7 @@ export default function App() {
         .then((data) => {
           if (data?.isPaid) {
             setIsPaid(true)
+            localStorage.setItem('wedin_is_paid', 'true')
             setView('momentMap')
           }
         })
@@ -121,9 +121,25 @@ export default function App() {
       const savedMomentAnswers = localStorage.getItem('wedin_moment_answers')
       if (savedMomentAnswers) setMomentAnswers(JSON.parse(savedMomentAnswers))
 
+      const storedIsPaid = localStorage.getItem('wedin_is_paid')
+      if (storedIsPaid === 'true') setIsPaid(true)
+
+      const storedCoupleName = localStorage.getItem('wedin_couple_name')
+      if (storedCoupleName) setCoupleName(storedCoupleName)
+
+      const storedMilRecs = localStorage.getItem('wedin_mil_recommendations')
+      if (storedMilRecs) {
+        try { setMilRecommendations(JSON.parse(storedMilRecs)) } catch (e) {}
+      }
+
       setView('momentMap') // skip discovery and portrait, go straight to the map
     }
   }, [])
+
+  function handleSetCoupleName(name) {
+    setCoupleName(name)
+    localStorage.setItem('wedin_couple_name', name)
+  }
 
   function handleComplete(answers) {
     setSessionAnswers(answers)
@@ -136,12 +152,16 @@ export default function App() {
     localStorage.removeItem('wedin_portrait')
     localStorage.removeItem('wedin_completed_moments')
     localStorage.removeItem('wedin_moment_answers')
+    localStorage.removeItem('wedin_is_paid')
+    localStorage.removeItem('wedin_couple_name')
+    localStorage.removeItem('wedin_mil_recommendations')
     setSessionAnswers({})
     setSessionId(null)
     setPortrait(null)
     setIsPaid(false)
     setCompletedMoments([])
     setMomentAnswers({})
+    setMilRecommendations(null)
     setView('discovery')
   }
 
@@ -206,8 +226,8 @@ export default function App() {
   }
 
   function handleMILComplete(answers, recommendations) {
-    setMilAnswers(answers)
     setMilRecommendations(recommendations)
+    localStorage.setItem('wedin_mil_recommendations', JSON.stringify(recommendations))
     setView('brief')
   }
 
@@ -416,6 +436,7 @@ export default function App() {
       <MomentMap
         coupleName={coupleName}
         isPaid={isPaid}
+        isUnlocking={unlocking}
         completedMoments={completedMoments}
         inProgressMoments={inProgressMoments}
         onUnlock={handleUnlock}
@@ -471,5 +492,5 @@ export default function App() {
     )
   }
 
-  return <DiscoverySession onComplete={handleComplete} onSetCoupleName={setCoupleName} />
+  return <DiscoverySession onComplete={handleComplete} onSetCoupleName={handleSetCoupleName} />
 }

@@ -74,6 +74,12 @@ OVERVIEW RULE: The moments array for Batch 1 (generate-mil-a) begins with the ov
 
 SESSION BOUNDARY: All recommendations must be grounded exclusively in what this specific couple said in their discovery session and deep-dive answers provided in this prompt. Do not reference information not present in the prompt. Do not invent preferences, tastes, or details the couple did not provide. If a field is empty or not provided, acknowledge the gap honestly rather than filling it with assumptions.
 
+PER-MOMENT LOGIC — apply when generating each moment recommendation:
+
+SPEECHES: DJ manages all speech intro songs as the default. Do not recommend the band for speech intros as a standard arrangement — a band sitting onstage waiting to play 30-second interludes between speeches is poor use of the booking and creates awkward staging. The only exception is a high-production wedding where band involvement in speeches is choreographed — this is a coordinator-led decision, not a MIL default. DJ also manages all background music between speeches and the final high-energy transition cue opening the dancefloor.
+
+LAST SONG: DJ plays the last song as the default — by this point the band has completed their set and handed over. At smaller weddings where the band has played the full evening, the last song is the band's call based on what will translate for their instrumentation and what the couple requested. Default assumption is always DJ closes the night unless the band has explicitly covered the full evening.
+
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
 
 const BATCH_INSTRUCTION = `

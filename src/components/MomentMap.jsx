@@ -279,7 +279,7 @@ function MomentCard({ moment, status, isActive, isPaid, onClick, index }) {
 }
 
 // ─── Expanded moment detail panel ──────────────────────────────────────────
-function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOverlay = false }) {
+function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOverlay = false, isUnlocking = false }) {
   const color = WARMTH_COLORS[moment.warmth];
   const isLocked = !isPaid && status === "locked";
 
@@ -395,9 +395,10 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
         {isLocked ? (
           <button
             onClick={onUnlock}
+            disabled={isUnlocking}
             style={{
               all: "unset",
-              cursor: "pointer",
+              cursor: isUnlocking ? "default" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -412,27 +413,30 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
               fontWeight: 500,
               boxSizing: "border-box",
               transition: "all 200ms ease",
+              opacity: isUnlocking ? 0.7 : 1,
             }}
             onMouseEnter={(e) => {
+              if (isUnlocking) return;
               e.currentTarget.style.transform = "translateY(-1px)";
-              e.currentTarget.style.boxShadow =
-                "0 8px 24px rgba(28,43,58,0.2)";
+              e.currentTarget.style.boxShadow = "0 8px 24px rgba(28,43,58,0.2)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(0)";
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            Unlock this moment
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path
-                d="M8 1l7 7-7 7M1 8h14"
-                stroke="#FAF7F2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            {isUnlocking ? 'Setting up…' : 'Unlock this moment'}
+            {!isUnlocking && (
+              <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                <path
+                  d="M8 1l7 7-7 7M1 8h14"
+                  stroke="#FAF7F2"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
           </button>
         ) : (
           <button
@@ -475,7 +479,7 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
 }
 
 // ─── Overlay wrapper — bottom sheet (mobile) / right drawer (desktop) ──────
-function MomentOverlay({ moment, status, isPaid, onClose, onUnlock, onMomentStart }) {
+function MomentOverlay({ moment, status, isPaid, onClose, onUnlock, onMomentStart, isUnlocking = false }) {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   useEffect(() => {
@@ -563,6 +567,7 @@ function MomentOverlay({ moment, status, isPaid, onClose, onUnlock, onMomentStar
           onUnlock={onUnlock}
           onStart={() => onMomentStart(moment.id)}
           inOverlay={true}
+          isUnlocking={isUnlocking}
         />
       </div>
     </>
@@ -616,7 +621,7 @@ function ProgressBar({ completed, total }) {
 }
 
 // ─── Unlock CTA banner ─────────────────────────────────────────────────────
-function UnlockBanner({ onUnlock, completedCount }) {
+function UnlockBanner({ onUnlock, completedCount, isUnlocking = false }) {
   const [hovered, setHovered] = useState(false);
   return (
     <div
@@ -657,38 +662,42 @@ function UnlockBanner({ onUnlock, completedCount }) {
 
       <button
         onClick={onUnlock}
+        disabled={isUnlocking}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         style={{
           all: "unset",
-          cursor: "pointer",
+          cursor: isUnlocking ? "default" : "pointer",
           display: "inline-flex",
           alignItems: "center",
           gap: 8,
           padding: "14px 24px",
-          background: hovered ? "#2d4a63" : "#1C2B3A",
+          background: hovered && !isUnlocking ? "#2d4a63" : "#1C2B3A",
           color: "#FAF7F2",
           borderRadius: 10,
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 14,
           fontWeight: 600,
           transition: "all 200ms ease",
-          transform: hovered ? "translateY(-1px)" : "translateY(0)",
-          boxShadow: hovered
+          transform: hovered && !isUnlocking ? "translateY(-1px)" : "translateY(0)",
+          boxShadow: hovered && !isUnlocking
             ? "0 8px 24px rgba(28,43,58,0.2)"
             : "0 4px 12px rgba(28,43,58,0.12)",
+          opacity: isUnlocking ? 0.7 : 1,
         }}
       >
-        Start planning →
-        <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-          <path
-            d="M8 1l7 7-7 7M1 8h14"
-            stroke="#FAF7F2"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        {isUnlocking ? 'Setting up…' : 'Start planning →'}
+        {!isUnlocking && (
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+            <path
+              d="M8 1l7 7-7 7M1 8h14"
+              stroke="#FAF7F2"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
       </button>
     </div>
   );
@@ -701,6 +710,7 @@ export default function MomentMap({
   completedMoments = [], // array of moment IDs that are 'complete'
   inProgressMoments = [], // array of moment IDs that are 'in-progress'
   isPaid = false, // false = show locked state + unlock CTA
+  isUnlocking = false, // true while Stripe redirect is in flight
   onUnlock = () => {}, // called when couple clicks unlock / pay
   onMomentStart = () => {}, // called with moment.id when a paid moment is started
   onGenerateBrief = () => {}, // called when all moments complete and couple clicks generate
@@ -873,7 +883,7 @@ export default function MomentMap({
                 animation: "fadeSlideIn 500ms ease 560ms both",
               }}
             >
-              <UnlockBanner onUnlock={onUnlock} completedCount={completedCount} />
+              <UnlockBanner onUnlock={onUnlock} completedCount={completedCount} isUnlocking={isUnlocking} />
             </div>
           )}
         </div>
@@ -980,6 +990,7 @@ export default function MomentMap({
           onClose={() => setActiveMoment(null)}
           onUnlock={onUnlock}
           onMomentStart={onMomentStart}
+          isUnlocking={isUnlocking}
         />
       )}
     </>

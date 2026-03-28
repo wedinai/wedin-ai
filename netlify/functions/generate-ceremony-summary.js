@@ -112,7 +112,7 @@ Respond ONLY with valid JSON: {"summary": "your full summary here — 5–8 sent
       summary = text || null
     }
 
-    console.log('Ceremony summary result:', summary ? 'success' : 'empty', summary?.slice?.(0, 60))
+
 
     return {
       statusCode: 200,

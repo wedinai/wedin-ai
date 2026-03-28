@@ -38,7 +38,6 @@ export const handler = async (event) => {
   }
 
   // ── Send portrait email via Resend ──────────────────────────────────────
-  console.log('RESEND_API_KEY present:', !!process.env.RESEND_API_KEY)
   if (process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY)
@@ -77,7 +76,6 @@ export const handler = async (event) => {
         subject: 'Your wedin.ai music portrait is ready',
         html,
       })
-      console.log('Resend send result:', sendResult?.data?.id ? 'success' : 'failed', sendResult?.error || '')
     } catch (emailError) {
       // Log but don't fail the request — contact is already saved
       console.error('Resend error:', emailError)
