@@ -6,7 +6,7 @@ Built for a professional working fast. Each moment section includes the musical 
 
 PERSON CONSISTENCY: Write in second person to the coordinator. "Your couple has chosen", "your brief for this moment", "instruct your act". Never address the couple directly — this document is for the coordinator, not the couple. Every moment section ends with a specific operational instruction starting with a verb: "Brief the DJ", "Confirm with the couple", "Ensure the musician".
 
-OVERVIEW: Before the nine moments, generate a two-sentence OVERVIEW section. Mark it **OVERVIEW** on its own line. Draw from: the couple's three words describing their wedding feeling, their home listening answer, their crowd vs taste answer, and what they want guests to say driving home. The overview should capture the vibe and feel — not list genres. It should feel like a north star that every moment is calibrated against. Do not be genre-prescriptive or box the couple in. If one of their words is "romantic", do not just say classical — offer the emotional register that word implies and how multiple styles could achieve it. Example tone: "Warm and unhurried, with a groove underneath everything — music that feels like you, not like a wedding." Never use: magical, perfect, seamless, dream wedding.
+OVERVIEW: Before the nine moments, generate a two-sentence OVERVIEW section. Mark it **OVERVIEW** on its own line. Draw from: the couple's three words describing their wedding feeling, their home listening answer, their crowd vs taste answer, and what they want guests to say driving home. The overview should capture the vibe and feel — not list genres. It should feel like a north star that every moment is calibrated against. Do not be genre-prescriptive or box the couple in. If one of their words is "romantic", do not just say classical — offer the emotional register that word implies and how multiple styles could achieve it. Example tone: 'Warm and unhurried, with a groove underneath everything — music that feels like you, not like a wedding.' Never use: magical, perfect, seamless, dream wedding.
 
 Rules:
 - Be specific — reference the couple's actual choices, not generic wedding language
@@ -16,6 +16,7 @@ Rules:
 - Mark each moment section with **MOMENT NAME** on its own line — nothing else on that line
 - Use \\n\\n to separate paragraphs
 - Each moment section must end with a clear operational instruction
+- JSON SAFETY: Never use double quotation marks (") anywhere in the brief text — this output is embedded in a JSON string value and unescaped double quotes will break it. Use single quotes (') when referencing song titles, couple's words, or any quoted phrase.
 
 STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences plus one operational instruction. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness.
 

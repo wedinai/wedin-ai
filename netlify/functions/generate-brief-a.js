@@ -6,7 +6,7 @@ This reflects their own clarity back to them more articulately than they could h
 
 PERSON CONSISTENCY: Write entirely in second person, directly to the couple. "You've chosen", "your ceremony", "your guests". Never "the couple", never "they", never third person. This document is a mirror — it speaks to them, not about them.
 
-OVERVIEW: Before the nine moments, generate a two-sentence OVERVIEW section. Mark it **OVERVIEW** on its own line. Draw from: the couple's three words describing their wedding feeling, their home listening answer, their crowd vs taste answer, and what they want guests to say driving home. The overview should capture the vibe and feel — not list genres. It should feel like a north star that every moment is calibrated against. Do not be genre-prescriptive or box the couple in. If one of their words is "romantic", do not just say classical — offer the emotional register that word implies and how multiple styles could achieve it. Example tone: "Warm and unhurried, with a groove underneath everything — music that feels like you, not like a wedding." Never use: magical, perfect, seamless, dream wedding.
+OVERVIEW: Before the nine moments, generate a two-sentence OVERVIEW section. Mark it **OVERVIEW** on its own line. Draw from: the couple's three words describing their wedding feeling, their home listening answer, their crowd vs taste answer, and what they want guests to say driving home. The overview should capture the vibe and feel — not list genres. It should feel like a north star that every moment is calibrated against. Do not be genre-prescriptive or box the couple in. If one of their words is "romantic", do not just say classical — offer the emotional register that word implies and how multiple styles could achieve it. Example tone: 'Warm and unhurried, with a groove underneath everything — music that feels like you, not like a wedding.' Never use: magical, perfect, seamless, dream wedding.
 
 Rules:
 - Use the couple's actual words and answers wherever possible
@@ -16,6 +16,7 @@ Rules:
 - Only include moments where answers are provided — omit moments with no data
 - Mark each moment section with **MOMENT NAME** on its own line — nothing else on that line
 - Use \\n\\n to separate paragraphs
+- JSON SAFETY: Never use double quotation marks (") anywhere in the brief text — this output is embedded in a JSON string value and unescaped double quotes will break it. Use single quotes (') when referencing song titles, couple's words, or any quoted phrase.
 
 STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences maximum. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness.
 

@@ -90,7 +90,7 @@ LAST SONG: DJ plays the last song as the default — by this point the band has 
 
 LAST SONG ENSEMBLE RULE: Never recommend booking a new live ensemble exclusively for the last song unless that ensemble is already booked for another moment in the day. A string quartet booked only for a 5-minute closing song is logistically absurd and commercially wasteful — it requires 10–12 weeks lead time, significant cost, and creates a logistical headache at the end of a long night. If the last song requires live music (anthem, cultural hymn, singalong), check whether an ensemble already booked for another moment can reprise for the close. If no ensemble is booked, recommend the recorded track played by the DJ with guests singing along — this is often more emotionally powerful than a live arrangement anyway.
 
-OUTPUT LENGTH RULES: recommendation: 1–2 sentences. why: 2–3 sentences minimum — this is where specialist knowledge lives, never compress it below 2 sentences. cost: one line, ZAR range only. instruction: 1–2 sentences starting with a verb. productionCheck fields: 2–3 sentences each. overview recommendation: 2–3 sentences. Total output must stay under 2200 tokens — achieve this through precision, not truncation of reasoning.
+OUTPUT LENGTH RULES: recommendation: 1 sentence. why: exactly 2 sentences — this is where specialist knowledge lives, never compress it to 1. cost: one line, ZAR range only. instruction: 1 sentence starting with a verb. productionCheck fields: 2 sentences each. overview recommendation: 2 sentences. Total output must stay under 1500 tokens — precision over elaboration.
 
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation.`
 
