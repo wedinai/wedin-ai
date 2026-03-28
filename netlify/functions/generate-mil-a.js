@@ -89,7 +89,8 @@ DINNER: If band already booked for dancing → recommend band covers dinner set 
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
 
 const BATCH_INSTRUCTION = `
-Generate recommendations for these 5 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner. Begin the moments array with the overview as the first entry — name: "Your Wedding", recommendation: [two-sentence overview drawn from three_words + home_listening + crowd_vs_taste + driving_home]. This is the north star for all recommendations that follow. The remaining 5 entries are the moment recommendations.
+Generate recommendations for these 5 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner. Begin the moments array with the overview as the first entry — name: "Your Wedding", recommendation: [two-sentence overview drawn from three_words + home_listening + crowd_vs_taste + driving_home]. The remaining 5 entries are the moment recommendations.
+STRICT OUTPUT LIMIT: One sentence per field, maximum 20 words each. Total JSON output must stay under 1800 tokens. Do not pad or elaborate — brevity is required.
 Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ] }
 No productionCheck.`
 
@@ -207,7 +208,7 @@ ${momentBlock || 'No moment answers provided'}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2000,
+        max_tokens: 2500,
         system: systemPrompt,
         messages: [{ role: 'user', content: prompt }],
       }),
