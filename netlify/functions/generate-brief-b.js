@@ -17,6 +17,8 @@ Rules:
 - Use \\n\\n to separate paragraphs
 - Each moment section must end with a clear operational instruction
 
+STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences plus one operational instruction. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness.
+
 Return ONLY valid JSON: {"coordinatorBrief": "..."}`
 
 // ── Answer formatter ─────────────────────────────────────────────────────────
@@ -183,7 +185,7 @@ Return ONLY valid JSON: {"coordinatorBrief": "..."}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2000,
+        max_tokens: 3000,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: prompt }],
       }),

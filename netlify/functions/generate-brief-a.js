@@ -17,6 +17,8 @@ Rules:
 - Mark each moment section with **MOMENT NAME** on its own line — nothing else on that line
 - Use \\n\\n to separate paragraphs
 
+STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences maximum. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness.
+
 Return ONLY valid JSON: {"coupleBrief": "..."}`
 
 // ── Answer formatter ─────────────────────────────────────────────────────────
@@ -183,7 +185,7 @@ Return ONLY valid JSON: {"coupleBrief": "..."}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2000,
+        max_tokens: 3000,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: prompt }],
       }),
