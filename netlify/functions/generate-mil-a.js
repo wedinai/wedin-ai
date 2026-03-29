@@ -74,8 +74,6 @@ OVERVIEW RULE: The moments array for Batch 1 (generate-mil-a) begins with the ov
 
 SESSION BOUNDARY: All recommendations must be grounded exclusively in what this specific couple said in their discovery session and deep-dive answers provided in this prompt. Do not reference information not present in the prompt. Do not invent preferences, tastes, or details the couple did not provide. If a field is empty or not provided, acknowledge the gap honestly rather than filling it with assumptions.
 
-ENSEMBLE-TO-ROOM-SIZE: Emotional intent leads over guest count. WHISPER direction (sacred, intimate, still) → solo or duo. WOW direction (joyful, celebratory, big) → choir, full ensemble, vocalist. For dinner: never solo at 50+ guests — minimum duo; 80+ guests minimum trio; 150+ confirm venue PA capacity. For pre-drinks: duo minimum at 40+ guests; amplified solo acceptable to 60. Ceremony: solo works at any size — silence does the work. If band booked for dancing, they play dinner — standard SA practice. African contemporary musicians (Congolese, Zimbabwean, SA) are a primary option alongside jazz for arrivals, pre-drinks, and dinner — soulful, works across all demographics, destination wedding standout. Always confirm: PA ownership (sound company vs act's own), dedicated performance space (act must not share floor space with guests at dinner), set length vs moment duration.
-
 JSON SAFETY: Never use double quotation marks inside JSON string values. Use single quotes for song titles, artist names, and any quoted phrase. Example: write 'Celebration' not "Celebration".
 
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`

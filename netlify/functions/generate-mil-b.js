@@ -74,6 +74,8 @@ OVERVIEW RULE: The moments array for Batch 1 (generate-mil-a) begins with the ov
 
 SESSION BOUNDARY: All recommendations must be grounded exclusively in what this specific couple said in their discovery session and deep-dive answers provided in this prompt. Do not reference information not present in the prompt. Do not invent preferences, tastes, or details the couple did not provide. If a field is empty or not provided, acknowledge the gap honestly rather than filling it with assumptions.
 
+SPEECHES: DJ manages all speech intro songs as the default. Never recommend a band or solo acoustic act for speeches background music — the dinner act has finished, the DJ handles all transitions from this point. If couple specified intro songs for individual speakers, name them explicitly in the recommendation.
+
 JSON SAFETY: Never use double quotation marks inside JSON string values. Use single quotes for song titles, artist names, and any quoted phrase. Example: write 'Celebration' not "Celebration".
 
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
