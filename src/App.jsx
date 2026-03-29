@@ -15,6 +15,7 @@ import BriefScreen from './components/BriefScreen.jsx'
 import PostBriefScreen from './components/PostBriefScreen.jsx'
 import MILIntakeScreen from './components/MILIntakeScreen.jsx'
 import MomentConfirmationScreen from './components/MomentConfirmationScreen.jsx'
+import MomentSummaryScreen from './components/MomentSummaryScreen.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -37,6 +38,8 @@ export default function App() {
   const [momentConfirmed, setMomentConfirmed] = useState({})
   const [momentFeedback, setMomentFeedback] = useState({})
   const [pendingConfirmation, setPendingConfirmation] = useState(null) // { momentId, momentName }
+  const [momentSummary, setMomentSummary] = useState(null)
+  const [momentSummaryLoading, setMomentSummaryLoading] = useState(false)
 
   // Persist completedMoments and momentAnswers to localStorage whenever they change
   useEffect(() => {
@@ -228,19 +231,11 @@ export default function App() {
   }
 
   function handlePreDrinksComplete(answers) {
-    setMomentAnswers((prev) => ({ ...prev, predrinks: answers }))
-    setCompletedMoments((prev) => prev.includes('predrinks') ? prev : [...prev, 'predrinks'])
-    setInProgressMoments((prev) => prev.filter((id) => id !== 'predrinks'))
-    setPendingConfirmation({ momentId: 'predrinks', momentName: 'Pre-drinks' })
-    setView('confirm')
+    handleMomentComplete('predrinks', 'Pre-drinks', 'predrinks', answers)
   }
 
   function handleArrivalsComplete(answers) {
-    setMomentAnswers((prev) => ({ ...prev, guestArrivals: answers }))
-    setCompletedMoments((prev) => prev.includes('arrivals') ? prev : [...prev, 'arrivals'])
-    setInProgressMoments((prev) => prev.filter((id) => id !== 'arrivals'))
-    setPendingConfirmation({ momentId: 'arrivals', momentName: 'Guest Arrivals' })
-    setView('confirm')
+    handleMomentComplete('arrivals', 'Guest Arrivals', 'guestArrivals', answers)
   }
 
   function handleCeremonyComplete(answers, summary) {
@@ -275,52 +270,55 @@ export default function App() {
     setView('brief')
   }
 
+  async function handleMomentComplete(momentId, momentName, answersKey, answers) {
+    setMomentAnswers((prev) => ({ ...prev, [answersKey]: answers }))
+    setCompletedMoments((prev) => prev.includes(momentId) ? prev : [...prev, momentId])
+    setInProgressMoments((prev) => prev.filter((id) => id !== momentId))
+    setPendingConfirmation({ momentId, momentName })
+
+    setMomentSummary(null)
+    setMomentSummaryLoading(true)
+    setView('momentSummary')
+
+    try {
+      const res = await fetch('/.netlify/functions/generate-moment-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ momentId, momentName, answers, sessionAnswers, coupleName }),
+      })
+      if (!res.ok) throw new Error('API error')
+      const data = await res.json()
+      setMomentSummary(data.summary || null)
+    } catch (e) {
+      console.error('Moment summary generation failed:', e)
+      setMomentSummary(null)
+    } finally {
+      setMomentSummaryLoading(false)
+    }
+  }
+
   function handleEntranceComplete(answers) {
-    setMomentAnswers((prev) => ({ ...prev, entrance: answers }))
-    setCompletedMoments((prev) => prev.includes('entrance') ? prev : [...prev, 'entrance'])
-    setInProgressMoments((prev) => prev.filter((id) => id !== 'entrance'))
-    setPendingConfirmation({ momentId: 'entrance', momentName: 'Your Entrance' })
-    setView('confirm')
+    handleMomentComplete('entrance', 'Your Entrance', 'entrance', answers)
   }
 
   function handleFirstDanceComplete(answers) {
-    setMomentAnswers((prev) => ({ ...prev, firstDance: answers }))
-    setCompletedMoments((prev) => prev.includes('firstdance') ? prev : [...prev, 'firstdance'])
-    setInProgressMoments((prev) => prev.filter((id) => id !== 'firstdance'))
-    setPendingConfirmation({ momentId: 'firstdance', momentName: 'First Dance' })
-    setView('confirm')
+    handleMomentComplete('firstdance', 'First Dance', 'firstDance', answers)
   }
 
   function handleDinnerComplete(answers) {
-    setMomentAnswers((prev) => ({ ...prev, dinner: answers }))
-    setCompletedMoments((prev) => prev.includes('dinner') ? prev : [...prev, 'dinner'])
-    setInProgressMoments((prev) => prev.filter((id) => id !== 'dinner'))
-    setPendingConfirmation({ momentId: 'dinner', momentName: 'Dinner' })
-    setView('confirm')
+    handleMomentComplete('dinner', 'Dinner', 'dinner', answers)
   }
 
   function handleSpeechesComplete(answers) {
-    setMomentAnswers((prev) => ({ ...prev, speeches: answers }))
-    setCompletedMoments((prev) => prev.includes('speeches') ? prev : [...prev, 'speeches'])
-    setInProgressMoments((prev) => prev.filter((id) => id !== 'speeches'))
-    setPendingConfirmation({ momentId: 'speeches', momentName: 'Speeches' })
-    setView('confirm')
+    handleMomentComplete('speeches', 'Speeches', 'speeches', answers)
   }
 
   function handleDancingComplete(answers) {
-    setMomentAnswers((prev) => ({ ...prev, dancing: answers }))
-    setCompletedMoments((prev) => prev.includes('dancing') ? prev : [...prev, 'dancing'])
-    setInProgressMoments((prev) => prev.filter((id) => id !== 'dancing'))
-    setPendingConfirmation({ momentId: 'dancing', momentName: 'Dancing' })
-    setView('confirm')
+    handleMomentComplete('dancing', 'Dancing', 'dancing', answers)
   }
 
   function handleLastSongComplete(answers) {
-    setMomentAnswers((prev) => ({ ...prev, lastSong: answers }))
-    setCompletedMoments((prev) => prev.includes('lastsong') ? prev : [...prev, 'lastsong'])
-    setInProgressMoments((prev) => prev.filter((id) => id !== 'lastsong'))
-    setPendingConfirmation({ momentId: 'lastsong', momentName: 'Last Song' })
-    setView('confirm')
+    handleMomentComplete('lastsong', 'Last Song', 'lastSong', answers)
   }
 
   async function handleUnlock() {
@@ -477,6 +475,18 @@ export default function App() {
         sessionAnswers={sessionAnswers}
         momentAnswers={momentAnswers}
         coupleName={coupleName}
+      />
+    )
+  }
+
+  if (view === 'momentSummary' && pendingConfirmation) {
+    return (
+      <MomentSummaryScreen
+        momentName={pendingConfirmation.momentName}
+        summary={momentSummary}
+        loading={momentSummaryLoading}
+        error={!momentSummaryLoading && !momentSummary}
+        onNext={() => setView('confirm')}
       />
     )
   }
