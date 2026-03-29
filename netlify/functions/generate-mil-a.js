@@ -78,7 +78,7 @@ JSON SAFETY: Never use double quotation marks inside JSON string values. Use sin
 
 ENSEMBLE-TO-ROOM-SIZE LOGIC: Solo only under 30 guests for dinner; duo minimum for standard wedding dinner (30–80 guests); trio recommended for 60+ guests; ceremony is the exception — solo appropriate at any size due to concentrated attention.
 
-Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
+Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Every field is ONE sentence maximum. If approaching token limit, shorten existing fields before starting new ones. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
 Generate recommendations for these 5 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner. Begin the moments array with the overview as the first entry — name: "Your Wedding", recommendation: [two-sentence overview drawn from three_words + home_listening + crowd_vs_taste + driving_home]. This is the north star for all recommendations that follow. The remaining 5 entries are the moment recommendations.
@@ -199,7 +199,7 @@ ${momentBlock || 'No moment answers provided'}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2500,
+        max_tokens: 3000,
         system: systemPrompt,
         messages: [{ role: 'user', content: prompt }],
       }),

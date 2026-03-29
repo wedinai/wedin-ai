@@ -18,7 +18,7 @@ Rules:
 - Use \\n\\n to separate paragraphs
 - JSON SAFETY: Never use double quotation marks (") anywhere in the brief text — this output is embedded in a JSON string value and unescaped double quotes will break it. Use single quotes (') when referencing song titles, couple's words, or any quoted phrase.
 
-STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences maximum. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness.
+STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences maximum. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness. If approaching token limit, shorten earlier sections before starting new ones. Never leave a JSON object unclosed.
 
 Return ONLY valid JSON: {"coupleBrief": "..."}`
 
