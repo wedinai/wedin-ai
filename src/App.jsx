@@ -110,10 +110,10 @@ export default function App() {
 
     const sessionToRestore = urlSessionId || savedSessionId
 
-    if (sessionToRestore && savedAnswers && savedPortrait) {
+    if (sessionToRestore && savedAnswers) {
       setSessionId(sessionToRestore)
       setSessionAnswers(JSON.parse(savedAnswers))
-      setPortrait(savedPortrait)
+      if (savedPortrait) setPortrait(savedPortrait)
 
       const savedCompleted = localStorage.getItem('wedin_completed_moments')
       if (savedCompleted) setCompletedMoments(JSON.parse(savedCompleted))
