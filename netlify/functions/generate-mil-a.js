@@ -81,7 +81,7 @@ ENSEMBLE-TO-ROOM-SIZE LOGIC: Solo only under 30 guests for dinner; duo minimum f
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Every field is ONE sentence maximum. If approaching token limit, shorten existing fields before starting new ones. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
-Generate recommendations for these 5 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner. Begin the moments array with the overview as the first entry — name: "Your Wedding", recommendation: [two-sentence overview drawn from three_words + home_listening + crowd_vs_taste + driving_home]. This is the north star for all recommendations that follow. The remaining 5 entries are the moment recommendations.
+Generate recommendations for these 5 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner. Begin the moments array with the overview as the first entry — name: "Your Wedding", recommendation: a two-sentence string summarising the couple's emotional intent, drawing from three_words, home_listening, crowd_vs_taste, and driving_home. This is the north star for all recommendations that follow. The remaining 5 entries are the moment recommendations.
 Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ] }
 No productionCheck.`
 
@@ -201,7 +201,10 @@ ${momentBlock || 'No moment answers provided'}`
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 3000,
         system: systemPrompt,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [
+          { role: 'user', content: prompt },
+          { role: 'assistant', content: '{' },
+        ],
       }),
     })
 
@@ -217,15 +220,16 @@ ${momentBlock || 'No moment answers provided'}`
 
     let milRecommendations
     try {
-      const text = data.content
+      const raw = data.content
         .filter(b => b.type === 'text')
         .map(b => b.text)
         .join('')
-      const clean = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
-      const start = clean.indexOf('{')
+      // Prepend the assistant prefill '{' to reconstruct the full JSON
+      const full = '{' + raw
+      const clean = full.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
       const end = clean.lastIndexOf('}')
-      if (start === -1 || end === -1) throw new Error('No JSON object found in response')
-      milRecommendations = JSON.parse(clean.slice(start, end + 1))
+      if (end === -1) throw new Error('No JSON object found in response')
+      milRecommendations = JSON.parse(clean.slice(0, end + 1))
     } catch (err) {
       console.error('MIL-A parse error:', err.message)
       return { statusCode: 500, body: JSON.stringify({ error: 'Failed to parse MIL-A response' }) }
