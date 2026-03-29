@@ -153,7 +153,7 @@ export default function MomentSummaryScreen({ momentName, summary, loading, erro
                 minHeight: 52,
               }}
             >
-              {error ? 'Continue anyway →' : 'This feels right — next →'}
+              {error ? 'Continue anyway →' : 'Next →'}
             </button>
           )}
         </div>
