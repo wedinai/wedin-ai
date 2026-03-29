@@ -40,6 +40,7 @@ export default function App() {
   const [pendingConfirmation, setPendingConfirmation] = useState(null) // { momentId, momentName }
   const [momentSummary, setMomentSummary] = useState(null)
   const [momentSummaryLoading, setMomentSummaryLoading] = useState(false)
+  const [confirmKey, setConfirmKey] = useState(0)
 
   // Persist completedMoments and momentAnswers to localStorage whenever they change
   useEffect(() => {
@@ -264,6 +265,33 @@ export default function App() {
     setView(momentId)
   }
 
+  async function handleUpdateMoment(feedback) {
+    const { momentId, momentName, answersKey } = pendingConfirmation
+    setMomentFeedback((prev) => ({ ...prev, [momentId]: feedback }))
+    setConfirmKey((prev) => prev + 1)
+    setMomentSummary(null)
+    setMomentSummaryLoading(true)
+    setView('momentSummary')
+
+    const answers = momentAnswers[answersKey] || {}
+
+    try {
+      const res = await fetch('/.netlify/functions/generate-moment-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ momentId, momentName, answers, sessionAnswers, coupleName, refinementFeedback: feedback }),
+      })
+      if (!res.ok) throw new Error('API error')
+      const data = await res.json()
+      setMomentSummary(data.summary || null)
+    } catch (e) {
+      console.error('Moment summary update failed:', e)
+      setMomentSummary(null)
+    } finally {
+      setMomentSummaryLoading(false)
+    }
+  }
+
   function handleMILComplete(answers, recommendations) {
     setMilRecommendations(recommendations)
     localStorage.setItem('wedin_mil_recommendations', JSON.stringify(recommendations))
@@ -274,7 +302,7 @@ export default function App() {
     setMomentAnswers((prev) => ({ ...prev, [answersKey]: answers }))
     setCompletedMoments((prev) => prev.includes(momentId) ? prev : [...prev, momentId])
     setInProgressMoments((prev) => prev.filter((id) => id !== momentId))
-    setPendingConfirmation({ momentId, momentName })
+    setPendingConfirmation({ momentId, momentName, answersKey })
 
     setMomentSummary(null)
     setMomentSummaryLoading(true)
@@ -494,10 +522,12 @@ export default function App() {
   if (view === 'confirm' && pendingConfirmation) {
     return (
       <MomentConfirmationScreen
+        key={confirmKey}
         momentId={pendingConfirmation.momentId}
         momentName={pendingConfirmation.momentName}
         onConfirm={handleConfirmMoment}
         onRedo={handleRedoMoment}
+        onUpdate={handleUpdateMoment}
       />
     )
   }

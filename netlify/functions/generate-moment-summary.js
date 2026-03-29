@@ -37,7 +37,7 @@ export const handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }
   }
 
-  const { momentId, momentName, answers = {}, sessionAnswers = {}, coupleName } = body
+  const { momentId, momentName, answers = {}, sessionAnswers = {}, coupleName, refinementFeedback } = body
 
   const name = coupleName && coupleName !== 'Your Wedding' ? coupleName : 'this couple'
 
@@ -46,6 +46,10 @@ export const handler = async (event) => {
     .map(([k, v]) => `- ${k}: ${Array.isArray(v) ? v.join(', ') : v}`)
     .join('\n')
 
+  const refinementSection = refinementFeedback
+    ? `\n\nThe couple has reviewed the summary and provided this feedback:\n- ${refinementFeedback.reflection || 'none'}\n- ${refinementFeedback.practical || 'none'}\n\nUpdate the summary to reflect their feedback specifically.`
+    : ''
+
   const prompt = `Write a ${momentName} music summary for ${name}, speaking directly to them in second person.
 
 Their discovery session context:
@@ -53,7 +57,7 @@ Their discovery session context:
 - Most anticipated moment: ${sessionAnswers['most_anticipated_moment'] || 'not provided'}
 
 Their ${momentName} answers:
-${formattedAnswers || '(no answers provided)'}
+${formattedAnswers || '(no answers provided)'}${refinementSection}
 
 Respond ONLY with valid JSON: {"summary": "3–4 sentence summary"}`
 

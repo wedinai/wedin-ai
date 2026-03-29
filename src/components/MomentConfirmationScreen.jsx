@@ -43,7 +43,7 @@ const COPY = {
 
 // ── Component ────────────────────────────────────────────────────────────────
 
-export default function MomentConfirmationScreen({ momentId, momentName, onConfirm, onRedo }) {
+export default function MomentConfirmationScreen({ momentId, momentName, onConfirm, onRedo, onUpdate }) {
   const [reflection, setReflection] = useState('')
   const [practical, setPractical] = useState('')
   const [mounted, setMounted] = useState(false)
@@ -51,6 +51,7 @@ export default function MomentConfirmationScreen({ momentId, momentName, onConfi
   useEffect(() => { setMounted(true) }, [])
 
   const copy = COPY[momentId] || COPY.arrivals
+  const hasText = reflection.trim().length > 0 || practical.trim().length > 0
 
   if (!mounted) return null
 
@@ -195,7 +196,35 @@ export default function MomentConfirmationScreen({ momentId, momentName, onConfi
           </div>
 
           {/* Actions */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {/* Conditional — update (only when feedback fields have text) */}
+            {hasText && onUpdate && (
+              <button
+                onClick={() => onUpdate({ reflection: reflection.trim(), practical: practical.trim() })}
+                style={{
+                  all: 'unset',
+                  boxSizing: 'border-box',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  padding: '15px 24px',
+                  background: '#FFFFFF',
+                  color: '#C4922A',
+                  border: '1.5px solid #C4922A',
+                  borderRadius: 10,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  minHeight: 52,
+                }}
+              >
+                Update this moment →
+              </button>
+            )}
+
             {/* Primary — confirm */}
             <button
               onClick={() => onConfirm({ reflection: reflection.trim(), practical: practical.trim() })}
@@ -226,18 +255,22 @@ export default function MomentConfirmationScreen({ momentId, momentName, onConfi
               onClick={onRedo}
               style={{
                 all: 'unset',
+                boxSizing: 'border-box',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 width: '100%',
-                padding: '12px 24px',
+                padding: '15px 24px',
+                background: '#FFFFFF',
+                color: '#1C2B3A',
+                border: '1.5px solid rgba(28,43,58,0.15)',
+                borderRadius: 10,
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: 14,
+                fontSize: 15,
                 fontWeight: 500,
-                color: '#C4922A',
                 textAlign: 'center',
-                minHeight: 44,
+                minHeight: 52,
               }}
             >
               Redo this moment
