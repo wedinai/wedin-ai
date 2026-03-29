@@ -14,6 +14,7 @@ import LastSongDeepDive from './components/LastSongDeepDive.jsx'
 import BriefScreen from './components/BriefScreen.jsx'
 import PostBriefScreen from './components/PostBriefScreen.jsx'
 import MILIntakeScreen from './components/MILIntakeScreen.jsx'
+import MomentConfirmationScreen from './components/MomentConfirmationScreen.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -33,6 +34,9 @@ export default function App() {
   const [momentAnswers, setMomentAnswers] = useState({}) // { guestArrivals: {…}, ceremony: {…}, … }
   const [portrait, setPortrait] = useState(null)
   const [milRecommendations, setMilRecommendations] = useState(null)
+  const [momentConfirmed, setMomentConfirmed] = useState({})
+  const [momentFeedback, setMomentFeedback] = useState({})
+  const [pendingConfirmation, setPendingConfirmation] = useState(null) // { momentId, momentName }
 
   // Persist completedMoments and momentAnswers to localStorage whenever they change
   useEffect(() => {
@@ -46,6 +50,18 @@ export default function App() {
       localStorage.setItem('wedin_moment_answers', JSON.stringify(momentAnswers))
     }
   }, [momentAnswers])
+
+  useEffect(() => {
+    if (Object.keys(momentConfirmed).length > 0) {
+      localStorage.setItem('wedin_moment_confirmed', JSON.stringify(momentConfirmed))
+    }
+  }, [momentConfirmed])
+
+  useEffect(() => {
+    if (Object.keys(momentFeedback).length > 0) {
+      localStorage.setItem('wedin_moment_feedback', JSON.stringify(momentFeedback))
+    }
+  }, [momentFeedback])
 
   // Save session to Supabase whenever a completed set of answers arrives
   useEffect(() => {
@@ -132,6 +148,12 @@ export default function App() {
         try { setMilRecommendations(JSON.parse(storedMilRecs)) } catch (e) {}
       }
 
+      const savedConfirmed = localStorage.getItem('wedin_moment_confirmed')
+      if (savedConfirmed) { try { setMomentConfirmed(JSON.parse(savedConfirmed)) } catch (e) {} }
+
+      const savedFeedback = localStorage.getItem('wedin_moment_feedback')
+      if (savedFeedback) { try { setMomentFeedback(JSON.parse(savedFeedback)) } catch (e) {} }
+
       setView('momentMap') // skip discovery and portrait, go straight to the map
     }
   }, [])
@@ -155,6 +177,8 @@ export default function App() {
     localStorage.removeItem('wedin_is_paid')
     localStorage.removeItem('wedin_couple_name')
     localStorage.removeItem('wedin_mil_recommendations')
+    localStorage.removeItem('wedin_moment_confirmed')
+    localStorage.removeItem('wedin_moment_feedback')
     setSessionAnswers({})
     setSessionId(null)
     setPortrait(null)
@@ -162,6 +186,9 @@ export default function App() {
     setCompletedMoments([])
     setMomentAnswers({})
     setMilRecommendations(null)
+    setMomentConfirmed({})
+    setMomentFeedback({})
+    setPendingConfirmation(null)
     setView('discovery')
   }
 
@@ -204,25 +231,42 @@ export default function App() {
     setMomentAnswers((prev) => ({ ...prev, predrinks: answers }))
     setCompletedMoments((prev) => prev.includes('predrinks') ? prev : [...prev, 'predrinks'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'predrinks'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'predrinks', momentName: 'Pre-drinks' })
+    setView('confirm')
   }
 
   function handleArrivalsComplete(answers) {
     setMomentAnswers((prev) => ({ ...prev, guestArrivals: answers }))
     setCompletedMoments((prev) => prev.includes('arrivals') ? prev : [...prev, 'arrivals'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'arrivals'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'arrivals', momentName: 'Guest Arrivals' })
+    setView('confirm')
   }
 
   function handleCeremonyComplete(answers, summary) {
     setMomentAnswers((prev) => ({ ...prev, ceremony: answers }))
     setCompletedMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'ceremony'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'ceremony', momentName: 'Ceremony' })
+    setView('confirm')
   }
 
   function handleGenerateBrief() {
     setView('postBrief')
+  }
+
+  function handleConfirmMoment(feedback) {
+    const { momentId } = pendingConfirmation
+    setMomentConfirmed((prev) => ({ ...prev, [momentId]: true }))
+    setMomentFeedback((prev) => ({ ...prev, [momentId]: feedback }))
+    setPendingConfirmation(null)
+    setView('momentMap')
+  }
+
+  function handleRedoMoment() {
+    const { momentId } = pendingConfirmation
+    setPendingConfirmation(null)
+    setView(momentId)
   }
 
   function handleMILComplete(answers, recommendations) {
@@ -235,42 +279,48 @@ export default function App() {
     setMomentAnswers((prev) => ({ ...prev, entrance: answers }))
     setCompletedMoments((prev) => prev.includes('entrance') ? prev : [...prev, 'entrance'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'entrance'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'entrance', momentName: 'Your Entrance' })
+    setView('confirm')
   }
 
   function handleFirstDanceComplete(answers) {
     setMomentAnswers((prev) => ({ ...prev, firstDance: answers }))
     setCompletedMoments((prev) => prev.includes('firstdance') ? prev : [...prev, 'firstdance'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'firstdance'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'firstdance', momentName: 'First Dance' })
+    setView('confirm')
   }
 
   function handleDinnerComplete(answers) {
     setMomentAnswers((prev) => ({ ...prev, dinner: answers }))
     setCompletedMoments((prev) => prev.includes('dinner') ? prev : [...prev, 'dinner'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'dinner'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'dinner', momentName: 'Dinner' })
+    setView('confirm')
   }
 
   function handleSpeechesComplete(answers) {
     setMomentAnswers((prev) => ({ ...prev, speeches: answers }))
     setCompletedMoments((prev) => prev.includes('speeches') ? prev : [...prev, 'speeches'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'speeches'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'speeches', momentName: 'Speeches' })
+    setView('confirm')
   }
 
   function handleDancingComplete(answers) {
     setMomentAnswers((prev) => ({ ...prev, dancing: answers }))
     setCompletedMoments((prev) => prev.includes('dancing') ? prev : [...prev, 'dancing'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'dancing'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'dancing', momentName: 'Dancing' })
+    setView('confirm')
   }
 
   function handleLastSongComplete(answers) {
     setMomentAnswers((prev) => ({ ...prev, lastSong: answers }))
     setCompletedMoments((prev) => prev.includes('lastsong') ? prev : [...prev, 'lastsong'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'lastsong'))
-    setView('momentMap')
+    setPendingConfirmation({ momentId: 'lastsong', momentName: 'Last Song' })
+    setView('confirm')
   }
 
   async function handleUnlock() {
@@ -431,13 +481,26 @@ export default function App() {
     )
   }
 
+  if (view === 'confirm' && pendingConfirmation) {
+    return (
+      <MomentConfirmationScreen
+        momentId={pendingConfirmation.momentId}
+        momentName={pendingConfirmation.momentName}
+        onConfirm={handleConfirmMoment}
+        onRedo={handleRedoMoment}
+      />
+    )
+  }
+
   if (view === 'momentMap') {
+    const confirmedMoments = Object.keys(momentConfirmed).filter((k) => momentConfirmed[k])
     return (
       <MomentMap
         coupleName={coupleName}
         isPaid={isPaid}
         isUnlocking={unlocking}
         completedMoments={completedMoments}
+        confirmedMoments={confirmedMoments}
         inProgressMoments={inProgressMoments}
         onUnlock={handleUnlock}
         onMomentStart={handleMomentStart}

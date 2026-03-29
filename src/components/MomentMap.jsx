@@ -97,26 +97,29 @@ const WARMTH_COLORS = {
 // ─── Status chip ───────────────────────────────────────────────────────────
 function StatusChip({ status }) {
   const styles = {
+    confirmed: {
+      bg: "rgba(196,146,42,0.12)",
+      text: "#C4922A",
+      label: "Confirmed",
+    },
     complete: {
       bg: "#1C2B3A",
       text: "#FAF7F2",
       label: "Complete",
-      dot: "#C4922A",
     },
     "in-progress": {
       bg: "rgba(196,146,42,0.12)",
       text: "#C4922A",
       label: "In progress",
-      dot: "#C4922A",
     },
     locked: {
       bg: "rgba(28,43,58,0.06)",
       text: "#6B6560",
       label: "Not started",
-      dot: "#6B6560",
     },
   };
   const s = styles[status] || styles.locked;
+  const isConfirmed = status === "confirmed";
   return (
     <span
       style={{
@@ -134,15 +137,21 @@ function StatusChip({ status }) {
         whiteSpace: "nowrap",
       }}
     >
-      <span
-        style={{
-          width: 5,
-          height: 5,
-          borderRadius: "50%",
-          background: s.dot,
-          flexShrink: 0,
-        }}
-      />
+      {isConfirmed ? (
+        <svg width="9" height="9" fill="none" viewBox="0 0 9 9" style={{ flexShrink: 0 }}>
+          <path d="M1.5 4.5l2 2 4-4" stroke="#C4922A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        <span
+          style={{
+            width: 5,
+            height: 5,
+            borderRadius: "50%",
+            background: status === "complete" ? "#C4922A" : status === "in-progress" ? "#C4922A" : "#6B6560",
+            flexShrink: 0,
+          }}
+        />
+      )}
       {s.label}
     </span>
   );
@@ -204,6 +213,21 @@ function MomentCard({ moment, status, isActive, isPaid, onClick, index }) {
             height: 3,
             background: `linear-gradient(90deg, ${color.node}, transparent)`,
             borderRadius: "16px 16px 0 0",
+          }}
+        />
+      )}
+
+      {/* Gold left strip on confirmed */}
+      {status === "confirmed" && (
+        <span
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 3,
+            background: "#C4922A",
+            borderRadius: "16px 0 0 16px",
           }}
         />
       )}
@@ -461,7 +485,7 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
               transition: "all 200ms ease",
             }}
           >
-            {status === "complete" ? "Review this moment" : "Plan this moment"}
+            {status === "complete" || status === "confirmed" ? "Review this moment" : "Plan this moment"}
             <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
               <path
                 d="M8 1l7 7-7 7M1 8h14"
@@ -708,12 +732,13 @@ export default function MomentMap({
   // Props the parent passes in
   coupleName = "Sarah & James",
   completedMoments = [], // array of moment IDs that are 'complete'
+  confirmedMoments = [], // array of moment IDs that are 'confirmed'
   inProgressMoments = [], // array of moment IDs that are 'in-progress'
   isPaid = false, // false = show locked state + unlock CTA
   isUnlocking = false, // true while Stripe redirect is in flight
   onUnlock = () => {}, // called when couple clicks unlock / pay
   onMomentStart = () => {}, // called with moment.id when a paid moment is started
-  onGenerateBrief = () => {}, // called when all moments complete and couple clicks generate
+  onGenerateBrief = () => {}, // called when all moments confirmed and couple clicks generate
 }) {
   const [activeMoment, setActiveMoment] = useState(null);
   const [mounted, setMounted] = useState(false);
@@ -723,12 +748,14 @@ export default function MomentMap({
   }, []);
 
   const getStatus = (momentId) => {
+    if (confirmedMoments.includes(momentId)) return "confirmed";
     if (completedMoments.includes(momentId)) return "complete";
     if (inProgressMoments.includes(momentId)) return "in-progress";
     return "locked";
   };
 
   const completedCount = completedMoments.length;
+  const confirmedCount = confirmedMoments.length;
 
   const handleMomentClick = (moment) => {
     if (activeMoment?.id === moment.id) {
@@ -937,44 +964,60 @@ export default function MomentMap({
                 animation: "fadeSlideIn 400ms ease both",
               }}
             >
-              <p
-                style={{
-                  margin: "0 0 16px",
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 22,
-                  color: "#1C2B3A",
-                }}
-              >
-                All 9 moments complete. Your brief is ready to build.
-              </p>
-              <button
-                onClick={onGenerateBrief}
-                style={{
-                  all: "unset",
-                  cursor: "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "14px 32px",
-                  background: "#1C2B3A",
-                  color: "#FAF7F2",
-                  borderRadius: 10,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                  fontWeight: 500,
-                }}
-              >
-                Build my brief →
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <path
-                    d="M8 1l7 7-7 7M1 8h14"
-                    stroke="#FAF7F2"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
+              {confirmedCount === MOMENTS.length ? (
+                <>
+                  <p
+                    style={{
+                      margin: "0 0 16px",
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: 22,
+                      color: "#1C2B3A",
+                    }}
+                  >
+                    All 9 moments confirmed. Your brief is ready to build.
+                  </p>
+                  <button
+                    onClick={onGenerateBrief}
+                    style={{
+                      all: "unset",
+                      cursor: "pointer",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "14px 32px",
+                      background: "#1C2B3A",
+                      color: "#FAF7F2",
+                      borderRadius: 10,
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 14,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Build my brief →
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                      <path
+                        d="M8 1l7 7-7 7M1 8h14"
+                        stroke="#FAF7F2"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </>
+              ) : (
+                <p
+                  style={{
+                    margin: 0,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    color: "#6B6560",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Complete and confirm all 9 moments to build your brief.
+                </p>
+              )}
             </div>
           )}
 
