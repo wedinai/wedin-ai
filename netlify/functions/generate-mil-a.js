@@ -74,7 +74,7 @@ OVERVIEW RULE: The moments array for Batch 1 (generate-mil-a) begins with the ov
 
 SESSION BOUNDARY: All recommendations must be grounded exclusively in what this specific couple said in their discovery session and deep-dive answers provided in this prompt. Do not reference information not present in the prompt. Do not invent preferences, tastes, or details the couple did not provide. If a field is empty or not provided, acknowledge the gap honestly rather than filling it with assumptions.
 
-JSON SAFETY: Never use double quotation marks inside JSON string values. Use single quotes for song titles, artist names, and any quoted phrase. Example: write 'Celebration' not "Celebration".
+JSON SAFETY: Never use double quotation marks inside JSON string values. Use single quotes for song titles, artist names, and any quoted phrase. Example: write 'Celebration' not "Celebration". Never use double quote characters inside field values. Use single quotes for emphasis or song titles (e.g. 'Hallelujah' not "Hallelujah"). This is critical for valid JSON output.
 
 ENSEMBLE-TO-ROOM-SIZE LOGIC: Solo only under 30 guests for dinner; duo minimum for standard wedding dinner (30–80 guests); trio recommended for 60+ guests; ceremony is the exception — solo appropriate at any size due to concentrated attention.
 
@@ -147,6 +147,47 @@ function formatAnswers(ma) {
   ]))
 
   return sections.join('\n')
+}
+
+// ── JSON sanitisation ─────────────────────────────────────────────────────────
+
+function sanitiseMILResponse(raw) {
+  // Prepend the assistant prefill character
+  const full = '{' + raw
+  // Remove any markdown code fences
+  const clean = full.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+  // Find the outermost JSON boundaries
+  const end = clean.lastIndexOf('}')
+  if (end === -1) throw new Error('No JSON object found in response')
+  const candidate = clean.slice(0, end + 1)
+  // Attempt direct parse first
+  try {
+    return JSON.parse(candidate)
+  } catch (e) {
+    // Sanitise unescaped double quotes inside string values
+    // Replace any " that is not preceded by \ and not a structural character
+    const sanitised = candidate.replace(
+      /("(?:[^"\\]|\\.)*")|([^"{}[\]:,\s])/g,
+      (match, stringToken, other) => {
+        if (stringToken) {
+          // Inside a JSON string — escape any unescaped internal quotes
+          return stringToken.replace(/(?<!\\)"/g, '\\"').replace(/^"|"$/g, '"')
+        }
+        return match
+      }
+    )
+    try {
+      return JSON.parse(sanitised)
+    } catch (e2) {
+      // Final fallback — find last complete object
+      const lastComplete = candidate.lastIndexOf('},')
+      if (lastComplete > 0) {
+        const repaired = candidate.substring(0, lastComplete + 1) + ']}}'
+        return JSON.parse(repaired)
+      }
+      throw new Error('All parse attempts failed: ' + e2.message)
+    }
+  }
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────────
@@ -224,12 +265,7 @@ ${momentBlock || 'No moment answers provided'}`
         .filter(b => b.type === 'text')
         .map(b => b.text)
         .join('')
-      // Prepend the assistant prefill '{' to reconstruct the full JSON
-      const full = '{' + raw
-      const clean = full.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
-      const end = clean.lastIndexOf('}')
-      if (end === -1) throw new Error('No JSON object found in response')
-      milRecommendations = JSON.parse(clean.slice(0, end + 1))
+      milRecommendations = sanitiseMILResponse(raw)
     } catch (err) {
       console.error('MIL-A parse error:', err.message)
       return { statusCode: 500, body: JSON.stringify({ error: 'Failed to parse MIL-A response' }) }
