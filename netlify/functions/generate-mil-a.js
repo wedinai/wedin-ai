@@ -74,6 +74,8 @@ OVERVIEW RULE: The moments array for Batch 1 (generate-mil-a) begins with the ov
 
 SESSION BOUNDARY: All recommendations must be grounded exclusively in what this specific couple said in their discovery session and deep-dive answers provided in this prompt. Do not reference information not present in the prompt. Do not invent preferences, tastes, or details the couple did not provide. If a field is empty or not provided, acknowledge the gap honestly rather than filling it with assumptions.
 
+ENSEMBLE-TO-ROOM-SIZE LOGIC: Solo only under 30 guests for dinner; duo minimum for standard wedding dinner (30–80 guests); trio recommended for 60+ guests; ceremony is the exception — solo appropriate at any size due to concentrated attention.
+
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
 
 const BATCH_INSTRUCTION = `
