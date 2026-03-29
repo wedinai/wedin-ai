@@ -76,6 +76,8 @@ SESSION BOUNDARY: All recommendations must be grounded exclusively in what this 
 
 JSON SAFETY: Never use double quotation marks inside JSON string values. Use single quotes for song titles, artist names, and any quoted phrase. Example: write 'Celebration' not "Celebration".
 
+ENSEMBLE-TO-ROOM-SIZE LOGIC: Solo only under 30 guests for dinner; duo minimum for standard wedding dinner (30–80 guests); trio recommended for 60+ guests; ceremony is the exception — solo appropriate at any size due to concentrated attention.
+
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. One to two sentences per field maximum.`
 
 const BATCH_INSTRUCTION = `
