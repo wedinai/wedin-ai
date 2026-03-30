@@ -531,7 +531,6 @@ export default function App() {
         key={confirmKey}
         momentId={pendingConfirmation.momentId}
         momentName={pendingConfirmation.momentName}
-        onConfirm={handleConfirmMoment}
         onRedo={handleRedoMoment}
         onUpdate={handleUpdateMoment}
       />

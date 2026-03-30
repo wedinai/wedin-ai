@@ -43,7 +43,7 @@ const COPY = {
 
 // ── Component ────────────────────────────────────────────────────────────────
 
-export default function MomentConfirmationScreen({ momentId, momentName, onConfirm, onRedo, onUpdate }) {
+export default function MomentConfirmationScreen({ momentId, momentName, onRedo, onUpdate }) {
   const [reflection, setReflection] = useState('')
   const [practical, setPractical] = useState('')
   const [mounted, setMounted] = useState(false)
@@ -135,7 +135,7 @@ export default function MomentConfirmationScreen({ momentId, momentName, onConfi
               lineHeight: 1.15,
             }}
           >
-            Does this feel right?
+            What would you like to change?
           </h1>
 
           {/* Text area 1 */}
@@ -186,57 +186,33 @@ export default function MomentConfirmationScreen({ momentId, momentName, onConfi
 
           {/* Actions */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {/* Conditional — update (only when feedback fields have text) */}
-            {hasText && onUpdate && (
-              <button
-                onClick={() => onUpdate({ reflection: reflection.trim(), practical: practical.trim() })}
-                style={{
-                  all: 'unset',
-                  boxSizing: 'border-box',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '100%',
-                  padding: '15px 24px',
-                  background: '#FFFFFF',
-                  color: '#C4922A',
-                  border: '1.5px solid #C4922A',
-                  borderRadius: 10,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  textAlign: 'center',
-                  minHeight: 52,
-                }}
-              >
-                Update this moment →
-              </button>
-            )}
-
-            {/* Primary — confirm */}
+            {/* Primary — update (always visible, disabled at 40% opacity until text present) */}
             <button
-              onClick={() => onConfirm({ reflection: reflection.trim(), practical: practical.trim() })}
+              onClick={() => { if (hasText) onUpdate({ reflection: reflection.trim(), practical: practical.trim() }) }}
+              disabled={!hasText}
               style={{
                 all: 'unset',
                 boxSizing: 'border-box',
-                cursor: 'pointer',
+                cursor: hasText ? 'pointer' : 'default',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 width: '100%',
                 padding: '15px 24px',
-                background: '#1C2B3A',
-                color: '#FAF7F2',
+                background: '#FFFFFF',
+                color: '#C4922A',
+                border: '1.5px solid #C4922A',
                 borderRadius: 10,
                 fontFamily: "'DM Sans', sans-serif",
                 fontSize: 15,
                 fontWeight: 500,
                 textAlign: 'center',
                 minHeight: 52,
+                opacity: hasText ? 1 : 0.4,
+                transition: 'opacity 180ms ease',
               }}
             >
-              Looks good — back to map
+              Update this moment →
             </button>
 
             {/* Secondary — redo */}
