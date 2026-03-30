@@ -515,6 +515,12 @@ export default function App() {
         loading={momentSummaryLoading}
         error={!momentSummaryLoading && !momentSummary}
         onNext={() => setView('confirm')}
+        onConfirm={() => {
+          const { momentId } = pendingConfirmation
+          setMomentConfirmed(prev => ({ ...prev, [momentId]: true }))
+          setPendingConfirmation(null)
+          setView('momentMap')
+        }}
       />
     )
   }

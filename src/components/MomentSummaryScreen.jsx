@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-export default function MomentSummaryScreen({ momentName, summary, loading, error, onNext }) {
+export default function MomentSummaryScreen({ momentName, summary, loading, error, onNext, onConfirm }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
@@ -130,31 +130,59 @@ export default function MomentSummaryScreen({ momentName, summary, loading, erro
             </p>
           )}
 
-          {/* Button — only show when not loading */}
+          {/* Buttons — only show when not loading */}
           {!loading && (
-            <button
-              onClick={onNext}
-              style={{
-                all: 'unset',
-                boxSizing: 'border-box',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                padding: '15px 24px',
-                background: '#1C2B3A',
-                color: '#FAF7F2',
-                borderRadius: 10,
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 15,
-                fontWeight: 500,
-                textAlign: 'center',
-                minHeight: 52,
-              }}
-            >
-              {error ? 'Continue anyway →' : 'Next →'}
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <button
+                onClick={onConfirm}
+                style={{
+                  all: 'unset',
+                  boxSizing: 'border-box',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  padding: '15px 24px',
+                  background: '#1C2B3A',
+                  color: '#FAF7F2',
+                  borderRadius: 10,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  minHeight: 52,
+                }}
+              >
+                {error ? 'Continue anyway →' : 'Yes, this feels right →'}
+              </button>
+              {!error && (
+                <button
+                  onClick={onNext}
+                  style={{
+                    all: 'unset',
+                    boxSizing: 'border-box',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    padding: '15px 24px',
+                    background: '#FFFFFF',
+                    color: '#1C2B3A',
+                    border: '1.5px solid #1C2B3A',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    minHeight: 52,
+                  }}
+                >
+                  I'd like to change something
+                </button>
+              )}
+            </div>
           )}
         </div>
 
