@@ -187,7 +187,6 @@ export default function SpeechesDeepDive({
 }) {
   const [answers, setAnswers] = useState({})
   const [stepIndex, setStepIndex] = useState(0)
-  const [screen, setScreen] = useState('question') // 'question' | 'complete'
   const [textValue, setTextValue] = useState('')
   const [otherSelected, setOtherSelected] = useState(false)
   const [otherText, setOtherText] = useState('')
@@ -226,7 +225,19 @@ export default function SpeechesDeepDive({
     const newActiveSteps = getActiveSteps(newAnswers)
     const nextIndex = stepIndex + 1
     if (nextIndex >= newActiveSteps.length) {
-      setScreen('complete')
+      const finalAnswers = {
+        speeches_count: newAnswers.speeches_count || null,
+        speeches_intro_songs: newAnswers.speeches_intro_songs || null,
+        speeches_intro_details: INTRO_BRANCH_VALUES.includes(newAnswers.speeches_intro_songs)
+          ? (newAnswers.speeches_intro_details || null)
+          : null,
+        speeches_between: newAnswers.speeches_between || null,
+        speeches_outro: newAnswers.speeches_outro || null,
+        speeches_outro_context: newAnswers.speeches_outro_context || null,
+        speeches_surprises: newAnswers.speeches_surprises || null,
+        speeches_surprises_context: newAnswers.speeches_surprises_context || null,
+      }
+      onComplete?.(finalAnswers)
     } else {
       setStepIndex(nextIndex)
     }
@@ -264,114 +275,6 @@ export default function SpeechesDeepDive({
   }
 
   if (!mounted) return null
-
-  // ── Completion screen ────────────────────────────────────────────────────
-  if (screen === 'complete') {
-    const finalAnswers = {
-      speeches_count: answers.speeches_count || null,
-      speeches_intro_songs: answers.speeches_intro_songs || null,
-      speeches_intro_details: INTRO_BRANCH_VALUES.includes(answers.speeches_intro_songs)
-        ? (answers.speeches_intro_details || null)
-        : null,
-      speeches_between: answers.speeches_between || null,
-      speeches_outro: answers.speeches_outro || null,
-      speeches_outro_context: answers.speeches_outro_context || null,
-      speeches_surprises: answers.speeches_surprises || null,
-      speeches_surprises_context: answers.speeches_surprises_context || null,
-    }
-
-    // Surprises note shown on completion screen if applicable
-    const completionNote = finalAnswers.speeches_surprises_context
-
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#FAF7F2',
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 64px' }}>
-
-          <p
-            style={{
-              margin: '0 0 8px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
-              fontWeight: 500,
-              color: '#C4922A',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Speeches · Complete
-          </p>
-
-          <h1
-            style={{
-              margin: '0 0 24px',
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 32,
-              fontWeight: 400,
-              color: '#1C2B3A',
-              lineHeight: 1.2,
-            }}
-          >
-            Speeches are planned.
-          </h1>
-
-          {completionNote && (
-            <ContextNote text={completionNote} />
-          )}
-
-          <p
-            style={{
-              margin: '0 0 40px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 16,
-              color: '#6B6560',
-              lineHeight: 1.7,
-            }}
-          >
-            The most personal moments of the day — and the music around them — are mapped. Your answers are saved and will feed into your music brief.
-          </p>
-
-          <button
-            onClick={() => onComplete?.(finalAnswers)}
-            style={{
-              all: 'unset',
-              boxSizing: 'border-box',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              width: '100%',
-              padding: '15px 24px',
-              background: '#1C2B3A',
-              color: '#FAF7F2',
-              borderRadius: 10,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 15,
-              fontWeight: 500,
-            }}
-          >
-            Back to your Moment Map
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path
-                d="M8 1l7 7-7 7M1 8h14"
-                stroke="#FAF7F2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-
-        </div>
-      </div>
-    )
-  }
 
   // ── Question screen ──────────────────────────────────────────────────────
   const pct = Math.round((stepIndex / totalSteps) * 100)

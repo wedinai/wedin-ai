@@ -128,7 +128,6 @@ export default function LastSongDeepDive({
 }) {
   const [answers, setAnswers] = useState({})
   const [stepIndex, setStepIndex] = useState(0)
-  const [screen, setScreen] = useState('question') // 'question' | 'complete'
   const [textValue, setTextValue] = useState('')
   const [otherSelected, setOtherSelected] = useState(false)
   const [otherText, setOtherText] = useState('')
@@ -164,7 +163,14 @@ export default function LastSongDeepDive({
 
     const nextIndex = stepIndex + 1
     if (nextIndex >= totalSteps) {
-      setScreen('complete')
+      const finalAnswers = {
+        lastsong_song: newAnswers.lastsong_song || null,
+        lastsong_energy: newAnswers.lastsong_energy || null,
+        lastsong_energy_context: newAnswers.lastsong_energy_context || null,
+        lastsong_instruction: newAnswers.lastsong_instruction || null,
+        lastsong_instruction_context: newAnswers.lastsong_instruction_context || null,
+      }
+      onComplete?.(finalAnswers)
     } else {
       setStepIndex(nextIndex)
     }
@@ -198,120 +204,6 @@ export default function LastSongDeepDive({
       : null
 
   if (!mounted) return null
-
-  // ── Completion screen ────────────────────────────────────────────────────
-  if (screen === 'complete') {
-    const finalAnswers = {
-      lastsong_song: answers.lastsong_song || null,
-      lastsong_energy: answers.lastsong_energy || null,
-      lastsong_energy_context: answers.lastsong_energy_context || null,
-      lastsong_instruction: answers.lastsong_instruction || null,
-      lastsong_instruction_context: answers.lastsong_instruction_context || null,
-    }
-
-    const completionNote = finalAnswers.lastsong_instruction_context
-
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#FAF7F2',
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 64px' }}>
-
-          <p
-            style={{
-              margin: '0 0 8px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
-              fontWeight: 500,
-              color: '#C4922A',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Last Song · Complete
-          </p>
-
-          <h1
-            style={{
-              margin: '0 0 12px',
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 32,
-              fontWeight: 400,
-              color: '#1C2B3A',
-              lineHeight: 1.2,
-            }}
-          >
-            Your music plan is complete.
-          </h1>
-
-          <p
-            style={{
-              margin: '0 0 28px',
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 20,
-              fontStyle: 'italic',
-              fontWeight: 400,
-              color: '#6B6560',
-              lineHeight: 1.4,
-            }}
-          >
-            Every moment of your day, mapped.
-          </p>
-
-          {completionNote && <ContextNote text={completionNote} />}
-
-          <p
-            style={{
-              margin: '0 0 40px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 16,
-              color: '#6B6560',
-              lineHeight: 1.7,
-            }}
-          >
-            From the first song guests hear as they arrive to the last song that brings everyone together one final time — it's all here. Your brief is being assembled.
-          </p>
-
-          <button
-            onClick={() => onComplete?.(finalAnswers)}
-            style={{
-              all: 'unset',
-              boxSizing: 'border-box',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              width: '100%',
-              padding: '15px 24px',
-              background: '#1C2B3A',
-              color: '#FAF7F2',
-              borderRadius: 10,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 15,
-              fontWeight: 500,
-            }}
-          >
-            Back to your Moment Map
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path
-                d="M8 1l7 7-7 7M1 8h14"
-                stroke="#FAF7F2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-
-        </div>
-      </div>
-    )
-  }
 
   // ── Question screen ──────────────────────────────────────────────────────
   const pct = Math.round((stepIndex / totalSteps) * 100)

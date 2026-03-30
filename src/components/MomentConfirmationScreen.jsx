@@ -127,7 +127,7 @@ export default function MomentConfirmationScreen({ momentId, momentName, onConfi
           </p>
           <h1
             style={{
-              margin: '0 0 8px',
+              margin: '0 0 40px',
               fontFamily: "'Cormorant Garamond', serif",
               fontSize: 32,
               fontWeight: 400,
@@ -137,17 +137,6 @@ export default function MomentConfirmationScreen({ momentId, momentName, onConfi
           >
             Does this feel right?
           </h1>
-          <p
-            style={{
-              margin: '0 0 40px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 14,
-              color: '#6B6560',
-              lineHeight: 1.6,
-            }}
-          >
-            Before you move on — does this feel right?
-          </p>
 
           {/* Text area 1 */}
           <div style={{ marginBottom: 32 }}>

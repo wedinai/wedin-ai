@@ -117,6 +117,19 @@ const ADDITIONAL_NOTE =
 const TRANSITION_DISPLAY_NOTE =
   "The thirty seconds after the first dance ends is the most important transition of the night. We'll include a specific instruction to your act or DJ in the brief — what to play, when to start, and how to bring the room with them."
 
+// ── Builds the final answers object (nulls out branch fields if branch not taken) ──
+
+function buildFinalAnswers(answers) {
+  const final = { ...answers }
+  if (final.firstdance_additional !== 'Yes — there are additional dances') {
+    final.firstdance_additional_who = null
+    final.firstdance_additional_sequence = null
+  }
+  if (!('firstdance_live_context' in final)) final.firstdance_live_context = null
+  if (!('firstdance_transition_context' in final)) final.firstdance_transition_context = null
+  return final
+}
+
 // ── Chip button ────────────────────────────────────────────────────────────
 
 function Chip({ label, selected, onClick }) {
@@ -185,7 +198,6 @@ export default function FirstDanceDeepDive({
 }) {
   const [answers, setAnswers] = useState({})
   const [stepIndex, setStepIndex] = useState(0)
-  const [screen, setScreen] = useState('question') // 'question' | 'complete'
   const [textValue, setTextValue] = useState('')
   const [otherSelected, setOtherSelected] = useState(false)
   const [otherText, setOtherText] = useState('')
@@ -225,7 +237,7 @@ export default function FirstDanceDeepDive({
     const newActiveSteps = getActiveSteps(newAnswers)
     const nextIndex = stepIndex + 1
     if (nextIndex >= newActiveSteps.length) {
-      setScreen('complete')
+      onComplete?.(buildFinalAnswers(newAnswers))
     } else {
       setStepIndex(nextIndex)
     }
@@ -263,107 +275,6 @@ export default function FirstDanceDeepDive({
   }
 
   if (!mounted) return null
-
-  // ── Completion screen ────────────────────────────────────────────────────
-  if (screen === 'complete') {
-    function getFinalAnswers() {
-      const final = { ...answers }
-      // Null out branch fields if branch was not taken
-      if (final.firstdance_additional !== 'Yes — there are additional dances') {
-        final.firstdance_additional_who = null
-        final.firstdance_additional_sequence = null
-      }
-      // Ensure all spec fields are present
-      if (!('firstdance_live_context' in final)) final.firstdance_live_context = null
-      if (!('firstdance_transition_context' in final)) final.firstdance_transition_context = null
-      return final
-    }
-
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#FAF7F2',
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 64px' }}>
-
-          <p
-            style={{
-              margin: '0 0 8px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
-              fontWeight: 500,
-              color: '#C4922A',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-            }}
-          >
-            First Dance · Complete
-          </p>
-
-          <h1
-            style={{
-              margin: '0 0 24px',
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 32,
-              fontWeight: 400,
-              color: '#1C2B3A',
-              lineHeight: 1.2,
-            }}
-          >
-            First Dance is planned.
-          </h1>
-
-          <p
-            style={{
-              margin: '0 0 40px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 16,
-              color: '#6B6560',
-              lineHeight: 1.7,
-            }}
-          >
-            The song, the dances that follow, and the moment the floor opens — it's all mapped. Your answers are saved and will feed into your music brief.
-          </p>
-
-          <button
-            onClick={() => onComplete?.(getFinalAnswers())}
-            style={{
-              all: 'unset',
-              boxSizing: 'border-box',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              width: '100%',
-              padding: '15px 24px',
-              background: '#1C2B3A',
-              color: '#FAF7F2',
-              borderRadius: 10,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 15,
-              fontWeight: 500,
-            }}
-          >
-            Back to your Moment Map
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path
-                d="M8 1l7 7-7 7M1 8h14"
-                stroke="#FAF7F2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-
-        </div>
-      </div>
-    )
-  }
 
   // ── Question screen ──────────────────────────────────────────────────────
   const pct = Math.round((stepIndex / totalSteps) * 100)

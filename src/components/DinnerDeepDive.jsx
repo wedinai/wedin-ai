@@ -131,7 +131,6 @@ export default function DinnerDeepDive({
 }) {
   const [answers, setAnswers] = useState({})
   const [stepIndex, setStepIndex] = useState(0)
-  const [screen, setScreen] = useState('question') // 'question' | 'complete'
   const [textValue, setTextValue] = useState('')
   const [otherSelected, setOtherSelected] = useState(false)
   const [otherText, setOtherText] = useState('')
@@ -164,7 +163,14 @@ export default function DinnerDeepDive({
 
     const nextIndex = stepIndex + 1
     if (nextIndex >= totalSteps) {
-      setScreen('complete')
+      const finalAnswers = {
+        dinner_atmosphere: newAnswers.dinner_atmosphere || null,
+        dinner_style: newAnswers.dinner_style || null,
+        dinner_live_or_recorded: newAnswers.dinner_live_or_recorded || null,
+        dinner_live_context: newAnswers.dinner_live_context || null,
+        dinner_energy_shift: newAnswers.dinner_energy_shift || null,
+      }
+      onComplete?.(finalAnswers)
     } else {
       setStepIndex(nextIndex)
     }
@@ -198,102 +204,6 @@ export default function DinnerDeepDive({
       : null
 
   if (!mounted) return null
-
-  // ── Completion screen ────────────────────────────────────────────────────
-  if (screen === 'complete') {
-    const finalAnswers = {
-      dinner_atmosphere: answers.dinner_atmosphere || null,
-      dinner_style: answers.dinner_style || null,
-      dinner_live_or_recorded: answers.dinner_live_or_recorded || null,
-      dinner_live_context: answers.dinner_live_context || null,
-      dinner_energy_shift: answers.dinner_energy_shift || null,
-    }
-
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#FAF7F2',
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 64px' }}>
-
-          <p
-            style={{
-              margin: '0 0 8px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
-              fontWeight: 500,
-              color: '#C4922A',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Dinner · Complete
-          </p>
-
-          <h1
-            style={{
-              margin: '0 0 24px',
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 32,
-              fontWeight: 400,
-              color: '#1C2B3A',
-              lineHeight: 1.2,
-            }}
-          >
-            Dinner is mapped.
-          </h1>
-
-          <p
-            style={{
-              margin: '0 0 40px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 16,
-              color: '#6B6560',
-              lineHeight: 1.7,
-            }}
-          >
-            Ninety minutes that carry the evening forward — planned. Your answers are saved and will feed into your music brief.
-          </p>
-
-          <button
-            onClick={() => onComplete?.(finalAnswers)}
-            style={{
-              all: 'unset',
-              boxSizing: 'border-box',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              width: '100%',
-              padding: '15px 24px',
-              background: '#1C2B3A',
-              color: '#FAF7F2',
-              borderRadius: 10,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 15,
-              fontWeight: 500,
-            }}
-          >
-            Back to your Moment Map
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path
-                d="M8 1l7 7-7 7M1 8h14"
-                stroke="#FAF7F2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-
-        </div>
-      </div>
-    )
-  }
 
   // ── Question screen ──────────────────────────────────────────────────────
   const pct = Math.round((stepIndex / totalSteps) * 100)
