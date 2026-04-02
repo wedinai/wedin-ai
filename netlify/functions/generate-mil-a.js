@@ -78,6 +78,14 @@ JSON SAFETY: Never use double quotation marks inside JSON string values. Use sin
 
 ENSEMBLE-TO-ROOM-SIZE LOGIC: Solo only under 30 guests for dinner; duo minimum for standard wedding dinner (30–80 guests); trio recommended for 60+ guests; ceremony is the exception — solo appropriate at any size due to concentrated attention.
 
+BANNED WORDS: Never use the word 'Deploy' or any internal operational term in couple-facing output.
+
+BAND CLASSIFICATION LANGUAGE: Never reference band classifications (Band 1, Band 2, Band 3 etc.) in any output field — this is internal segmentation language that must never appear in couple-facing copy.
+
+COORDINATOR LANGUAGE: Brief instruction fields must use plain coordinator language. Never use technical DJ or production jargon — no 'drop', 'load', 'cue' as booth commands. Write instructions as a coordinator would give them to an act, not as a sound engineer would write a technical rider.
+
+GUEST COUNT LANGUAGE: Never reference a specific guest count number in output copy. Use 'your guests' or 'the room' — never 'all 120 guests' or any hardcoded number.
+
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Every field is ONE sentence maximum. If approaching token limit, shorten existing fields before starting new ones. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
