@@ -113,6 +113,13 @@ Coordinator Brief tab: generate-brief-b.js output, unchanged.
 - T&Cs and Privacy Policy — drafted, ready to implement
 - ceremonyKnowledge.js — updated to v3.0, April 4. Nine traditions fully documented.
 - Four MIL copy quality rules added April 2: banned "Deploy", no band classification language, coordinator plain language, no hardcoded guest counts
+- MIL JSON truncation fix — max_tokens raised to 1800 (mil-a) / 2000 (mil-b), sanitiseMILResponse replaced with walk-backward loop repair
+- Entrance live act rule — hard prohibition (MUST / PROHIBITED), explicit keyword enumeration, dinner-invention loophole closed
+- Production check coherence rule — explicit prohibition on inventing acts not in couple's stated answers
+- Outdoor amplification rule — verbatim sentence enforcement, paraphrase escape hatch closed
+- First dance song ground truth rule — FIRST DANCE SONG GROUND TRUTH instruction added, formatAnswers label renamed to 'Chosen first dance song — ground truth'
+- PreDrinksDeepDive + EntranceDeepDive — song question text input render block added (was rendering chips only)
+- wedin-test-scenarios.md — five test scenario seed scripts + RESET script, committed to repo
 
 ---
 

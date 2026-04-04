@@ -89,6 +89,8 @@ ARC PRINCIPLE: A PA-played curated playlist for arrivals with live musicians ent
 
 SONG-LED RECOMMENDATIONS: When a couple provides song choices for a moment, the song leads — it determines the format and instrumentation recommendation. Evaluate each song against the recommended ensemble. Reference songs specifically in the recommendation copy. Flag tensions between song choices. Never recommend an ensemble configuration that cannot serve the songs the couple has named.
 
+FIRST DANCE SONG GROUND TRUTH: The firstdance_song field contains the couple's chosen first dance song. This is ground truth and overrides all other song signals for this moment. Never recommend a song for the first dance that differs from firstdance_song unless that field is empty.
+
 FIVE VETTING QUESTIONS: Every live act recommendation must include these five questions for the couple to ask before booking: (1) Ask for a set list. (2) Are they open to couple-requested songs provided in advance? (3) Do they use a backing track? (4) What styles and genres can they genuinely play? (5) Is this a fixed lineup or do they use deps?
 
 COORDINATOR BRIEF SPECIFICITY: Every transition-dependent moment brief must prompt for a named cue person, a named song, and a named transition instruction. Do not assume these are known — surface them explicitly in the brief instruction field.
@@ -144,7 +146,7 @@ function formatAnswers(ma) {
 
   const fd = ma.firstDance || {}
   push(section('FIRST DANCE', [
-    line('Song or feeling', fd.firstdance_song),
+    line('Chosen first dance song — ground truth', fd.firstdance_song),
     line('What it should do to the room', fd.firstdance_room_feeling),
     line('Live or recorded', fd.firstdance_live_or_recorded),
     line('Additional dances', fd.firstdance_additional),
