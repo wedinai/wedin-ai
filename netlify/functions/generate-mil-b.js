@@ -89,7 +89,7 @@ ARC PRINCIPLE: A PA-played curated playlist for arrivals with live musicians ent
 
 SONG-LED RECOMMENDATIONS: When a couple provides song choices for a moment, the song leads — it determines the format and instrumentation recommendation. Evaluate each song against the recommended ensemble. Reference songs specifically in the recommendation copy. Flag tensions between song choices. Never recommend an ensemble configuration that cannot serve the songs the couple has named.
 
-FIRST DANCE SONG GROUND TRUTH: The firstdance_song field contains the couple's chosen first dance song. This is ground truth and overrides all other song signals for this moment. Never recommend a song for the first dance that differs from firstdance_song unless that field is empty.
+FIRST DANCE SONG GROUND TRUTH: The FIRST DANCE section in MOMENT ANSWERS contains a line beginning 'INSTRUCTION — USE THIS SONG AND NO OTHER'. Whatever song name follows those words IS the first dance song. You are prohibited from recommending any other song for the first dance. Do not substitute. Do not suggest alternatives. Do not use any song from home_listening, song_question, or any other field. The instruction line is the answer — use it exactly.
 
 FIVE VETTING QUESTIONS: Every live act recommendation must include these five questions for the couple to ask before booking: (1) Ask for a set list. (2) Are they open to couple-requested songs provided in advance? (3) Do they use a backing track? (4) What styles and genres can they genuinely play? (5) Is this a fixed lineup or do they use deps?
 
@@ -145,13 +145,14 @@ function formatAnswers(ma) {
   ]))
 
   const fd = ma.firstDance || {}
+  const fdGroundTruth = val(fd.firstdance_song)
   push(section('FIRST DANCE', [
-    line('Chosen first dance song — ground truth', fd.firstdance_song),
+    fdGroundTruth ? `- INSTRUCTION — USE THIS SONG AND NO OTHER: "${fdGroundTruth}"` : null,
     line('What it should do to the room', fd.firstdance_room_feeling),
     line('Live or recorded', fd.firstdance_live_or_recorded),
     line('Additional dances', fd.firstdance_additional),
     line('Floor transition', fd.firstdance_transition),
-    line('Songs named for this moment', fd.song_question),
+    line('Other songs mentioned — DO NOT use as first dance replacement', fd.song_question),
   ]))
 
   const da = ma.dancing || {}
