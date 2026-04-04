@@ -89,6 +89,13 @@ const STEP_OFFICIANT_REQUIREMENTS = {
   ],
 }
 
+const STEP_SONG_QUESTION = {
+  id: 'song_question',
+  type: 'text',
+  question: "If you could choose four songs for the ceremony — the music playing as people take their seats, as you walk in, as you sign — which ones feel right? They don't have to be 'wedding songs'. They just have to be yours.",
+  placeholder: "Four songs — or as many as you have. Title, artist, or just a feeling.",
+}
+
 // ── Faith tradition sub-flow steps ────────────────────────────────────────
 
 const JEWISH_STEPS = [
@@ -286,6 +293,7 @@ function buildAllSteps(answers) {
     STEP_RECESSIONAL_SONG,
     STEP_CEREMONY_FORMAT,
     STEP_OFFICIANT_REQUIREMENTS,
+    STEP_SONG_QUESTION,
   )
   return steps
 }
