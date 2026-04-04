@@ -34,6 +34,12 @@ const STEPS = [
       'Other — tell us more',
     ],
   },
+  {
+    id: 'song_question',
+    type: 'text',
+    question: "As your guests arrive — before the day has really begun — what four songs would be playing in the background? The ones that would immediately say: something special is about to happen.",
+    placeholder: "Four songs, or as many as you have. Artists, titles, or just vibes — anything helps.",
+  },
 ]
 
 // ── Chip button ────────────────────────────────────────────────────────────

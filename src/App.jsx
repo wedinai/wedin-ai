@@ -473,9 +473,13 @@ export default function App() {
   }
 
   if (view === 'postBrief') {
+    const confirmedList = Object.keys(momentConfirmed).filter((k) => momentConfirmed[k])
+    const allConfirmed = confirmedList.length >= 9
     return (
       <PostBriefScreen
-        onStartMIL={() => setView('mil')}
+        onStartMIL={() => { if (allConfirmed) setView('mil') }}
+        allConfirmed={allConfirmed}
+        confirmedCount={confirmedList.length}
       />
     )
   }

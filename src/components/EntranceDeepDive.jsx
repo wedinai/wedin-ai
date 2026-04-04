@@ -39,6 +39,12 @@ const STEPS = [
       'Other — tell us more',
     ],
   },
+  {
+    id: 'song_question',
+    type: 'text',
+    question: "The doors open. You walk in as married. What song is playing? And if you have a second choice waiting in the wings — tell us that too.",
+    placeholder: "The song (or two) that plays as you enter.",
+  },
 ]
 
 // ── Derives the conditional transition context note from Q2 answer ──────────

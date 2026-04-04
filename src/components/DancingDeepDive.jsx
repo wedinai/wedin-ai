@@ -58,6 +58,12 @@ const STEPS_MAIN = [
       'Other — tell us more',
     ],
   },
+  {
+    id: 'song_question',
+    type: 'text',
+    question: "The floor is open, the night is young. What four songs, if the DJ played them back to back, would have everyone on the floor? These are the songs that define what kind of night you want.",
+    placeholder: "Four songs that define the night. Artists, titles, genres — anything helps.",
+  },
 ]
 
 const STEPS_BRANCH = [
@@ -80,6 +86,7 @@ function getActiveSteps(answers) {
       STEPS_BRANCH[0],
       STEPS_MAIN[3],
       STEPS_MAIN[4],
+      STEPS_MAIN[5],
     ]
   }
   return STEPS_MAIN
@@ -225,6 +232,7 @@ export default function DancingDeepDive({
         dancing_peak_moment: newAnswers.dancing_peak_moment || null,
         dancing_wind_down: newAnswers.dancing_wind_down || null,
         dancing_wind_down_context: newAnswers.dancing_wind_down_context || null,
+        song_question: newAnswers.song_question || null,
       }
       onComplete?.(finalAnswers)
     } else {

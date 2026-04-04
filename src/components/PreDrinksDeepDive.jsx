@@ -52,6 +52,12 @@ const STEPS = [
       'Other — tell us more',
     ],
   },
+  {
+    id: 'song_question',
+    type: 'text',
+    question: "Your guests are outside, drinks in hand, the day still unfolding. What four songs would you want drifting across the space? The ones that would set exactly the right mood while you're off having your photos taken.",
+    placeholder: "Four songs, or as many as you have. Artists, titles, or just vibes — anything helps.",
+  },
 ]
 
 // ── Derives the conditional presence context note from Q1 answer ───────────
