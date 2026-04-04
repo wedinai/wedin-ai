@@ -58,6 +58,12 @@ const STEPS_MAIN = [
       'Other — tell us more',
     ],
   },
+  {
+    id: 'song_question',
+    type: 'text',
+    question: "Four songs that live in the same world as your first dance — your shortlist, songs you considered, songs that feel right for this moment even if they won't all play. The more you give us, the better we understand what you're building here.",
+    placeholder: "Songs from the shortlist, or in the same emotional world. As many as you have.",
+  },
 ]
 
 const STEPS_BRANCH = [
@@ -91,6 +97,7 @@ function getActiveSteps(answers) {
       STEPS_BRANCH[0],
       STEPS_BRANCH[1],
       STEPS_MAIN[4],
+      STEPS_MAIN[5],
     ]
   }
   return STEPS_MAIN
@@ -127,6 +134,7 @@ function buildFinalAnswers(answers) {
   }
   if (!('firstdance_live_context' in final)) final.firstdance_live_context = null
   if (!('firstdance_transition_context' in final)) final.firstdance_transition_context = null
+  if (!('song_question' in final)) final.song_question = null
   return final
 }
 

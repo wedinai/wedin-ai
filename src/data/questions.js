@@ -347,6 +347,21 @@ export const questions = [
       { id: 'over_350', label: '350+' },
     ],
   },
+  {
+    id: 'venue_type',
+    section: 'Your Wedding',
+    type: 'single',
+    question: 'Where is your wedding being held?',
+    options: [
+      { id: 'hotel_events_venue', label: 'Hotel or events venue' },
+      { id: 'wine_estate_garden', label: 'Wine estate or garden' },
+      { id: 'farm_bush',          label: 'Farm or bush' },
+      { id: 'beach_outdoor',      label: 'Beach or outdoor' },
+      { id: 'church_religious',   label: 'Church or religious venue' },
+      { id: 'destination',        label: 'Destination (outside SA)' },
+      { id: 'not_sure',           label: 'Not sure yet' },
+    ],
+  },
   // ── COMPLETION ───────────────────────────────────────────────────────────
   {
     id: 'complete',

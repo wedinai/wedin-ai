@@ -33,6 +33,12 @@ const STEPS = [
       'Other — tell us more',
     ],
   },
+  {
+    id: 'song_question',
+    type: 'text',
+    question: "Four songs that feel like the end of your night — songs that belong in the final hour, alongside or leading up to your last one. The floor thinning, the night winding down. Which four songs belong here?",
+    placeholder: "Four songs for the final hour. Artists, titles, or feelings — anything helps.",
+  },
 ]
 
 // ── Conditional note helpers ───────────────────────────────────────────────
@@ -169,6 +175,7 @@ export default function LastSongDeepDive({
         lastsong_energy_context: newAnswers.lastsong_energy_context || null,
         lastsong_instruction: newAnswers.lastsong_instruction || null,
         lastsong_instruction_context: newAnswers.lastsong_instruction_context || null,
+        song_question: newAnswers.song_question || null,
       }
       onComplete?.(finalAnswers)
     } else {

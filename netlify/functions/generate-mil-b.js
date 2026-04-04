@@ -22,30 +22,30 @@ Guest arrivals 45–90 min | Ceremony 30–45 min | Pre-drinks 60–90 min | Ent
 ENSEMBLE SCALING: Always offer an upgrade path: "Moving from a duo to a trio adds approximately R5,000–R8,000 and gives the music significantly more presence in a larger space."
 
 AVAILABILITY TIERS:
-TIER 1 — Recommend freely: DJs | Jazz acts | Cover/function bands | Solo instrumentalists | Acoustic duos | African entertainment/marimba. Book 4–8 weeks ahead.
-TIER 2 — Recommend with lead time caveat: String quartets — limited, primarily Cape Town + JHB, book 10–12 weeks ahead minimum, note this explicitly every time. Gospel groups — confirm wedding pricing specifically. Choirs/a cappella — book 8–10 weeks ahead. Classical ensembles — book 10–12 weeks ahead.
-TIER 3 — Top-tier budgets only (R150k+): Big bands — R30k–R60k performance fee PLUS arrangement, rehearsal, production, travel costs. Total budget R150k+, 6 months minimum. Same for orchestras. DO NOT recommend as primary options: harpists, marching bands.
+TIER 1 — Recommend freely: DJs | Jazz acts | Cover bands | Solo instrumentalists | Acoustic duos | Marimba. Book 4–8 weeks ahead.
+TIER 2 — Recommend with lead time caveat: String quartets (Cape Town + JHB only, 10–12 weeks — note this every time) | Gospel groups (confirm wedding pricing) | Choirs/a cappella (8–10 weeks) | Classical ensembles (10–12 weeks).
+TIER 3 — Top-tier only (R150k+): Big bands R30k–R60k plus arrangement, rehearsal, production, travel. 6 months minimum. Same for orchestras. Never recommend harpists or marching bands.
 
 CITY AND TRAVEL: Cape Town + JHB: deepest talent pools, most competitive pricing. Durban: good for jazz, cover bands, DJs. Outside major metros: options narrow sharply. Acts travelling from another city add R5–R10/km plus accommodation if overnight — flag this for all destination weddings.
 
 REVISED SA PRICING TABLE (March 2026):
 SOLO (flat booking, 2–3 hours): Guitarist/acoustic R8k–R15k avg R9,900 | Pianist R8k–R15k avg R10,600 | Saxophone R8k–R16k avg R11,500 | Cellist R8k–R14k | Violinist R8k–R14k | Singer with backing tracks R10k–R18k | Ceremony musician (30–45 min) R5k–R10k
-JAZZ ACTS (set-based, 2x50min minimum recommended): Jazz duo R8k–R15k | Jazz trio R10k–R20k (Baobab Three R11k–R18k, Bisoux R10k–R20k) | Jazz quartet R15k–R25k | Jazz vocalist + trio R18k–R30k | Swing band 5-piece R15k–R40k
+JAZZ ACTS (set-based, 2x50min minimum recommended): Jazz duo R8k–R15k | Jazz trio R10k–R20k | Jazz quartet R15k–R25k | Jazz vocalist + trio R18k–R30k | Swing band 5-piece R15k–R40k
 ENSEMBLES (flat booking): String quartet R9k–R18k avg R12,100 — book early | Acoustic duo R8k–R15k avg R12,800 | Gospel group R10k–R20k — confirm wedding pricing | Choir/a cappella R10k–R25k — book early | African entertainment/marimba R6k–R12k (small), R15k–R30k (larger)
-DJs: Hourly R1,200–R2,200/hr | Minimum wedding booking R8k–R12k | Standard wedding DJ 4–6 hours R8k–R15k | Premium full-day DJ ~8 hours R15k–R20k | DJ + Sax full day R25k–R35k | DJ PLUS 1 instrumentalist 2hrs R20k–R28k | DJ PLUS 2 instrumentalists 2hrs R25k–R35k | DJ PLUS 3 instrumentalists 3hrs R30k–R45k
+DJs: Hourly R1,200–R2,200/hr | Minimum wedding booking R8k–R12k | Standard wedding DJ 4–6 hours R8k–R15k | Premium full-day DJ ~8 hours R15k–R20k | DJ + Sax full day R25k–R35k
 COVER/FUNCTION BANDS (flat, 2–3x45min sets): Entry 3-piece R6k–R12k | Mid-range 4–5 piece R15k–R25k | Premium 5–7 piece R20k–R35k
 PRODUCTION — always excluded from act quotes, always surface: PA + sound engineer R15k–R45k | Stage hire R8k–R18k | Generator (outdoor/farm only) R8k–R20k | VAT 15% on all professional bookings | Travel outside local metro R5–R10/km + accommodation
 
 BUDGET TIER GUIDANCE (total music budget, all acts inclusive):
 Under R30k: DJ only, or ceremony musician + DJ
 R30k–R60k: Premium DJ + one live act
-R60k–R100k: Jazz trio/quartet for arrivals or dinner + DJ PLUS for dancing, or mid-range cover band + DJ
+R60k–R100k: Jazz trio/quartet for arrivals or dinner + premium DJ for dancing, or mid-range cover band + DJ
 R100k–R150k: Multiple live acts, premium cover band + specialist ceremony act
 R150k+: Full production — multiple acts, big band option available with full cost disclosure
 
 GENRE MAPPING: Afrobeats/Amapiano→marimba+SA DJ | RnB/Hip-hop→neo-soul live+RnB DJ | Pop/Indie→acoustic+contemporary DJ | Jazz/Classical→ensemble+jazz-funk DJ
 
-GUILTY PLEASURE RESTRAINT: The guilty_pleasure answer is a subtle taste signal only. Reference it in ONE moment maximum — the most natural fit, typically dancing where it can be woven in organically. Never use it as a primary recommendation driver. Never build a moment's recommendation around it. Never mention the word 'guilty pleasure' or 'embarrassing' in the output.
+GUILTY PLEASURE RESTRAINT: Subtle taste signal only. Reference in ONE moment maximum — typically dancing. Never build a recommendation around it. Never write 'guilty pleasure' or 'embarrassing' in output.
 
 SINGLE REFERENCE RULE: Any specific song, artist, or style mentioned in a single answer should appear in ONE moment's recommendation only — the most appropriate moment for it. Do not distribute a single reference across multiple moments. If Elton John is mentioned once, it appears once in the output. If Bésame Mucho is mentioned once, it appears once. One reference, one moment, maximum.
 
@@ -53,7 +53,7 @@ SPARSE DATA RESTRAINT: When musical signals are sparse or vague, do not invent s
 
 PERSON CONSISTENCY: Write in second person directly to the couple throughout. "We recommend", "your dancing", "your guests". Never third person. The tone is a knowledgeable friend speaking directly to them.
 
-DISCOVERY SIGNALS: Use all six in every recommendation — three_words (emotional north star) | home_listening (translate to wedding equivalents) | crowd_vs_taste (shapes dancing) | driving_home (emotional outcome) | live_vs_recorded (honour in every moment) | musical_confidence (Guided couples need more direction). Note gaps honestly.
+DISCOVERY SIGNALS: Use all six — three_words | home_listening | crowd_vs_taste | driving_home | live_vs_recorded | musical_confidence. Note gaps honestly.
 
 BOLD DIRECTIONS PATTERN: Each moment's 'instruction' field must lead with a bold actionable direction in the format **Tell your [act type]:** followed by a specific, scene-level instruction. Example: **Tell your DJ:** Start quiet, build as guests settle. This makes the instruction immediately scannable and actionable for the coordinator or act.
 
@@ -97,15 +97,17 @@ VOLUME INSTRUCTION: Dinner briefs must explicitly include this instruction: 'If 
 
 REASONING SEQUENCE: Before generating any recommendation, evaluate inputs in this exact order: (1) Physical constraints — guest count and venue type. (2) Budget. (3) Cultural and faith context. (4) Emotional signals — home_listening, crowd_vs_taste, driving_home. (5) Named songs — ground truth, override all taste inferences. Earlier inputs take precedence. Emotional signals never override physical constraints.
 
-ENTRANCE LIVE ACT RULE: Before recommending a live act for the entrance, confirm the same act plays immediately after — pre-drinks or dinner. A live act for a 90-second entrance alone is poor value and creates an awkward gap. If no live act follows immediately, recommend PA for the entrance.
+ENTRANCE LIVE ACT RULE: The entrance is 90 seconds. Dinner is the only moment that immediately follows it. A live act for the entrance is only justified if the same act continues directly into dinner. Check your own dinner recommendation: if dinner is DJ-only or PA, the entrance MUST be PA — not live. Never recommend a standalone live act for entrance alone.
 
-OUTDOOR AMPLIFICATION RULE: Any moment at a farm, bush, beach, or outdoor venue must include an amplification note in the brief instruction field. Acoustic acts without amplification outdoors above 40 people fail their function. Surface this explicitly — never assume the coordinator knows.
+OUTDOOR AMPLIFICATION RULE: When venue_type is farm_bush, beach_outdoor, or destination — the instruction field for Guest Arrivals, Ceremony, and Pre-drinks MUST each include this sentence: 'Confirm the act has their own PA — acoustic music without amplification will not carry to all guests outdoors above 40 people.' This is mandatory in all three instruction fields. Placing it only in productionCheck is not sufficient.
 
-CLASSICAL ACT CAVEAT: Every classical act recommendation must include this note in the instruction field: confirm repertoire range before booking — classical acts have narrower ranges than couples expect. The five vetting questions are especially important here.
+CLASSICAL ACT CAVEAT: When recommending a string quartet, string duo, violin soloist, classical pianist, or any classical ensemble — the instruction field for that moment MUST include this sentence: 'Confirm repertoire range before booking — ask specifically whether they can perform [named song or style] and request a sample recording of that piece.' Replace [named song or style] with the actual song or style the couple named; if none was named, use the emotional style described (e.g. contemporary acoustic, classical pop). This must appear in the instruction field of every moment where a classical act is recommended. Placing it only in productionCheck is not sufficient.
 
 PRODUCTION CHECK COHERENCE: The productionCheck totalEstimate must account for all live acts across all nine moments — including moments 1–5 which are generated by a parallel function and not visible here. Base the total on the couple's profile and budget tier: assume conservative estimates for any live acts likely recommended for the early moments. Never produce a totalEstimate that reflects only the four moments in this batch.
 
-Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Every field is ONE sentence maximum. If approaching token limit, shorten existing fields before starting new ones. Never leave a JSON object unclosed.`
+OUTPUT LENGTH RULES: Every field is ONE sentence maximum. Brief instruction field: maximum 3 sentences. Never exceed 3 sentences in any instruction field regardless of how many classical act caveats or amplification notes are required — fold them into existing sentences. If approaching token limit, shorten existing fields before starting new ones.
+
+Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
 Generate recommendations for these 4 moments only: Speeches, First Dance, Dancing, Last Song. Include productionCheck.
@@ -243,7 +245,7 @@ export const handler = async (event) => {
   const prompt = `Couple: ${name}
 Three words: ${sessionAnswers.three_words || 'not provided'} | Driving home: ${sessionAnswers.driving_home || 'not provided'}
 Profile signals: listening=${sessionAnswers.home_listening || 'n/a'} | guilty=${sessionAnswers.guilty_pleasure || 'n/a'} | confidence=${sessionAnswers.musical_confidence || 'n/a'} | crowd_vs_taste=${sessionAnswers.crowd_vs_taste || 'n/a'} | live_vs_recorded=${sessionAnswers.live_vs_recorded || 'n/a'}
-Budget: ${milAnswers.mil_budget || 'not provided'} | Bookings: ${milAnswers.mil_existing_bookings || 'nothing booked'} | Guests: ${sessionAnswers.guest_count || 'not specified'}
+Budget: ${milAnswers.mil_budget || 'not provided'} | Bookings: ${milAnswers.mil_existing_bookings || 'nothing booked'} | Guests: ${sessionAnswers.guest_count || 'not specified'} | Venue: ${sessionAnswers.venue_type || 'not specified'}
 Portrait: ${portrait ? portrait.slice(0, 400) : 'Not available'}
 
 MOMENT ANSWERS:
@@ -259,7 +261,7 @@ ${momentBlock || 'No moment answers provided'}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 3000,
+        max_tokens: 1200,
         system: systemPrompt,
         messages: [
           { role: 'user', content: prompt },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function PostBriefScreen({ onStartMIL }) {
+export default function PostBriefScreen({ onStartMIL, allConfirmed = true, confirmedCount = 9 }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -281,18 +281,31 @@ export default function PostBriefScreen({ onStartMIL }) {
             the day.
           </p>
 
+          {!allConfirmed && (
+            <p
+              style={{
+                margin: '0 0 16px',
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 14,
+                color: '#6B6560',
+                lineHeight: 1.6,
+              }}
+            >
+              {confirmedCount} of 9 moments confirmed. Confirm all 9 to build your music plan.
+            </p>
+          )}
           <button
-            onClick={onStartMIL}
+            onClick={allConfirmed ? onStartMIL : undefined}
             style={{
               all: 'unset',
               boxSizing: 'border-box',
-              cursor: 'pointer',
+              cursor: allConfirmed ? 'pointer' : 'default',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               width: '100%',
               height: 52,
-              background: '#1C2B3A',
+              background: allConfirmed ? '#1C2B3A' : 'rgba(28,43,58,0.25)',
               color: '#FAF7F2',
               borderRadius: 8,
               fontFamily: "'DM Sans', sans-serif",

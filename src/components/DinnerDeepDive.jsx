@@ -46,6 +46,12 @@ const STEPS = [
       'Other — tell us more',
     ],
   },
+  {
+    id: 'song_question',
+    type: 'text',
+    question: "Picture your guests around the tables, the room full, everyone settling in. What four songs would be playing softly in the background — the ones that would make dinner feel exactly the way you want it to?",
+    placeholder: "Four songs, or as many as you have. Artists, titles, or just vibes — anything helps.",
+  },
 ]
 
 // ── Conditional note helper ────────────────────────────────────────────────
@@ -169,6 +175,7 @@ export default function DinnerDeepDive({
         dinner_live_or_recorded: newAnswers.dinner_live_or_recorded || null,
         dinner_live_context: newAnswers.dinner_live_context || null,
         dinner_energy_shift: newAnswers.dinner_energy_shift || null,
+        song_question: newAnswers.song_question || null,
       }
       onComplete?.(finalAnswers)
     } else {
