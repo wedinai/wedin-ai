@@ -204,12 +204,12 @@ localStorage.setItem('wedin_moment_answers', JSON.stringify({
     speeches_outro: 'Build gently into first dance',
   },
   firstDance: {
-    firstdance_song: "Iron & Wine — Flightless Bird, American Mouth",
+    firstdance_song: "The Cinematic Orchestra — To Build A Home",
     firstdance_room_feeling: 'Intimate — just the two of us for a moment, room goes quiet',
     firstdance_live_or_recorded: 'Recorded — the original recording only',
     firstdance_additional: 'No additional dances',
     firstdance_transition: 'Open the floor after — let it breathe first',
-    song_question: "Iron & Wine — Flightless Bird, Bon Iver — Skinny Love",
+    song_question: "The Cinematic Orchestra — To Build A Home, Bon Iver — Skinny Love, Iron & Wine — Naked As We Came, Novo Amor — Anchor",
   },
   dancing: {
     dancing_energy_arc: 'Start gentle, build through the night — no rush',
