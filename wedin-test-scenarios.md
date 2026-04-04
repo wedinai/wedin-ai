@@ -1,6 +1,14 @@
 # wedin.ai — MIL Test Scenario Seed Scripts
 
-Paste any script into browser DevTools console on the live app. Each script clears existing wedin.ai localStorage, injects the scenario, and reloads. After reload the app will open at the Moment Map with all moments complete. Trigger MIL from there.
+Paste any script into browser DevTools console on the live app. Each script clears existing wedin.ai localStorage, injects the scenario, and reloads.
+
+After reload: app opens at the Moment Map with all 9 moments showing **Complete**. Click **"Generate brief"** → PostBriefScreen → **"Build my music plan"** → MILIntakeScreen. Answer the two intake questions (budget + bookings), then wait ~30 seconds for generation.
+
+**Two localStorage keys control this:**
+- `wedin_completed_moments` — array of moment IDs (controls the Complete chip on each card)
+- `wedin_moment_confirmed` — object of `{ momentId: true }` entries (controls the MIL CTA unlock in PostBriefScreen)
+
+Both must be set correctly. All five scripts below set both.
 
 ---
 
@@ -111,9 +119,14 @@ localStorage.setItem('wedin_moment_answers', JSON.stringify({
 }))
 
 localStorage.setItem('wedin_completed_moments', JSON.stringify([
-  'guestArrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
-  'speeches', 'firstDance', 'dancing', 'lastSong',
+  'arrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
+  'speeches', 'firstdance', 'dancing', 'lastsong',
 ]))
+
+localStorage.setItem('wedin_moment_confirmed', JSON.stringify({
+  arrivals: true, ceremony: true, predrinks: true, entrance: true, dinner: true,
+  speeches: true, firstdance: true, dancing: true, lastsong: true,
+}))
 
 localStorage.setItem('wedin_portrait', "Sophie and Liam have a clear musical identity — warm, acoustic, emotionally honest. Their listening world is Norah Jones, Jack Johnson, Ben Harper: music that feels like a Sunday morning with people you love. They want guests to feel at home from the moment they arrive, and they want the day to build organically toward joy rather than spectacle. Liam is the more musically opinionated of the two; Sophie trusts his instincts but wants the dancing to feel inclusive for everyone.")
 
@@ -215,9 +228,14 @@ localStorage.setItem('wedin_moment_answers', JSON.stringify({
 }))
 
 localStorage.setItem('wedin_completed_moments', JSON.stringify([
-  'guestArrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
-  'speeches', 'firstDance', 'dancing', 'lastSong',
+  'arrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
+  'speeches', 'firstdance', 'dancing', 'lastsong',
 ]))
+
+localStorage.setItem('wedin_moment_confirmed', JSON.stringify({
+  arrivals: true, ceremony: true, predrinks: true, entrance: true, dinner: true,
+  speeches: true, firstdance: true, dancing: true, lastsong: true,
+}))
 
 localStorage.setItem('wedin_portrait', "Emma and Tom know exactly who they are. Their music lives in the folk-acoustic world — Mumford, Fleet Foxes, Bon Iver — and their farm venue is an extension of that identity. They want the day to feel like it emerged naturally from the landscape rather than was imposed upon it. Tom is practical and relaxed about music; Emma has strong instincts about feeling and atmosphere even if she doesn't always have the words. The outdoor setting is central to their vision — and a significant practical consideration for everything acoustic.")
 
@@ -319,9 +337,14 @@ localStorage.setItem('wedin_moment_answers', JSON.stringify({
 }))
 
 localStorage.setItem('wedin_completed_moments', JSON.stringify([
-  'guestArrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
-  'speeches', 'firstDance', 'dancing', 'lastSong',
+  'arrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
+  'speeches', 'firstdance', 'dancing', 'lastsong',
 ]))
+
+localStorage.setItem('wedin_moment_confirmed', JSON.stringify({
+  arrivals: true, ceremony: true, predrinks: true, entrance: true, dinner: true,
+  speeches: true, firstdance: true, dancing: true, lastsong: true,
+}))
 
 localStorage.setItem('wedin_portrait', "Charlotte and James are the most musically opinionated couple in this test set. Their listening world — Max Richter, Einaudi, Radiohead, Nick Cave — tells a clear story: they want music that operates at the level of fine art, not entertainment. They have strong opinions about originals vs covers, and they will notice if a recommendation is generic. The guilty pleasure (90s pop) is a meaningful signal — it says the dancefloor should eventually earn something more fun. The string quartet and classical act recommendations are likely across multiple moments, making the classical caveat rule the primary test here.")
 
@@ -423,9 +446,14 @@ localStorage.setItem('wedin_moment_answers', JSON.stringify({
 }))
 
 localStorage.setItem('wedin_completed_moments', JSON.stringify([
-  'guestArrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
-  'speeches', 'firstDance', 'dancing', 'lastSong',
+  'arrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
+  'speeches', 'firstdance', 'dancing', 'lastsong',
 ]))
+
+localStorage.setItem('wedin_moment_confirmed', JSON.stringify({
+  arrivals: true, ceremony: true, predrinks: true, entrance: true, dinner: true,
+  speeches: true, firstdance: true, dancing: true, lastsong: true,
+}))
 
 localStorage.setItem('wedin_portrait', "Aisha and Marcus present the sharpest tension in this test set: their taste is intimate, quiet, and deeply personal — Bon Iver, Nick Drake, Sufjan Stevens — but they have 280 guests in a large function hall on a budget under R30,000. This is a direct physical vs emotional mismatch. The REASONING SEQUENCE rule requires the model to evaluate physical constraints first (guest count and venue) then budget, before it touches emotional signals. The correct output flags that solo acoustic cannot carry a room of this size, that their budget supports DJ-only, and that emotional fidelity is achievable through a precise brief rather than a solo musician who will be invisible.")
 
@@ -527,9 +555,14 @@ localStorage.setItem('wedin_moment_answers', JSON.stringify({
 }))
 
 localStorage.setItem('wedin_completed_moments', JSON.stringify([
-  'guestArrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
-  'speeches', 'firstDance', 'dancing', 'lastSong',
+  'arrivals', 'ceremony', 'predrinks', 'entrance', 'dinner',
+  'speeches', 'firstdance', 'dancing', 'lastsong',
 ]))
+
+localStorage.setItem('wedin_moment_confirmed', JSON.stringify({
+  arrivals: true, ceremony: true, predrinks: true, entrance: true, dinner: true,
+  speeches: true, firstdance: true, dancing: true, lastsong: true,
+}))
 
 localStorage.setItem('wedin_portrait', "Naledi and David are the maximum-expression test case: full budget, full ambition, deeply South African identity, and a guest list that spans generations and cultures. Their vision is genuinely complex — marimba arrivals, choir ceremony, jazz dinner, live band into DJ. The production check coherence test is the primary target: mil-b must estimate total costs that account for all live acts across all 9 moments, including the substantial acts in moments 1–5 that mil-a generates. A totalEstimate that only reflects the dancing band and DJ would be a failure. The PRODUCTION CHECK COHERENCE rule exists specifically for this scenario.")
 
