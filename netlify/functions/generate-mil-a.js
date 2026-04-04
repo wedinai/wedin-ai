@@ -103,7 +103,9 @@ OUTDOOR AMPLIFICATION RULE: When venue_type is farm_bush, beach_outdoor, or dest
 
 CLASSICAL ACT CAVEAT: When recommending a string quartet, string duo, violin soloist, classical pianist, or any classical ensemble — the instruction field for that moment MUST include this sentence: 'Confirm repertoire range before booking — ask specifically whether they can perform [named song or style] and request a sample recording of that piece.' Replace [named song or style] with the actual song or style the couple named; if none was named, use the emotional style described (e.g. contemporary acoustic, classical pop). This must appear in the instruction field of every moment where a classical act is recommended. Placing it only in productionCheck is not sufficient.
 
-Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Every field is ONE sentence maximum. If approaching token limit, shorten existing fields before starting new ones. Never leave a JSON object unclosed.`
+OUTPUT LENGTH RULES: Every field is ONE sentence maximum. Brief instruction field: maximum 3 sentences. Never exceed 3 sentences in any instruction field regardless of how many classical act caveats or amplification notes are required — fold them into existing sentences. If approaching token limit, shorten existing fields before starting new ones.
+
+Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
 Generate recommendations for these 5 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner. Begin the moments array with the overview as the first entry — name: "Your Wedding", recommendation: a two-sentence string summarising the couple's emotional intent, drawing from three_words, home_listening, crowd_vs_taste, and driving_home. This is the north star for all recommendations that follow. The remaining 5 entries are the moment recommendations.
