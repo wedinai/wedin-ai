@@ -267,7 +267,7 @@ ${momentBlock || 'No moment answers provided'}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1000,
+        max_tokens: 1400,
         system: systemPrompt,
         messages: [
           { role: 'user', content: prompt },
@@ -292,6 +292,7 @@ ${momentBlock || 'No moment answers provided'}`
         .filter(b => b.type === 'text')
         .map(b => b.text)
         .join('')
+      console.log('MIL-A raw length:', raw.length)
       milRecommendations = sanitiseMILResponse(raw)
     } catch (err) {
       console.error('MIL-A parse error:', err.message)
