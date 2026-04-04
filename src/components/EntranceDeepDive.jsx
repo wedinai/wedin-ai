@@ -103,6 +103,7 @@ export default function EntranceDeepDive({
   const [stepIndex, setStepIndex] = useState(0)
   const [otherSelected, setOtherSelected] = useState(false)
   const [otherText, setOtherText] = useState('')
+  const [songText, setSongText] = useState('')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
@@ -110,6 +111,7 @@ export default function EntranceDeepDive({
   useEffect(() => {
     setOtherSelected(false)
     setOtherText('')
+    setSongText('')
   }, [stepIndex])
 
   const currentStep = STEPS[stepIndex]
@@ -362,6 +364,83 @@ export default function EntranceDeepDive({
                     </button>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Text input — song question */}
+            {currentStep.type === 'text' && (
+              <div>
+                <textarea
+                  value={songText}
+                  onChange={(e) => setSongText(e.target.value)}
+                  placeholder={currentStep.placeholder}
+                  rows={4}
+                  autoFocus
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    background: '#FFFFFF',
+                    border: '1.5px solid rgba(28,43,58,0.15)',
+                    borderRadius: 10,
+                    padding: '14px 16px',
+                    fontSize: 15,
+                    fontFamily: "'DM Sans', sans-serif",
+                    color: '#1C2B3A',
+                    outline: 'none',
+                    resize: 'none',
+                    lineHeight: 1.6,
+                    marginBottom: 12,
+                    boxSizing: 'border-box',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.border = '1.5px solid #1C2B3A'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(196,146,42,0.12)'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.border = '1.5px solid rgba(28,43,58,0.15)'
+                    e.target.style.boxShadow = 'none'
+                  }}
+                />
+                <button
+                  onClick={() => { if (songText.trim()) saveAndAdvance(songText.trim()) }}
+                  disabled={!songText.trim()}
+                  style={{
+                    all: 'unset',
+                    boxSizing: 'border-box',
+                    cursor: songText.trim() ? 'pointer' : 'default',
+                    display: 'block',
+                    width: '100%',
+                    padding: '14px 24px',
+                    background: '#1C2B3A',
+                    color: '#FAF7F2',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 15,
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    opacity: songText.trim() ? 1 : 0.4,
+                  }}
+                >
+                  Continue
+                </button>
+                <button
+                  onClick={() => saveAndAdvance('')}
+                  style={{
+                    all: 'unset',
+                    boxSizing: 'border-box',
+                    cursor: 'pointer',
+                    display: 'block',
+                    width: '100%',
+                    padding: '12px 24px',
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 13,
+                    color: '#6B6560',
+                    textAlign: 'center',
+                    marginTop: 8,
+                  }}
+                >
+                  Skip this question
+                </button>
               </div>
             )}
           </div>
