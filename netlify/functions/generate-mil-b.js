@@ -149,6 +149,7 @@ function formatAnswers(ma) {
     line('Live or recorded', fd.firstdance_live_or_recorded),
     line('Additional dances', fd.firstdance_additional),
     line('Floor transition', fd.firstdance_transition),
+    line('Songs named for this moment', fd.song_question),
   ]))
 
   const da = ma.dancing || {}
@@ -158,6 +159,7 @@ function formatAnswers(ma) {
     line('Songs or genres to avoid', da.dancing_avoid),
     line('Peak moment', da.dancing_peak_moment),
     line('Wind-down', da.dancing_wind_down),
+    line('Songs named for this moment', da.song_question),
   ]))
 
   const ls = ma.lastSong || {}
@@ -165,6 +167,7 @@ function formatAnswers(ma) {
     line('Song or feeling', ls.lastsong_song),
     line('How to end the night', ls.lastsong_energy),
     line('Instruction needed', ls.lastsong_instruction),
+    line('Songs named for this moment', ls.song_question),
   ]))
 
   return sections.join('\n')
@@ -214,14 +217,17 @@ function sanitiseMILResponse(raw) {
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export const handler = async (event) => {
+  console.log('MIL-B invoked', event.httpMethod)
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
+    console.error('MIL-B: ANTHROPIC_API_KEY not set')
     return { statusCode: 500, body: JSON.stringify({ error: 'API key not configured' }) }
   }
+  console.log('MIL-B: API key present, processing request')
 
   let body
   try {

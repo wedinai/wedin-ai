@@ -92,7 +92,15 @@ export default function MILIntakeScreen({
           body: JSON.stringify(payload),
         }),
       ])
-      if (!res1.ok || !res2.ok) throw new Error('MIL generation failed')
+      if (!res1.ok || !res2.ok) {
+        const [err1, err2] = await Promise.all([
+          res1.ok ? Promise.resolve(null) : res1.json().catch(() => ({ error: 'unreadable' })),
+          res2.ok ? Promise.resolve(null) : res2.json().catch(() => ({ error: 'unreadable' })),
+        ])
+        if (err1) console.error('MIL-A error response:', res1.status, err1)
+        if (err2) console.error('MIL-B error response:', res2.status, err2)
+        throw new Error('MIL generation failed')
+      }
       const [data1, data2] = await Promise.all([res1.json(), res2.json()])
       const combined = {
         moments: [

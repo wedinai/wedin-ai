@@ -138,6 +138,7 @@ function formatAnswers(ma) {
     line('Musical approach', ga.arrivals_attention),
     line('Style or reference', ga.arrivals_style),
     line('Venue and duration', ga.arrivals_logistics),
+    line('Songs named for this moment', ga.song_question),
   ]))
 
   const c = ma.ceremony || {}
@@ -149,6 +150,7 @@ function formatAnswers(ma) {
     line('Signing music', c.signing_music),
     line('Recessional', c.recessional_song),
     line('Live or recorded', c.ceremony_format),
+    line('Songs named for this moment', c.song_question),
   ]))
 
   const pd = ma.predrinks || {}
@@ -156,6 +158,7 @@ function formatAnswers(ma) {
     line('Musical impact', pd.predrinks_impact),
     line('Energy shift to reception', pd.predrinks_energy_shift),
     line('Cultural element', pd.predrinks_cultural),
+    line('Songs named for this moment', pd.song_question),
   ]))
 
   const en = ma.entrance || {}
@@ -163,6 +166,7 @@ function formatAnswers(ma) {
     line('Entry style', en.entrance_style),
     line('Space transition', en.entrance_transition),
     line('Live musicians for entrance', en.entrance_live_musicians),
+    line('Songs named for this moment', en.song_question),
   ]))
 
   const di = ma.dinner || {}
@@ -171,6 +175,7 @@ function formatAnswers(ma) {
     line('Musical style or mood', di.dinner_style),
     line('Live or recorded', di.dinner_live_or_recorded),
     line('Energy toward speeches', di.dinner_energy_shift),
+    line('Songs named for this moment', di.song_question),
   ]))
 
   return sections.join('\n')
@@ -220,14 +225,17 @@ function sanitiseMILResponse(raw) {
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export const handler = async (event) => {
+  console.log('MIL-A invoked', event.httpMethod)
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
+    console.error('MIL-A: ANTHROPIC_API_KEY not set')
     return { statusCode: 500, body: JSON.stringify({ error: 'API key not configured' }) }
   }
+  console.log('MIL-A: API key present, processing request')
 
   let body
   try {
