@@ -204,10 +204,21 @@ function sanitiseMILResponse(raw) {
       return JSON.parse(sanitised)
     } catch (e2) {
       // Final fallback — find last complete object
-      const lastComplete = candidate.lastIndexOf('},')
-      if (lastComplete > 0) {
-        const repaired = candidate.substring(0, lastComplete + 1) + ']}}'
-        return JSON.parse(repaired)
+      // Walk backward through } positions, trying both array and object closings
+      let pos = candidate.length
+      while (pos > 0) {
+        pos = candidate.lastIndexOf('}', pos - 1)
+        if (pos <= 0) break
+        const base = candidate.substring(0, pos + 1)
+        for (const suffix of [']}', ']}}']) {
+          try {
+            const parsed = JSON.parse(base + suffix)
+            if (parsed.moments && Array.isArray(parsed.moments) && parsed.moments.length > 0) {
+              console.log('MIL-B: repaired truncated JSON, recovered', parsed.moments.length, 'moments')
+              return parsed
+            }
+          } catch (e3) {}
+        }
       }
       throw new Error('All parse attempts failed: ' + e2.message)
     }
@@ -267,7 +278,7 @@ ${momentBlock || 'No moment answers provided'}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1400,
+        max_tokens: 2000,
         system: systemPrompt,
         messages: [
           { role: 'user', content: prompt },
