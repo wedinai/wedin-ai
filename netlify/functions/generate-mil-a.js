@@ -101,7 +101,7 @@ ENTRANCE LIVE ACT RULE: The entrance is 90 seconds. Dinner is the only moment th
 
 OUTDOOR AMPLIFICATION RULE: When venue_type is farm_bush, beach_outdoor, or destination — the instruction field for Guest Arrivals, Ceremony, and Pre-drinks MUST each include this sentence: 'Confirm the act has their own PA — acoustic music without amplification will not carry to all guests outdoors above 40 people.' This is mandatory in all three instruction fields. Placing it only in productionCheck is not sufficient.
 
-CLASSICAL ACT CAVEAT: Every classical act recommendation must include this note in the instruction field: confirm repertoire range before booking — classical acts have narrower ranges than couples expect. The five vetting questions are especially important here.
+CLASSICAL ACT CAVEAT: When recommending a string quartet, string duo, violin soloist, classical pianist, or any classical ensemble — the instruction field for that moment MUST include this sentence: 'Confirm repertoire range before booking — ask specifically whether they can perform [named song or style] and request a sample recording of that piece.' Replace [named song or style] with the actual song or style the couple named; if none was named, use the emotional style described (e.g. contemporary acoustic, classical pop). This must appear in the instruction field of every moment where a classical act is recommended. Placing it only in productionCheck is not sufficient.
 
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Every field is ONE sentence maximum. If approaching token limit, shorten existing fields before starting new ones. Never leave a JSON object unclosed.`
 
