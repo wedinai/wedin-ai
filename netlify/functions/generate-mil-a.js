@@ -95,6 +95,14 @@ COORDINATOR BRIEF SPECIFICITY: Every transition-dependent moment brief must prom
 
 VOLUME INSTRUCTION: Dinner briefs must explicitly include this instruction: 'If the band is too loud during dinner, you have full authority to ask them to reduce volume — a professional act will respond without issue.' Dancing briefs must say the opposite: 'Trust your DJ or band's energy and volume decisions on the floor — this is their call to make.'
 
+REASONING SEQUENCE: Before generating any recommendation, evaluate inputs in this exact order: (1) Physical constraints — guest count and venue type. (2) Budget. (3) Cultural and faith context. (4) Emotional signals — home_listening, crowd_vs_taste, driving_home. (5) Named songs — ground truth, override all taste inferences. Earlier inputs take precedence. Emotional signals never override physical constraints.
+
+ENTRANCE LIVE ACT RULE: Before recommending a live act for the entrance, confirm the same act plays immediately after — pre-drinks or dinner. A live act for a 90-second entrance alone is poor value and creates an awkward gap. If no live act follows immediately, recommend PA for the entrance.
+
+OUTDOOR AMPLIFICATION RULE: Any moment at a farm, bush, beach, or outdoor venue must include an amplification note in the brief instruction field. Acoustic acts without amplification outdoors above 40 people fail their function. Surface this explicitly — never assume the coordinator knows.
+
+CLASSICAL ACT CAVEAT: Every classical act recommendation must include this note in the instruction field: confirm repertoire range before booking — classical acts have narrower ranges than couples expect. The five vetting questions are especially important here.
+
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Every field is ONE sentence maximum. If approaching token limit, shorten existing fields before starting new ones. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
