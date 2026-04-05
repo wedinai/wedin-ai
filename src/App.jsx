@@ -239,6 +239,14 @@ export default function App() {
     handleMomentComplete('arrivals', 'Guest Arrivals', 'guestArrivals', answers)
   }
 
+  function handleCeremonyConfirm(answers, summary) {
+    setMomentAnswers((prev) => ({ ...prev, ceremony: answers }))
+    setCompletedMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
+    setInProgressMoments((prev) => prev.filter((id) => id !== 'ceremony'))
+    setMomentConfirmed((prev) => ({ ...prev, ceremony: true }))
+    setView('momentMap')
+  }
+
   function handleCeremonyComplete(answers, summary) {
     setMomentAnswers((prev) => ({ ...prev, ceremony: answers }))
     setCompletedMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
@@ -466,6 +474,7 @@ export default function App() {
         sessionId={sessionId}
         coupleName={coupleName}
         sessionAnswers={sessionAnswers}
+        onConfirm={handleCeremonyConfirm}
         onComplete={handleCeremonyComplete}
         onBack={() => setView('momentMap')}
       />

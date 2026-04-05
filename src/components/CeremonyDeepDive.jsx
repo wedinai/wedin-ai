@@ -339,6 +339,7 @@ export default function CeremonyDeepDive({
   sessionId,
   coupleName,
   sessionAnswers = {},
+  onConfirm,
   onComplete,
   onBack,
 }) {
@@ -555,38 +556,56 @@ export default function CeremonyDeepDive({
             </div>
           )}
 
-          {/* CTA */}
-          <button
-            onClick={() => onComplete?.(answers, summary)}
-            style={{
-              all: 'unset',
-              boxSizing: 'border-box',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              width: '100%',
-              padding: '15px 24px',
-              background: '#1C2B3A',
-              color: '#FAF7F2',
-              borderRadius: 10,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 15,
-              fontWeight: 500,
-            }}
-          >
-            Back to your music map
-            <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-              <path
-                d="M8 1l7 7-7 7M1 8h14"
-                stroke="#FAF7F2"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+          {/* Confirmation CTAs */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <button
+              onClick={() => onConfirm?.(answers, summary)}
+              style={{
+                all: 'unset',
+                boxSizing: 'border-box',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                padding: '15px 24px',
+                background: '#1C2B3A',
+                color: '#FAF7F2',
+                borderRadius: 10,
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 15,
+                fontWeight: 500,
+                textAlign: 'center',
+                minHeight: 52,
+              }}
+            >
+              Yes, this feels right →
+            </button>
+            <button
+              onClick={() => onComplete?.(answers, summary)}
+              style={{
+                all: 'unset',
+                boxSizing: 'border-box',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                padding: '15px 24px',
+                background: '#FFFFFF',
+                color: '#1C2B3A',
+                border: '1.5px solid #1C2B3A',
+                borderRadius: 10,
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 15,
+                fontWeight: 500,
+                textAlign: 'center',
+                minHeight: 52,
+              }}
+            >
+              I'd like to change something
+            </button>
+          </div>
 
         </div>
       </div>
