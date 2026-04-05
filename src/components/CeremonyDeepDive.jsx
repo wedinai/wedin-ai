@@ -339,7 +339,6 @@ export default function CeremonyDeepDive({
   sessionId,
   coupleName,
   sessionAnswers = {},
-  onConfirm,
   onComplete,
   onBack,
 }) {
@@ -556,56 +555,30 @@ export default function CeremonyDeepDive({
             </div>
           )}
 
-          {/* Confirmation CTAs */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <button
-              onClick={() => onConfirm?.(answers, summary)}
-              style={{
-                all: 'unset',
-                boxSizing: 'border-box',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                padding: '15px 24px',
-                background: '#1C2B3A',
-                color: '#FAF7F2',
-                borderRadius: 10,
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 15,
-                fontWeight: 500,
-                textAlign: 'center',
-                minHeight: 52,
-              }}
-            >
-              Yes, this feels right →
-            </button>
-            <button
-              onClick={() => onComplete?.(answers, summary)}
-              style={{
-                all: 'unset',
-                boxSizing: 'border-box',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                padding: '15px 24px',
-                background: '#FFFFFF',
-                color: '#1C2B3A',
-                border: '1.5px solid #1C2B3A',
-                borderRadius: 10,
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 15,
-                fontWeight: 500,
-                textAlign: 'center',
-                minHeight: 52,
-              }}
-            >
-              I'd like to change something
-            </button>
-          </div>
+          {/* Continue to confirmation flow */}
+          <button
+            onClick={() => onComplete?.(answers, summary)}
+            style={{
+              all: 'unset',
+              boxSizing: 'border-box',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              padding: '15px 24px',
+              background: '#1C2B3A',
+              color: '#FAF7F2',
+              borderRadius: 10,
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 15,
+              fontWeight: 500,
+              textAlign: 'center',
+              minHeight: 52,
+            }}
+          >
+            Continue →
+          </button>
 
         </div>
       </div>
