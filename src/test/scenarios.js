@@ -8,8 +8,8 @@ export const SCENARIOS = {
     portrait:
       "Sophie and Liam have a clear musical identity — warm, acoustic, emotionally honest. Their listening world is Norah Jones, Jack Johnson, Ben Harper. They want guests to feel at home from the moment they arrive and the day to build organically toward joy.",
     milIntake: {
-      budget: 'R85 000',
-      existingBookings: 'None',
+      budget: '60k_100k',
+      existingBookings: 'nothing_booked',
     },
     sessionAnswers: {
       three_words: 'Intimate, warm, joyful',
@@ -97,8 +97,8 @@ export const SCENARIOS = {
     portrait:
       "Emma and Tom know exactly who they are. Their music lives in the folk-acoustic world — Mumford, Fleet Foxes, Bon Iver — and their farm venue is an extension of that identity. The outdoor setting is central to their vision and a significant practical consideration for everything acoustic.",
     milIntake: {
-      budget: 'R65 000',
-      existingBookings: 'None',
+      budget: '60k_100k',
+      existingBookings: 'nothing_booked',
     },
     sessionAnswers: {
       three_words: 'Natural, relaxed, real',
@@ -187,8 +187,8 @@ export const SCENARIOS = {
     portrait:
       "Charlotte and James have exacting taste — contemporary classical, post-rock, and the kind of refinement that only comes from genuinely loving the music. Their wedding needs to feel like a piece of music itself: structured, considered, building to something.",
     milIntake: {
-      budget: 'R120 000',
-      existingBookings: 'String quartet already booked for ceremony',
+      budget: '100k_150k',
+      existingBookings: 'band_booked',
     },
     sessionAnswers: {
       three_words: 'Elegant, timeless, personal',
@@ -279,8 +279,8 @@ export const SCENARIOS = {
     portrait:
       "Thabo and Priya have deeply personal, intimate taste — but their guest count and venue create a real tension the MIL must surface honestly. A solo acoustic guitarist cannot hold a hotel ballroom with 280 people. The MIL's job here is to honour their taste while being honest about what the room requires.",
     milIntake: {
-      budget: 'R95 000',
-      existingBookings: 'None',
+      budget: '60k_100k',
+      existingBookings: 'nothing_booked',
     },
     sessionAnswers: {
       three_words: 'Intimate, soulful, ours',
@@ -368,8 +368,8 @@ export const SCENARIOS = {
     portrait:
       "Naledi and David are the maximum-expression test case: full budget, full ambition, deeply South African identity, multigenerational and multicultural guest list. Their vision is genuinely complex — marimba arrivals, choir ceremony, jazz dinner, live band into DJ. The production check coherence test is the primary target.",
     milIntake: {
-      budget: 'R110 000',
-      existingBookings: 'Cantor already booked',
+      budget: '100k_150k',
+      existingBookings: 'dj_and_live',
     },
     sessionAnswers: {
       three_words: 'Opulent, joyful, African',
