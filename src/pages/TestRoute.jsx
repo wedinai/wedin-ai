@@ -35,6 +35,7 @@ export default function TestRoute() {
     localStorage.setItem('wedin_completed_moments', JSON.stringify(ALL_MOMENTS))
     localStorage.setItem('wedin_moment_confirmed', JSON.stringify(ALL_CONFIRMED))
     localStorage.setItem('wedin_portrait', scenario.portrait)
+    localStorage.setItem('wedin_mil_intake', JSON.stringify(scenario.milIntake))
 
     navigate('/moment-map', { replace: true })
   }, [scenario, navigate])
