@@ -123,6 +123,10 @@ export const handler = async (event) => {
     }
 
     const playlist = await playlistRes.json()
+    console.log('create-spotify-playlist: playlist created id', playlist.id, '| owner', playlist.owner?.id || 'unknown')
+
+    // Brief pause to let Spotify propagate the new playlist before adding tracks
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     // ── Step 4: Add tracks ───────────────────────────────────────────────────
     console.log('create-spotify-playlist: adding tracks to playlist', playlist.id)
@@ -136,7 +140,7 @@ export const handler = async (event) => {
     })
     if (!addRes.ok) {
       const addErr = await addRes.text()
-      console.error('create-spotify-playlist: add tracks failed', addRes.status, addErr.slice(0, 200))
+      console.error('create-spotify-playlist: add tracks failed', addRes.status, addErr)
     } else {
       const addBody = await addRes.json()
       console.log('create-spotify-playlist: add tracks status', addRes.status, '| snapshot_id', addBody.snapshot_id || 'none')
