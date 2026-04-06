@@ -80,7 +80,7 @@ Rules:
 2. For moments with no named songs, generate contextual suggestions based on the MIL recommendation and the couple's session answers.
 3. For Speeches: skip — do not include any tracks.
 4. Keep artist and title as they appear on Spotify — no abbreviations.
-5. Return ONLY valid JSON. No markdown. No explanation. No preamble.
+5. Return ONLY valid JSON. No markdown, no backticks, no code fences, no preamble.
 6. Format: array of objects — [{ "moment": string, "artist": string, "title": string }]
 7. Target 20–27 tracks total. Total output under 800 tokens.
 
@@ -111,8 +111,7 @@ IMPORTANT: Base all recommendations only on what this couple actually said. Fres
     const data = await apiRes.json()
     const rawText = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '[]'
     console.log('generate-spotify-tracks: raw output', rawText.slice(0, 500))
-    const raw = rawText
-    const clean = raw.trim()
+    const clean = rawText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim()
 
     let tracks = []
     try {
