@@ -131,7 +131,7 @@ export const handler = async (event) => {
     // ── Step 4: Add tracks ───────────────────────────────────────────────────
     console.log('create-spotify-playlist: adding tracks to playlist', playlist.id, '| sample uris', JSON.stringify(trackUris.slice(0, 3)))
     const addRes = await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
