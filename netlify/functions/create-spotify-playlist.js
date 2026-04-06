@@ -110,7 +110,7 @@ export const handler = async (event) => {
         },
         body: JSON.stringify({
           name: `${coupleName} Wedding`,
-          public: true,
+          public: false,
           description: 'Your wedding soundtrack, built by wedin.ai',
         }),
       }
@@ -129,7 +129,7 @@ export const handler = async (event) => {
     await new Promise(resolve => setTimeout(resolve, 1000))
 
     // ── Step 4: Add tracks ───────────────────────────────────────────────────
-    console.log('create-spotify-playlist: adding tracks to playlist', playlist.id)
+    console.log('create-spotify-playlist: adding tracks to playlist', playlist.id, '| sample uris', JSON.stringify(trackUris.slice(0, 3)))
     const addRes = await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
       method: 'POST',
       headers: {
