@@ -44,6 +44,10 @@ export default function App() {
   const [ceremonySummary, setCeremonySummary] = useState(null)
   const [email, setEmail] = useState(null)
   const [educationCards, setEducationCards] = useState({})
+  const [spotifyPlaylistUrl, setSpotifyPlaylistUrl] = useState(
+    () => localStorage.getItem('wedin_spotify_playlist') || null
+  )
+  const [spotifyLoading, setSpotifyLoading] = useState(false)
 
   // ── Supabase state persistence ────────────────────────────────────────────
   // Called after each deep-dive confirmation and after MIL completion.
@@ -488,6 +492,42 @@ export default function App() {
     localStorage.setItem('wedin_mil_recommendations', JSON.stringify(recommendations))
     persistState({ mil_recommendations: recommendations })
     setView('brief')
+
+    // Non-blocking Spotify playlist generation — same pattern as generateEducationCard
+    ;(async () => {
+      setSpotifyLoading(true)
+      try {
+        const r1 = await fetch('/.netlify/functions/generate-spotify-tracks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            momentAnswers,
+            milRecommendations: recommendations,
+            sessionAnswers,
+            coupleName,
+          }),
+        })
+        if (!r1.ok) return
+        const { tracks } = await r1.json()
+        if (!tracks?.length) return
+        const r2 = await fetch('/.netlify/functions/create-spotify-playlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tracks, coupleName }),
+        })
+        if (!r2.ok) return
+        const { playlistUrl } = await r2.json()
+        if (playlistUrl) {
+          setSpotifyPlaylistUrl(playlistUrl)
+          localStorage.setItem('wedin_spotify_playlist', playlistUrl)
+          persistState({ mil_recommendations: recommendations, spotify_playlist_url: playlistUrl })
+        }
+      } catch (e) {
+        console.error('Spotify playlist generation failed:', e)
+      } finally {
+        setSpotifyLoading(false)
+      }
+    })()
   }
 
   async function handleMomentComplete(momentId, momentName, answersKey, answers) {
@@ -690,6 +730,8 @@ export default function App() {
         onStartMIL={() => setView('mil')}
         milRecommendations={milRecommendations}
         initialTab={milRecommendations ? 'musicPlan' : 'couple'}
+        spotifyPlaylistUrl={spotifyPlaylistUrl}
+        spotifyLoading={spotifyLoading}
       />
     )
   }

@@ -31,6 +31,12 @@
 [functions."generate-education"]
   timeout = 26
 
+[functions."generate-spotify-tracks"]
+  timeout = 26
+
+[functions."create-spotify-playlist"]
+  timeout = 26
+
 [dev]
   command = "npm run dev"
   targetPort = 5173
