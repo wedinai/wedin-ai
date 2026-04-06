@@ -586,24 +586,30 @@ export default function BriefScreen({
                         margin: '0 0 12px 0',
                         fontWeight: 400,
                       }}>{moment.name}</h3>
-                      <div style={{ marginBottom: '8px' }}>
-                        <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Recommendation: </span>
-                        <span style={{ color: '#1C2B3A', fontSize: '14px' }}>{moment.recommendation}</span>
-                      </div>
-                      <div style={{ marginBottom: '8px' }}>
-                        <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Why: </span>
-                        <span style={{ color: '#6B6560', fontSize: '14px' }}>{moment.why}</span>
-                      </div>
-                      <div style={{
-                        background: 'rgba(196,146,42,0.06)',
-                        borderLeft: '3px solid #C4922A',
-                        borderRadius: '0 8px 8px 0',
-                        padding: '12px 16px',
-                        marginTop: '12px',
-                      }}>
-                        <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '13px' }}>Brief instruction: </span>
-                        <span style={{ color: '#1C2B3A', fontSize: '13px', fontStyle: 'italic' }}>{moment.instruction}</span>
-                      </div>
+                      {moment.recommendation && (
+                        <div style={{ marginBottom: '8px' }}>
+                          <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Recommendation: </span>
+                          <span style={{ color: '#1C2B3A', fontSize: '14px' }}>{moment.recommendation}</span>
+                        </div>
+                      )}
+                      {moment.why && (
+                        <div style={{ marginBottom: '8px' }}>
+                          <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Why: </span>
+                          <span style={{ color: '#6B6560', fontSize: '14px' }}>{moment.why}</span>
+                        </div>
+                      )}
+                      {moment.instruction && (
+                        <div style={{
+                          background: 'rgba(196,146,42,0.06)',
+                          borderLeft: '3px solid #C4922A',
+                          borderRadius: '0 8px 8px 0',
+                          padding: '12px 16px',
+                          marginTop: '12px',
+                        }}>
+                          <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '13px' }}>Brief instruction: </span>
+                          <span style={{ color: '#1C2B3A', fontSize: '13px', fontStyle: 'italic' }}>{moment.instruction}</span>
+                        </div>
+                      )}
                     </div>
                   ))}
                   {milRecommendations.productionCheck && (
