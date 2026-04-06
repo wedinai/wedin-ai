@@ -92,6 +92,7 @@ export const handler = async (event) => {
     )
 
     const trackUris = searchResults.filter(Boolean)
+    console.log('create-spotify-playlist: trackUris count', trackUris.length, '| first uri', trackUris[0] || 'none')
 
     if (!trackUris.length) {
       console.log('create-spotify-playlist: no tracks found on Spotify')
@@ -124,7 +125,8 @@ export const handler = async (event) => {
     const playlist = await playlistRes.json()
 
     // ── Step 4: Add tracks ───────────────────────────────────────────────────
-    await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
+    console.log('create-spotify-playlist: adding tracks to playlist', playlist.id)
+    const addRes = await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -132,6 +134,8 @@ export const handler = async (event) => {
       },
       body: JSON.stringify({ uris: trackUris }),
     })
+    const addBody = await addRes.json()
+    console.log('create-spotify-playlist: add tracks status', addRes.status, '| response', JSON.stringify(addBody).slice(0, 200))
 
     return {
       statusCode: 200,
