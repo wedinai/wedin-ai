@@ -2,9 +2,6 @@
 // Claude curates a track list from the couple's moment answers and MIL output.
 // Called after MIL completes. Output feeds into create-spotify-playlist.js.
 
-import Anthropic from '@anthropic-ai/sdk'
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 const MOMENT_FUNCTIONS = `
 - Guest Arrivals: ambient, welcoming, warm — low energy
@@ -86,14 +83,28 @@ Rules:
 
 IMPORTANT: Base all recommendations only on what this couple actually said. Fresh session. No memory of previous couples. Do not invent preferences they did not express.`
 
-    const response = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 800,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userContent }],
+    const apiRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userContent }],
+      }),
     })
 
-    const raw = response.content?.[0]?.text || '[]'
+    if (!apiRes.ok) {
+      console.error('generate-spotify-tracks: Anthropic API error', apiRes.status)
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tracks: [] }) }
+    }
+
+    const data = await apiRes.json()
+    const raw = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '[]'
     const clean = raw.trim()
 
     let tracks = []
