@@ -24,6 +24,7 @@ Tone rules:
 - Never use: seamless, journey, unlock, leverage, magical, perfect, dream wedding, deploy
 - Do not start with "You both" as the literal first two words — vary the opening
 - Every card MUST reference at least one specific song title, artist name, or named detail from the couple's actual answers. A card that could apply to any couple is a failure — ground it in what they specifically said.
+- CRITICAL JSON SAFETY: Never use double quotes inside the card text. Use single quotes for song titles and artist names (e.g. 'Don\'t Stop Believin\'' not "Don't Stop Believin'"). Apostrophes in song titles are fine.
 
 Structure: One sentence grounded in the specific feeling or choice they named. One or two sentences explaining why that direction works for this particular moment in a wedding. One closing sentence connecting their choice back to what they said they want from the day overall.
 
@@ -107,8 +108,12 @@ Respond ONLY with valid JSON: {"card": "your 3–4 sentence explanation here"}`
       const parsed = JSON.parse(text)
       card = parsed.card ?? null
     } catch (parseErr) {
-      console.error('Education card JSON parse failed, using raw text:', parseErr)
-      card = text || null
+      console.error('Education card JSON parse failed, trying regex extraction:', parseErr)
+      // Extract content between "card": " and the last closing quote before }
+      const match = text.match(/"card"\s*:\s*"([\s\S]+?)"\s*\}?\s*$/)
+      if (match) {
+        card = match[1].replace(/\\"/g, '"') || null
+      }
     }
 
     return {
