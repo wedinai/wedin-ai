@@ -134,8 +134,13 @@ export const handler = async (event) => {
       },
       body: JSON.stringify({ uris: trackUris }),
     })
-    const addBody = await addRes.json()
-    console.log('create-spotify-playlist: add tracks status', addRes.status, '| response', JSON.stringify(addBody).slice(0, 200))
+    if (!addRes.ok) {
+      const addErr = await addRes.text()
+      console.error('create-spotify-playlist: add tracks failed', addRes.status, addErr.slice(0, 200))
+    } else {
+      const addBody = await addRes.json()
+      console.log('create-spotify-playlist: add tracks status', addRes.status, '| snapshot_id', addBody.snapshot_id || 'none')
+    }
 
     return {
       statusCode: 200,
