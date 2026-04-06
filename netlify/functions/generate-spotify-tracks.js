@@ -125,6 +125,7 @@ IMPORTANT: Base all recommendations only on what this couple actually said. Fres
       tracks = []
     }
 
+    console.log('generate-spotify-tracks: returning tracks count', tracks.length)
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
