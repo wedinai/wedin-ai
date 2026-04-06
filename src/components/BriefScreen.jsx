@@ -74,13 +74,57 @@ function Tab({ label, active, onClick }) {
 
 // ── How to Book tab ────────────────────────────────────────────────────────
 
-const VETTING_QUESTIONS = [
-  'Ask for a set list — what songs do they actually play?',
-  'Are they open to couple-requested songs if provided in advance?',
-  'Do they use a backing track?',
-  'What styles and genres can they genuinely play?',
-  'Is this a fixed lineup or do they use deps?',
-]
+const VETTING_QUESTIONS_BY_TYPE = {
+  dj: [
+    'Does this DJ have experience with weddings of your size and venue type?',
+    'Can you hear a recent wedding set or see a recent setlist?',
+    'Do they own professional outdoor PA if your venue requires it?',
+    'What is their backup plan if equipment fails?',
+    'Are they comfortable with a specific wind-down arc rather than a fixed set?',
+  ],
+  band: [
+    'What is the band\'s exact lineup on your date — no deps without approval?',
+    'Can they provide a live recording from a recent wedding, not a studio recording?',
+    'Do they provide their own backline and PA or does that need to be hired separately?',
+    'What is their set length and break structure?',
+    'Have they played your specific venue or a similar size before?',
+  ],
+  acoustic: [
+    'Can they perform the specific songs you named — ask for a sample recording of each one?',
+    'Do they have their own PA for outdoor or large indoor spaces?',
+    'What is their set length and can they sustain it without repetition?',
+    'Are they open to requests on the day?',
+  ],
+  strings: [
+    'Can they perform contemporary arrangements — not just classical repertoire?',
+    'Ask for sample recordings of the specific pieces you named.',
+    'What is their dep policy — will the same musicians play on your day?',
+    'Do they provide their own music stands and need specific stage requirements?',
+  ],
+  choir: [
+    'Can they perform both traditional and contemporary repertoire as your brief requires?',
+    'What is their minimum booking size and what is included in rehearsal?',
+    'Do they have experience with weddings and cultural ceremonies specifically?',
+    'Ask for a sample recording of the traditional pieces you need.',
+  ],
+  recorded: [
+    'Confirm your venue\'s PA system is adequate for your guest count.',
+    'Does your DJ have the specific songs you named in their library?',
+    'Who is responsible for cueing songs at the right moment — DJ, coordinator, or AV technician?',
+  ],
+}
+
+function getVettingQuestions(recommendation) {
+  if (!recommendation) return VETTING_QUESTIONS_BY_TYPE.dj
+  const r = recommendation.toLowerCase()
+  if (r.includes('choir')) return VETTING_QUESTIONS_BY_TYPE.choir
+  if (r.includes('quartet') || r.includes('string') || r.includes('classical')) return VETTING_QUESTIONS_BY_TYPE.strings
+  if (r.includes('band')) return VETTING_QUESTIONS_BY_TYPE.band
+  if (r.includes('acoustic') || r.includes('solo') || r.includes('duo')) return VETTING_QUESTIONS_BY_TYPE.acoustic
+  if (r.includes('recorded') || r.includes('playlist')) return VETTING_QUESTIONS_BY_TYPE.recorded
+  if (r.includes('dj')) return VETTING_QUESTIONS_BY_TYPE.dj
+  return VETTING_QUESTIONS_BY_TYPE.dj
+}
 
 const BOOKING_LEAD_TIME =
   'Book 6–9 months out for live acts; 3–6 months for DJs and soloists. Outside Cape Town or Johannesburg, add travel costs and expect a shorter available pool.'
@@ -149,22 +193,27 @@ function HowToBook({ milRecommendations }) {
             >
               Before you book
             </p>
-            <ol style={{ margin: 0, paddingLeft: '18px' }}>
-              {VETTING_QUESTIONS.map((q, qi) => (
-                <li
-                  key={qi}
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: '13px',
-                    color: '#1C2B3A',
-                    lineHeight: 1.65,
-                    marginBottom: qi < VETTING_QUESTIONS.length - 1 ? '6px' : 0,
-                  }}
-                >
-                  {q}
-                </li>
-              ))}
-            </ol>
+            {(() => {
+              const questions = getVettingQuestions(moment.recommendation)
+              return (
+                <ol style={{ margin: 0, paddingLeft: '18px' }}>
+                  {questions.map((q, qi) => (
+                    <li
+                      key={qi}
+                      style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: '13px',
+                        color: '#1C2B3A',
+                        lineHeight: 1.65,
+                        marginBottom: qi < questions.length - 1 ? '6px' : 0,
+                      }}
+                    >
+                      {q}
+                    </li>
+                  ))}
+                </ol>
+              )
+            })()}
           </div>
 
           <p
