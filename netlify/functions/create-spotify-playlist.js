@@ -100,7 +100,7 @@ export const handler = async (event) => {
 
     // ── Step 3: Create playlist on wedin.ai Spotify account ─────────────────
     const playlistRes = await fetch(
-      `https://api.spotify.com/v1/users/${SPOTIFY_USER_ID}/playlists`,
+      `https://api.spotify.com/v1/me/playlists`,
       {
         method: 'POST',
         headers: {
