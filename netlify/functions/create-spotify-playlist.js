@@ -44,15 +44,35 @@ export const handler = async (event) => {
       }),
     })
 
+    console.log('create-spotify-playlist: token exchange status', tokenRes.status)
+    console.log('create-spotify-playlist: SPOTIFY_USER_ID present', !!SPOTIFY_USER_ID, '| value', SPOTIFY_USER_ID)
+
     if (!tokenRes.ok) {
       const err = await tokenRes.text()
       console.error('create-spotify-playlist: token exchange failed', err)
       return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playlistUrl: null }) }
     }
 
-    const { access_token: accessToken } = await tokenRes.json()
+    const tokenData = await tokenRes.json()
+    console.log('create-spotify-playlist: access_token present', !!tokenData.access_token)
+    const accessToken = tokenData.access_token
 
     // ── Step 2: Search each track in parallel ────────────────────────────────
+    // Log the first track search only — enough to diagnose query + response issues
+    const firstTrack = tracks[0]
+    if (firstTrack) {
+      const q0 = encodeURIComponent(`track:"${firstTrack.title}" artist:"${firstTrack.artist}"`)
+      console.log('create-spotify-playlist: first search query (decoded)', `track:"${firstTrack.title}" artist:"${firstTrack.artist}"`)
+      const probe = await fetch(
+        `https://api.spotify.com/v1/search?q=${q0}&type=track&limit=1`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      )
+      const probeData = await probe.json()
+      console.log('create-spotify-playlist: first search response status', probe.status)
+      console.log('create-spotify-playlist: first search items count', probeData.tracks?.items?.length ?? 'no tracks key')
+      if (probeData.error) console.log('create-spotify-playlist: first search error body', JSON.stringify(probeData.error))
+    }
+
     const searchResults = await Promise.all(
       tracks.map(async ({ artist, title }) => {
         try {
@@ -64,7 +84,8 @@ export const handler = async (event) => {
           if (!res.ok) return null
           const data = await res.json()
           return data.tracks?.items?.[0]?.uri || null
-        } catch {
+        } catch (e) {
+          console.error('create-spotify-playlist: search error', e.message)
           return null
         }
       })
