@@ -41,12 +41,8 @@ export const handler = async (event) => {
   if (process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY)
-      // Session-aware return URL — picked up by App.jsx restore logic on return visit
-      // On a different device, the session param is present but localStorage won't be,
-      // so full cross-device restore requires fetching answers from Supabase by session ID — deferred TODO
-      const returnUrl = session_id
-        ? `https://wedin-ai-app.netlify.app?session=${session_id}`
-        : 'https://wedin-ai-app.netlify.app'
+      // Email-based restore URL — works on any device, no localStorage dependency
+      const returnUrl = `https://wedin-ai-app.netlify.app?email=${encodeURIComponent(email.trim())}`
 
       const html = `<!DOCTYPE html>
 <html>
