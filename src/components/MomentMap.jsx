@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import EducationCard from "./EducationCard.jsx";
 
 // ─── Moment data ───────────────────────────────────────────────────────────
 const MOMENTS = [
@@ -739,6 +740,7 @@ export default function MomentMap({
   onUnlock = () => {}, // called when couple clicks unlock / pay
   onMomentStart = () => {}, // called with moment.id when a paid moment is started
   onGenerateBrief = () => {}, // called when all moments confirmed and couple clicks generate
+  educationCards = {}, // education cards keyed by momentId, shown below confirmed moments
 }) {
   const [activeMoment, setActiveMoment] = useState(null);
   const [mounted, setMounted] = useState(false);
@@ -946,6 +948,9 @@ export default function MomentMap({
                     onClick={() => handleMomentClick(moment)}
                     index={index}
                   />
+                  {status === "confirmed" && educationCards[moment.id] && (
+                    <EducationCard card={educationCards[moment.id]} />
+                  )}
                 </div>
               );
             })}

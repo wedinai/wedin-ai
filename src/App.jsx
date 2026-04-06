@@ -43,6 +43,7 @@ export default function App() {
   const [confirmKey, setConfirmKey] = useState(0)
   const [ceremonySummary, setCeremonySummary] = useState(null)
   const [email, setEmail] = useState(null)
+  const [educationCards, setEducationCards] = useState({})
 
   // ── Supabase state persistence ────────────────────────────────────────────
   // Called after each deep-dive confirmation and after MIL completion.
@@ -92,6 +93,12 @@ export default function App() {
       localStorage.setItem('wedin_moment_feedback', JSON.stringify(momentFeedback))
     }
   }, [momentFeedback])
+
+  useEffect(() => {
+    if (Object.keys(educationCards).length > 0) {
+      localStorage.setItem('wedin_education_cards', JSON.stringify(educationCards))
+    }
+  }, [educationCards])
 
   // Save session to Supabase whenever a completed set of answers arrives
   useEffect(() => {
@@ -184,6 +191,8 @@ export default function App() {
       if (savedFeedback) { try { setMomentFeedback(JSON.parse(savedFeedback)) } catch (e) {} }
       const savedCeremonySummary = localStorage.getItem('wedin_ceremony_summary')
       if (savedCeremonySummary) setCeremonySummary(savedCeremonySummary)
+      const savedEducationCards = localStorage.getItem('wedin_education_cards')
+      if (savedEducationCards) { try { setEducationCards(JSON.parse(savedEducationCards)) } catch (e) {} }
       setView('momentMap')
     }
 
@@ -219,6 +228,8 @@ export default function App() {
             } else {
               setView('momentMap')
             }
+            const savedEducationCards = localStorage.getItem('wedin_education_cards')
+            if (savedEducationCards) { try { setEducationCards(JSON.parse(savedEducationCards)) } catch (e) {} }
           } else {
             restoreFromLocalStorage()
           }
@@ -277,6 +288,7 @@ export default function App() {
     localStorage.removeItem('wedin_moment_feedback')
     localStorage.removeItem('wedin_ceremony_summary')
     localStorage.removeItem('wedin_email')
+    localStorage.removeItem('wedin_education_cards')
     setSessionAnswers({})
     setSessionId(null)
     setPortrait(null)
@@ -288,6 +300,7 @@ export default function App() {
     setMomentFeedback({})
     setCeremonySummary(null)
     setEmail(null)
+    setEducationCards({})
     setPendingConfirmation(null)
     setView('discovery')
   }
@@ -367,6 +380,7 @@ export default function App() {
     setMomentFeedback((prev) => ({ ...prev, [momentId]: feedback }))
     setPendingConfirmation(null)
     persistState({ moment_confirmed: newConfirmed })
+    generateEducationCard(momentId)
     setView('momentMap')
   }
 
@@ -376,6 +390,7 @@ export default function App() {
     setMomentConfirmed(prev => ({ ...prev, [momentId]: true }))
     setPendingConfirmation(null)
     persistState({ moment_confirmed: newConfirmed })
+    generateEducationCard(momentId)
     setView('momentMap')
   }
 
@@ -410,6 +425,62 @@ export default function App() {
     } finally {
       setMomentSummaryLoading(false)
     }
+  }
+
+  const MOMENTS_META = {
+    arrivals:   'Guest Arrivals',
+    ceremony:   'Ceremony',
+    predrinks:  'Pre-drinks',
+    entrance:   'Your Entrance',
+    firstdance: 'First Dance',
+    dinner:     'Dinner',
+    speeches:   'Speeches',
+    dancing:    'Dancing',
+    lastsong:   'Last Song',
+  }
+
+  const EDUCATION_ANSWERS_KEY = {
+    arrivals:   'guestArrivals',
+    ceremony:   'ceremony',
+    predrinks:  'predrinks',
+    entrance:   'entrance',
+    firstdance: 'firstDance',
+    dinner:     'dinner',
+    speeches:   'speeches',
+    dancing:    'dancing',
+    lastsong:   'lastSong',
+  }
+
+  function generateEducationCard(momentId) {
+    const answersKey = EDUCATION_ANSWERS_KEY[momentId]
+    if (!answersKey) return
+
+    ;(async () => {
+      try {
+        const res = await fetch('/.netlify/functions/generate-education', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            portrait,
+            sessionAnswers,
+            momentAnswers,
+            momentId,
+            momentName: MOMENTS_META[momentId] || momentId,
+            coupleName,
+          }),
+        })
+        if (!res.ok) return
+        const data = await res.json()
+        if (!data.card) return
+        setEducationCards(prev => {
+          const next = { ...prev, [momentId]: data.card }
+          localStorage.setItem('wedin_education_cards', JSON.stringify(next))
+          return next
+        })
+      } catch {
+        // silent failure — education card is non-blocking
+      }
+    })()
   }
 
   function handleMILComplete(answers, recommendations) {
@@ -675,6 +746,7 @@ export default function App() {
         onMomentStart={handleMomentStart}
         onGenerateBrief={handleGenerateBrief}
         onBack={() => setView('portrait')}
+        educationCards={educationCards}
       />
     )
   }
