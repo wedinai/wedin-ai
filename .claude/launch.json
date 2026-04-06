@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vite-main",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd /Users/russelnerwich/Desktop/wedin.ai && /opt/homebrew/bin/node /Users/russelnerwich/Desktop/wedin.ai/node_modules/.bin/vite --port 5173"],
+      "port": 5173
+    }
+  ]
+}
