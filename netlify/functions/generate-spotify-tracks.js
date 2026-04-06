@@ -95,9 +95,12 @@ IMPORTANT: Base all recommendations only on what this couple actually said. Fres
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 800,
+        max_tokens: 1500,
         system: systemPrompt,
-        messages: [{ role: 'user', content: userContent }],
+        messages: [
+          { role: 'user', content: userContent },
+          { role: 'assistant', content: '[' },
+        ],
       }),
     })
 
@@ -111,7 +114,9 @@ IMPORTANT: Base all recommendations only on what this couple actually said. Fres
     const data = await apiRes.json()
     const rawText = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '[]'
     console.log('generate-spotify-tracks: raw output', rawText.slice(0, 500))
-    const clean = rawText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim()
+    // Prepend '[' because assistant prefill started the array
+    const full = '[' + rawText
+    const clean = full.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim()
 
     let tracks = []
     try {
