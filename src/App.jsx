@@ -148,7 +148,14 @@ export default function App() {
     const params = new URLSearchParams(window.location.search)
     if (params.get('payment') === 'success') return
 
-    const savedEmail = localStorage.getItem('wedin_email')
+    // Email link restore — ?email= param lands from portrait delivery email
+    const urlEmail = params.get('email')
+    if (urlEmail) {
+      localStorage.setItem('wedin_email', urlEmail)
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+
+    const savedEmail = urlEmail || localStorage.getItem('wedin_email')
     const savedSessionId = localStorage.getItem('wedin_session_id')
     const savedAnswers = localStorage.getItem('wedin_session_answers')
     const urlSessionId = params.get('session')
