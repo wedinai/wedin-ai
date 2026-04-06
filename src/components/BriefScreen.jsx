@@ -72,6 +72,151 @@ function Tab({ label, active, onClick }) {
   )
 }
 
+// ── How to Book tab ────────────────────────────────────────────────────────
+
+const VETTING_QUESTIONS = [
+  'Ask for a set list — what songs do they actually play?',
+  'Are they open to couple-requested songs if provided in advance?',
+  'Do they use a backing track?',
+  'What styles and genres can they genuinely play?',
+  'Is this a fixed lineup or do they use deps?',
+]
+
+const BOOKING_LEAD_TIME =
+  'Book 6–9 months out for live acts; 3–6 months for DJs and soloists. Outside Cape Town or Johannesburg, add travel costs and expect a shorter available pool.'
+
+function HowToBook({ milRecommendations }) {
+  return (
+    <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      {milRecommendations.moments?.map((moment, i) => (
+        <div
+          key={i}
+          style={{
+            marginBottom: '32px',
+            paddingBottom: '32px',
+            borderBottom:
+              i < milRecommendations.moments.length - 1
+                ? '1px solid rgba(28,43,58,0.08)'
+                : 'none',
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: '22px',
+              color: '#C4922A',
+              margin: '0 0 12px 0',
+              fontWeight: 400,
+            }}
+          >
+            {moment.name}
+          </h3>
+
+          {moment.recommendation && (
+            <div style={{ marginBottom: '8px' }}>
+              <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Recommendation: </span>
+              <span style={{ color: '#1C2B3A', fontSize: '14px' }}>{moment.recommendation}</span>
+            </div>
+          )}
+
+          {moment.cost && (
+            <div style={{ marginBottom: '16px' }}>
+              <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Cost estimate: </span>
+              <span style={{ color: '#1C2B3A', fontSize: '14px' }}>{moment.cost}</span>
+            </div>
+          )}
+
+          <div
+            style={{
+              background: '#FFFFFF',
+              border: '1px solid rgba(28,43,58,0.08)',
+              borderLeft: '3px solid #C4922A',
+              borderRadius: '0 8px 8px 0',
+              padding: '14px 16px',
+              marginBottom: '12px',
+            }}
+          >
+            <p
+              style={{
+                margin: '0 0 10px',
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 11,
+                fontWeight: 600,
+                color: '#C4922A',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Before you book
+            </p>
+            <ol style={{ margin: 0, paddingLeft: '18px' }}>
+              {VETTING_QUESTIONS.map((q, qi) => (
+                <li
+                  key={qi}
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: '13px',
+                    color: '#1C2B3A',
+                    lineHeight: 1.65,
+                    marginBottom: qi < VETTING_QUESTIONS.length - 1 ? '6px' : 0,
+                  }}
+                >
+                  {q}
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <p
+            style={{
+              margin: 0,
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: '13px',
+              color: '#6B6560',
+              lineHeight: 1.6,
+              fontStyle: 'italic',
+            }}
+          >
+            {BOOKING_LEAD_TIME}
+          </p>
+        </div>
+      ))}
+
+      {milRecommendations.productionCheck && (
+        <div
+          style={{
+            background: '#1C2B3A',
+            borderRadius: '12px',
+            padding: '24px',
+            marginTop: '8px',
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: '20px',
+              color: '#FAF7F2',
+              margin: '0 0 16px 0',
+              fontWeight: 400,
+            }}
+          >
+            Production Reality Check
+          </h3>
+          <div style={{ color: '#FAF7F2', fontSize: '14px', marginBottom: '8px' }}>
+            <strong>Total estimate:</strong> {milRecommendations.productionCheck.totalEstimate}
+          </div>
+          <div style={{ color: '#FAF7F2', fontSize: '14px', marginBottom: '8px' }}>
+            <strong>Book first:</strong> {milRecommendations.productionCheck.bookFirst}
+          </div>
+          <div style={{ color: 'rgba(250,247,242,0.7)', fontSize: '13px' }}>
+            {milRecommendations.productionCheck.hiddenCosts}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main component ─────────────────────────────────────────────────────────
 
 export default function BriefScreen({
@@ -148,7 +293,6 @@ export default function BriefScreen({
         lines.push(m.name.toUpperCase())
         if (m.recommendation) lines.push(`Recommendation: ${m.recommendation}`)
         if (m.why)            lines.push(`Why: ${m.why}`)
-        if (m.cost)           lines.push(`Cost: ${m.cost}`)
         if (m.instruction)    lines.push(`Brief instruction: ${m.instruction}`)
         lines.push('')
       })
@@ -450,10 +594,6 @@ export default function BriefScreen({
                         <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Why: </span>
                         <span style={{ color: '#6B6560', fontSize: '14px' }}>{moment.why}</span>
                       </div>
-                      <div style={{ marginBottom: '8px' }}>
-                        <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '14px' }}>Cost: </span>
-                        <span style={{ color: '#1C2B3A', fontSize: '14px' }}>{moment.cost}</span>
-                      </div>
                       <div style={{
                         background: 'rgba(196,146,42,0.06)',
                         borderLeft: '3px solid #C4922A',
@@ -496,6 +636,8 @@ export default function BriefScreen({
                 <div dangerouslySetInnerHTML={{ __html: milRecommendations }} />
               )}
             </div>
+          ) : activeTab === 'couple' && isMILJson ? (
+            <HowToBook milRecommendations={milRecommendations} />
           ) : (
             <BriefContent text={activeBrief} />
           )}
