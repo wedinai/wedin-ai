@@ -38,7 +38,7 @@ loadEnv()
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET
 const REDIRECT_URI = 'http://127.0.0.1:8888/callback'
-const SCOPE = 'playlist-modify-public'
+const SCOPE = 'playlist-modify-public playlist-modify-private'
 const PORT = 8888
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
