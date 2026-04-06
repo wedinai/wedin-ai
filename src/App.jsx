@@ -41,6 +41,7 @@ export default function App() {
   const [momentSummary, setMomentSummary] = useState(null)
   const [momentSummaryLoading, setMomentSummaryLoading] = useState(false)
   const [confirmKey, setConfirmKey] = useState(0)
+  const [ceremonySummary, setCeremonySummary] = useState(null)
 
   // Persist completedMoments and momentAnswers to localStorage whenever they change
   useEffect(() => {
@@ -158,6 +159,9 @@ export default function App() {
       const savedFeedback = localStorage.getItem('wedin_moment_feedback')
       if (savedFeedback) { try { setMomentFeedback(JSON.parse(savedFeedback)) } catch (e) {} }
 
+      const savedCeremonySummary = localStorage.getItem('wedin_ceremony_summary')
+      if (savedCeremonySummary) setCeremonySummary(savedCeremonySummary)
+
       setView('momentMap') // skip discovery and portrait, go straight to the map
     }
   }, [])
@@ -183,6 +187,7 @@ export default function App() {
     localStorage.removeItem('wedin_mil_recommendations')
     localStorage.removeItem('wedin_moment_confirmed')
     localStorage.removeItem('wedin_moment_feedback')
+    localStorage.removeItem('wedin_ceremony_summary')
     setSessionAnswers({})
     setSessionId(null)
     setPortrait(null)
@@ -192,6 +197,7 @@ export default function App() {
     setMilRecommendations(null)
     setMomentConfirmed({})
     setMomentFeedback({})
+    setCeremonySummary(null)
     setPendingConfirmation(null)
     setView('discovery')
   }
@@ -243,6 +249,10 @@ export default function App() {
     setMomentAnswers((prev) => ({ ...prev, ceremony: answers }))
     setCompletedMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'ceremony'))
+    if (summary) {
+      setCeremonySummary(summary)
+      localStorage.setItem('wedin_ceremony_summary', summary)
+    }
     setMomentSummary(summary || null)
     setMomentSummaryLoading(false)
     setPendingConfirmation({ momentId: 'ceremony', momentName: 'Ceremony', answersKey: 'ceremony' })
@@ -509,6 +519,7 @@ export default function App() {
         sessionAnswers={sessionAnswers}
         momentAnswers={momentAnswers}
         coupleName={coupleName}
+        ceremonySummary={ceremonySummary}
       />
     )
   }

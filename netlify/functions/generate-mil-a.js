@@ -261,6 +261,7 @@ export const handler = async (event) => {
     momentAnswers = {},
     milAnswers = {},
     coupleName,
+    ceremonySummary,
   } = body
 
   const name = coupleName && coupleName !== 'Your Wedding' ? coupleName : 'this couple'
@@ -272,6 +273,7 @@ Three words: ${sessionAnswers.three_words || 'not provided'} | Driving home: ${s
 Profile signals: listening=${sessionAnswers.home_listening || 'n/a'} | guilty=${sessionAnswers.guilty_pleasure || 'n/a'} | confidence=${sessionAnswers.musical_confidence || 'n/a'} | crowd_vs_taste=${sessionAnswers.crowd_vs_taste || 'n/a'} | live_vs_recorded=${sessionAnswers.live_vs_recorded || 'n/a'}
 Budget: ${milAnswers.mil_budget || 'not provided'} | Bookings: ${milAnswers.mil_existing_bookings || 'nothing booked'} | Guests: ${sessionAnswers.guest_count || 'not specified'} | Venue: ${sessionAnswers.venue_type || 'not specified'}
 Portrait: ${portrait ? portrait.slice(0, 400) : 'Not available'}
+Ceremony summary: ${ceremonySummary || 'Not available'}
 
 MOMENT ANSWERS:
 ${momentBlock || 'No moment answers provided'}`

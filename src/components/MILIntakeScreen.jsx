@@ -56,6 +56,7 @@ export default function MILIntakeScreen({
   sessionAnswers,
   momentAnswers,
   coupleName,
+  ceremonySummary,
 }) {
   const [step, setStep] = useState(0)           // 0 = Q1, 1 = Q2
   const [milBudget, setMilBudget] = useState(null)
@@ -79,7 +80,7 @@ export default function MILIntakeScreen({
   async function generateMIL(answers) {
     setPhase('loading')
     try {
-      const payload = { portrait, sessionAnswers, momentAnswers, milAnswers: answers, coupleName }
+      const payload = { portrait, sessionAnswers, momentAnswers, milAnswers: answers, coupleName, ceremonySummary }
       const [res1, res2] = await Promise.all([
         fetch('/.netlify/functions/generate-mil-a', {
           method: 'POST',
