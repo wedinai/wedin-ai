@@ -86,9 +86,8 @@ export default function PostBriefScreen({ onStartMIL, allConfirmed = true, confi
               lineHeight: 1.7,
             }}
           >
-            You've done the hard part — you know how you want your day to feel.
-            The next step is turning that into a plan: which acts, what to book,
-            and what your coordinator needs to know.
+            Every moment is mapped. Now we turn it into a plan — which acts to
+            book, what each one costs, and what your coordinator needs on the night.
           </p>
 
           {/* ── Three feature cards ──────────────────────────────────── */}

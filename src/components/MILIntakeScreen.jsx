@@ -215,7 +215,7 @@ export default function MILIntakeScreen({
               lineHeight: 1.6,
             }}
           >
-            We hit a snag building your music plan. Your brief is saved — try again in a moment.
+            Your answers are saved. Try again in a moment.
           </p>
           <button
             onClick={retry}
@@ -327,7 +327,7 @@ export default function MILIntakeScreen({
                   lineHeight: 1.65,
                 }}
               >
-                To make these recommendations as specific as possible, we need to know your music budget. This covers everything — acts, DJ, live musicians across the whole day.
+                This covers everything — your act, any DJ, live musicians across the whole day. Even a rough range is enough.
               </p>
 
               <h2

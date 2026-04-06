@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react'
 const STEP_CEREMONY_STRUCTURE = {
   id: 'ceremony_structure',
   type: 'chips',
-  educate: "Every ceremony has its own musical soul — shaped by tradition, faith, culture, or a couple's own instinct for what feels right. Before we plan the music, we need to understand what your ceremony is rooted in.",
+  educate: "Every ceremony has its own musical soul — shaped by tradition, faith, culture, or a couple's own instinct for what feels right.",
   question: "How would you describe your ceremony?",
   chips: [
     'Fully religious',
@@ -49,7 +49,7 @@ const STEP_SIGNING_MUSIC = {
   id: 'signing_music',
   type: 'text',
   educate: "The signing moment is 3–5 minutes most couples forget to plan. You're seated, close to each other, and the room goes quieter than anywhere else in the day.",
-  question: "Have you thought about music for the signing — or is that still a blank? It can be the most beautiful space in the ceremony to fill.",
+  question: "Have you thought about music for the signing — or is that still a blank? It's 3–5 minutes where the room goes quiet and close. Worth planning.",
   placeholder: "A song, a feeling, or 'hadn't thought about it' — all useful.",
 }
 
@@ -57,7 +57,7 @@ const STEP_RECESSIONAL_SONG = {
   id: 'recessional_song',
   type: 'text',
   educate: "The recessional is your first 60 seconds as a married couple. It's the last thing your guests hear before they pour out behind you.",
-  question: "Have you thought about your recessional song (your walk back down the aisle as a married couple)? This is the moment most couples want to feel most like themselves.",
+  question: "Have you thought about your recessional song (your walk back down the aisle as a married couple)? Most couples treat it as an afterthought. It's the first thing you do as a married couple in public.",
   placeholder: "A song title, an artist, or the feeling you want.",
 }
 
@@ -550,7 +550,7 @@ export default function CeremonyDeepDive({
                   lineHeight: 1.6,
                 }}
               >
-                Your Ceremony summary will appear here once it's been generated.
+                We're still writing your ceremony summary — it'll appear here in a moment.
               </p>
             </div>
           )}
