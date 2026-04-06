@@ -17,7 +17,7 @@ const MOMENTS = [
     name: "Ceremony",
     description: "The moment everyone watches in silence",
     detail:
-      "Every processional song, the signing moment, the recessional — this is the most emotionally charged musical hour of your day. Get it right and your guests will feel it in their chest.",
+      "Every processional song, the signing moment, the recessional — this is the most emotionally charged musical hour of your day. Get it right and your guests will notice.",
     warmth: 2,
   },
   {
@@ -449,7 +449,7 @@ function MomentDetail({ moment, status, isPaid, onClose, onUnlock, onStart, inOv
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            {isUnlocking ? 'Setting up…' : 'Unlock this moment'}
+            {isUnlocking ? 'Setting up…' : 'Open this moment'}
             {!isUnlocking && (
               <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
                 <path

@@ -171,7 +171,7 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
                 className="font-sans mb-6"
                 style={{ fontSize: '0.9375rem', color: 'var(--grey)', lineHeight: 1.6 }}
               >
-                You've just mapped the musical identity of your wedding day. Leave your email and we'll send you your portrait — then step inside your Moment Map, where every moment of the day is waiting to be shaped around exactly how you want it to feel.
+                You've just mapped the musical identity of your wedding day. Add your email and we'll send you your portrait — then step inside your Moment Map, where every moment of the day is waiting to be shaped.
               </p>
               <form onSubmit={handleEmailSubmit}>
                 <input

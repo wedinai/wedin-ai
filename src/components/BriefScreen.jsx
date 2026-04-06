@@ -256,7 +256,7 @@ export default function BriefScreen({
               textAlign: 'center',
             }}
           >
-            Something went wrong.
+            We hit a snag.
           </h1>
           <p
             style={{
@@ -269,7 +269,7 @@ export default function BriefScreen({
               lineHeight: 1.6,
             }}
           >
-            The brief couldn't be generated. Your answers are saved — try again.
+            We couldn't generate your brief. Your answers are saved — try again.
           </p>
           <button
             onClick={generateBrief}
@@ -403,7 +403,7 @@ export default function BriefScreen({
               />
             )}
             <Tab
-              label="Your Brief"
+              label="How to Book"
               active={activeTab === 'couple'}
               onClick={() => setActiveTab('couple')}
             />

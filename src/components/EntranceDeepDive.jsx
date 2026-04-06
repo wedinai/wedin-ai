@@ -439,7 +439,7 @@ export default function EntranceDeepDive({
                     marginTop: 8,
                   }}
                 >
-                  Skip this question
+                  Skip for now
                 </button>
               </div>
             )}
