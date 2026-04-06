@@ -15,13 +15,16 @@ const MOMENT_FUNCTIONS = `
 - Last Song: emotional resolution — high valence, singalong quality`
 
 export const handler = async (event) => {
+  console.log('generate-spotify-tracks: function started')
+
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
 
   try {
-    const { momentAnswers = {}, milRecommendations = {}, sessionAnswers = {}, coupleName = 'the couple' } =
-      JSON.parse(event.body || '{}')
+    const body = JSON.parse(event.body || '{}')
+    console.log('generate-spotify-tracks: body parsed', JSON.stringify(body).slice(0, 200))
+    const { momentAnswers = {}, milRecommendations = {}, sessionAnswers = {}, coupleName = 'the couple' } = body
 
     // Extract all named songs from moment answers — these are ground truth
     const songSources = {
@@ -98,13 +101,17 @@ IMPORTANT: Base all recommendations only on what this couple actually said. Fres
       }),
     })
 
+    console.log('generate-spotify-tracks: claude response status', apiRes.status)
+
     if (!apiRes.ok) {
       console.error('generate-spotify-tracks: Anthropic API error', apiRes.status)
       return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tracks: [] }) }
     }
 
     const data = await apiRes.json()
-    const raw = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '[]'
+    const rawText = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '[]'
+    console.log('generate-spotify-tracks: raw output', rawText.slice(0, 500))
+    const raw = rawText
     const clean = raw.trim()
 
     let tracks = []
