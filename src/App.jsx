@@ -493,8 +493,10 @@ export default function App() {
     persistState({ mil_recommendations: recommendations })
     setView('brief')
 
-    // Non-blocking Spotify playlist generation — same pattern as generateEducationCard
+    // Non-blocking Spotify playlist generation — delayed 12s to avoid competing
+    // with generate-brief-a/b for Anthropic API capacity during brief assembly.
     ;(async () => {
+      await new Promise(resolve => setTimeout(resolve, 12000))
       setSpotifyLoading(true)
       try {
         const r1 = await fetch('/.netlify/functions/generate-spotify-tracks', {
