@@ -67,10 +67,9 @@ export const handler = async (event) => {
         `https://api.spotify.com/v1/search?q=${q0}&type=track&limit=1`,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       )
-      const probeData = await probe.json()
       console.log('create-spotify-playlist: first search response status', probe.status)
-      console.log('create-spotify-playlist: first search items count', probeData.tracks?.items?.length ?? 'no tracks key')
-      if (probeData.error) console.log('create-spotify-playlist: first search error body', JSON.stringify(probeData.error))
+      const probeText = await probe.text()
+      console.log('create-spotify-playlist: first search raw response', probeText.slice(0, 300))
     }
 
     const searchResults = await Promise.all(
