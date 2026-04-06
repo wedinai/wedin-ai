@@ -55,6 +55,7 @@ export const handler = async (event) => {
 
     const tokenData = await tokenRes.json()
     console.log('create-spotify-playlist: access_token present', !!tokenData.access_token)
+    console.log('create-spotify-playlist: token scope', tokenData.scope || 'no scope returned')
     const accessToken = tokenData.access_token
 
     // ── Step 2: Search each track in parallel ────────────────────────────────
