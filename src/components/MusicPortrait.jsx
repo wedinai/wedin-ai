@@ -20,7 +20,7 @@ async function generateNarrative(answers) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function MusicPortrait({ answers, sessionId, coupleName, onStartOver, onViewMomentMap }) {
+export default function MusicPortrait({ answers, sessionId, coupleName, onStartOver, onViewMomentMap, onEmailSaved }) {
   const [narrative, setNarrative] = useState(null)
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState('')
@@ -54,6 +54,8 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
       console.error('Contact save failed:', e)
     }
 
+    localStorage.setItem('wedin_email', email.trim())
+    if (onEmailSaved) onEmailSaved(email.trim(), narrative)
     setSaveState('done')
   }
 

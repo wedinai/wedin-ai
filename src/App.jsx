@@ -42,6 +42,31 @@ export default function App() {
   const [momentSummaryLoading, setMomentSummaryLoading] = useState(false)
   const [confirmKey, setConfirmKey] = useState(0)
   const [ceremonySummary, setCeremonySummary] = useState(null)
+  const [email, setEmail] = useState(null)
+
+  // ── Supabase state persistence ────────────────────────────────────────────
+  // Called after each deep-dive confirmation and after MIL completion.
+  // Reads current closure values + applies overrides for newly-computed values
+  // that haven't been committed to React state yet.
+  function persistState(overrides = {}) {
+    const em = localStorage.getItem('wedin_email')
+    if (!sessionId || !em) return
+    const state = {
+      couple_name: coupleName,
+      portrait,
+      ceremony_summary: ceremonySummary,
+      moment_answers: momentAnswers,
+      completed_moments: completedMoments,
+      moment_confirmed: momentConfirmed,
+      mil_recommendations: milRecommendations,
+      ...overrides,
+    }
+    fetch('/.netlify/functions/save-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId, email: em, state }),
+    }).catch(e => console.error('persistState failed:', e))
+  }
 
   // Persist completedMoments and momentAnswers to localStorage whenever they change
   useEffect(() => {
@@ -118,53 +143,109 @@ export default function App() {
     }
   }, [])
 
-  // Restore session for returning couples — from localStorage or ?session= URL param
-  // Cross-device restore (fetching answers from Supabase by session ID) is deferred — TODO Phase 2
+  // Restore session for returning couples — Supabase first (keyed by email), localStorage fallback
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('payment') === 'success') return // payment flow takes priority
+    if (params.get('payment') === 'success') return
 
+    const savedEmail = localStorage.getItem('wedin_email')
     const savedSessionId = localStorage.getItem('wedin_session_id')
     const savedAnswers = localStorage.getItem('wedin_session_answers')
-    const savedPortrait = localStorage.getItem('wedin_portrait')
     const urlSessionId = params.get('session')
 
-    const sessionToRestore = urlSessionId || savedSessionId
-
-    if (sessionToRestore && savedAnswers) {
+    function restoreFromLocalStorage() {
+      const sessionToRestore = urlSessionId || savedSessionId
+      if (!sessionToRestore || !savedAnswers) return
+      if (savedEmail) setEmail(savedEmail)
       setSessionId(sessionToRestore)
       setSessionAnswers(JSON.parse(savedAnswers))
+      const savedPortrait = localStorage.getItem('wedin_portrait')
       if (savedPortrait) setPortrait(savedPortrait)
-
       const savedCompleted = localStorage.getItem('wedin_completed_moments')
       if (savedCompleted) setCompletedMoments(JSON.parse(savedCompleted))
-
       const savedMomentAnswers = localStorage.getItem('wedin_moment_answers')
       if (savedMomentAnswers) setMomentAnswers(JSON.parse(savedMomentAnswers))
-
       const storedIsPaid = localStorage.getItem('wedin_is_paid')
       if (storedIsPaid === 'true') setIsPaid(true)
-
       const storedCoupleName = localStorage.getItem('wedin_couple_name')
       if (storedCoupleName) setCoupleName(storedCoupleName)
-
       const storedMilRecs = localStorage.getItem('wedin_mil_recommendations')
-      if (storedMilRecs) {
-        try { setMilRecommendations(JSON.parse(storedMilRecs)) } catch (e) {}
-      }
-
+      if (storedMilRecs) { try { setMilRecommendations(JSON.parse(storedMilRecs)) } catch (e) {} }
       const savedConfirmed = localStorage.getItem('wedin_moment_confirmed')
       if (savedConfirmed) { try { setMomentConfirmed(JSON.parse(savedConfirmed)) } catch (e) {} }
-
       const savedFeedback = localStorage.getItem('wedin_moment_feedback')
       if (savedFeedback) { try { setMomentFeedback(JSON.parse(savedFeedback)) } catch (e) {} }
-
       const savedCeremonySummary = localStorage.getItem('wedin_ceremony_summary')
       if (savedCeremonySummary) setCeremonySummary(savedCeremonySummary)
+      setView('momentMap')
+    }
 
-      setView('momentMap') // skip discovery and portrait, go straight to the map
+    if (savedEmail) {
+      // Primary: restore from Supabase keyed by email
+      fetch('/.netlify/functions/restore-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: savedEmail }),
+      })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data?.found) {
+            setEmail(savedEmail)
+            setSessionId(data.session_id)
+            setSessionAnswers(data.answers || {})
+            const s = data.state || {}
+            if (s.couple_name) setCoupleName(s.couple_name)
+            if (s.portrait) setPortrait(s.portrait)
+            if (s.ceremony_summary) setCeremonySummary(s.ceremony_summary)
+            if (s.moment_answers) setMomentAnswers(s.moment_answers)
+            if (s.completed_moments) setCompletedMoments(s.completed_moments)
+            if (s.moment_confirmed) setMomentConfirmed(s.moment_confirmed)
+            if (s.mil_recommendations) setMilRecommendations(s.mil_recommendations)
+            const storedIsPaid = localStorage.getItem('wedin_is_paid')
+            if (storedIsPaid === 'true') setIsPaid(true)
+            // Navigate based on restored state
+            const confirmedCount = Object.values(s.moment_confirmed || {}).filter(Boolean).length
+            if (s.mil_recommendations) {
+              setView('brief')
+            } else if (confirmedCount >= 9) {
+              setView('postBrief')
+            } else {
+              setView('momentMap')
+            }
+          } else {
+            restoreFromLocalStorage()
+          }
+        })
+        .catch(() => restoreFromLocalStorage())
+    } else if ((urlSessionId || savedSessionId) && savedAnswers) {
+      restoreFromLocalStorage()
     }
   }, [])
+
+  function handleEmailSaved(savedEmail, narrativeText) {
+    setEmail(savedEmail)
+    setPortrait(narrativeText)
+    // Save email + initial portrait to Supabase
+    if (sessionId) {
+      fetch('/.netlify/functions/save-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          email: savedEmail,
+          state: {
+            couple_name: coupleName,
+            portrait: narrativeText,
+            ceremony_summary: null,
+            moment_answers: {},
+            completed_moments: [],
+            moment_confirmed: {},
+            mil_recommendations: null,
+          },
+        }),
+      }).catch(e => console.error('Initial state persist failed:', e))
+    }
+  }
 
   function handleSetCoupleName(name) {
     setCoupleName(name)
@@ -188,6 +269,7 @@ export default function App() {
     localStorage.removeItem('wedin_moment_confirmed')
     localStorage.removeItem('wedin_moment_feedback')
     localStorage.removeItem('wedin_ceremony_summary')
+    localStorage.removeItem('wedin_email')
     setSessionAnswers({})
     setSessionId(null)
     setPortrait(null)
@@ -198,6 +280,7 @@ export default function App() {
     setMomentConfirmed({})
     setMomentFeedback({})
     setCeremonySummary(null)
+    setEmail(null)
     setPendingConfirmation(null)
     setView('discovery')
   }
@@ -246,6 +329,8 @@ export default function App() {
   }
 
   function handleCeremonyComplete(answers, summary) {
+    const newMomentAnswers = { ...momentAnswers, ceremony: answers }
+    const newCompleted = completedMoments.includes('ceremony') ? completedMoments : [...completedMoments, 'ceremony']
     setMomentAnswers((prev) => ({ ...prev, ceremony: answers }))
     setCompletedMoments((prev) => prev.includes('ceremony') ? prev : [...prev, 'ceremony'])
     setInProgressMoments((prev) => prev.filter((id) => id !== 'ceremony'))
@@ -253,6 +338,11 @@ export default function App() {
       setCeremonySummary(summary)
       localStorage.setItem('wedin_ceremony_summary', summary)
     }
+    persistState({
+      moment_answers: newMomentAnswers,
+      completed_moments: newCompleted,
+      ceremony_summary: summary || ceremonySummary,
+    })
     setMomentSummary(summary || null)
     setMomentSummaryLoading(false)
     setPendingConfirmation({ momentId: 'ceremony', momentName: 'Ceremony', answersKey: 'ceremony' })
@@ -265,9 +355,20 @@ export default function App() {
 
   function handleConfirmMoment(feedback) {
     const { momentId } = pendingConfirmation
+    const newConfirmed = { ...momentConfirmed, [momentId]: true }
     setMomentConfirmed((prev) => ({ ...prev, [momentId]: true }))
     setMomentFeedback((prev) => ({ ...prev, [momentId]: feedback }))
     setPendingConfirmation(null)
+    persistState({ moment_confirmed: newConfirmed })
+    setView('momentMap')
+  }
+
+  function handleSummaryConfirm() {
+    const { momentId } = pendingConfirmation
+    const newConfirmed = { ...momentConfirmed, [momentId]: true }
+    setMomentConfirmed(prev => ({ ...prev, [momentId]: true }))
+    setPendingConfirmation(null)
+    persistState({ moment_confirmed: newConfirmed })
     setView('momentMap')
   }
 
@@ -307,14 +408,18 @@ export default function App() {
   function handleMILComplete(answers, recommendations) {
     setMilRecommendations(recommendations)
     localStorage.setItem('wedin_mil_recommendations', JSON.stringify(recommendations))
+    persistState({ mil_recommendations: recommendations })
     setView('brief')
   }
 
   async function handleMomentComplete(momentId, momentName, answersKey, answers) {
+    const newMomentAnswers = { ...momentAnswers, [answersKey]: answers }
+    const newCompleted = completedMoments.includes(momentId) ? completedMoments : [...completedMoments, momentId]
     setMomentAnswers((prev) => ({ ...prev, [answersKey]: answers }))
     setCompletedMoments((prev) => prev.includes(momentId) ? prev : [...prev, momentId])
     setInProgressMoments((prev) => prev.filter((id) => id !== momentId))
     setPendingConfirmation({ momentId, momentName, answersKey })
+    persistState({ moment_answers: newMomentAnswers, completed_moments: newCompleted })
 
     setMomentSummary(null)
     setMomentSummaryLoading(true)
@@ -532,12 +637,7 @@ export default function App() {
         loading={momentSummaryLoading}
         error={!momentSummaryLoading && !momentSummary}
         onNext={() => setView('confirm')}
-        onConfirm={() => {
-          const { momentId } = pendingConfirmation
-          setMomentConfirmed(prev => ({ ...prev, [momentId]: true }))
-          setPendingConfirmation(null)
-          setView('momentMap')
-        }}
+        onConfirm={handleSummaryConfirm}
       />
     )
   }
@@ -580,6 +680,7 @@ export default function App() {
         coupleName={coupleName}
         onStartOver={handleStartOver}
         onViewMomentMap={handleViewMomentMap}
+        onEmailSaved={handleEmailSaved}
       />
     )
   }

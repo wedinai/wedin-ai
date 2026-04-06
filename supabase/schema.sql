@@ -11,12 +11,19 @@ create table if not exists sessions (
   answers    jsonb       not null,
   is_paid    boolean     default false not null,
   paid_at    timestamptz,
+  email      text,                    -- set when couple submits email at portrait screen
+  state      jsonb,                   -- incremental session state: couple_name, portrait, moment_answers, etc.
   created_at timestamptz default now() not null
 );
 
--- Migration: run this if the sessions table already exists
+create index if not exists sessions_email_idx on sessions(email);
+
+-- Migration: run this if the sessions table already exists without new columns
 -- alter table sessions add column if not exists is_paid boolean default false not null;
 -- alter table sessions add column if not exists paid_at timestamptz;
+-- alter table sessions add column if not exists email text;
+-- alter table sessions add column if not exists state jsonb;
+-- create index if not exists sessions_email_idx on sessions(email);
 
 alter table sessions enable row level security;
 
