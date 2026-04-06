@@ -1,25 +1,7 @@
 import React from 'react'
 
-export default function EducationCard({ card, loading = false }) {
-  if (!card && !loading) return null
-
-  if (loading) {
-    return (
-      <div style={{ padding: '12px 20px' }}>
-        <p
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontStyle: 'italic',
-            fontSize: 13,
-            color: '#6B6560',
-            margin: 0,
-          }}
-        >
-          Reading your choices…
-        </p>
-      </div>
-    )
-  }
+export default function EducationCard({ card, isExpanded, onToggle }) {
+  if (!card) return null
 
   return (
     <>
@@ -29,29 +11,52 @@ export default function EducationCard({ card, loading = false }) {
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-      <div
+
+      {/* Toggle trigger */}
+      <button
+        onClick={onToggle}
         style={{
-          borderLeft: '3px solid #C4922A',
-          background: 'rgba(196,146,42,0.06)',
-          borderRadius: '0 8px 8px 0',
-          padding: '16px 20px',
-          marginTop: 8,
-          animation: 'educationFadeIn 200ms ease both',
+          all: 'unset',
+          cursor: 'pointer',
+          display: 'block',
+          width: '100%',
+          paddingTop: 10,
+          paddingBottom: 4,
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: 13,
+          color: '#C4922A',
+          minHeight: 44,
+          boxSizing: 'border-box',
         }}
       >
-        <p
+        Why this works {isExpanded ? '↑' : '↓'}
+      </button>
+
+      {/* Card content — shown only when expanded */}
+      {isExpanded && (
+        <div
           style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontStyle: 'italic',
-            fontSize: 14,
-            lineHeight: 1.6,
-            color: '#1C2B3A',
-            margin: 0,
+            borderLeft: '3px solid #C4922A',
+            background: 'rgba(196,146,42,0.06)',
+            borderRadius: '0 8px 8px 0',
+            padding: '16px 20px',
+            animation: 'educationFadeIn 200ms ease both',
           }}
         >
-          {card}
-        </p>
-      </div>
+          <p
+            style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontStyle: 'italic',
+              fontSize: 14,
+              lineHeight: 1.6,
+              color: '#1C2B3A',
+              margin: 0,
+            }}
+          >
+            {card}
+          </p>
+        </div>
+      )}
     </>
   )
 }

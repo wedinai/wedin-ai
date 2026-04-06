@@ -23,6 +23,7 @@ Tone rules:
 - 3–4 sentences only. No more. Plain text. No bullet points, no headers.
 - Never use: seamless, journey, unlock, leverage, magical, perfect, dream wedding, deploy
 - Do not start with "You both" as the literal first two words — vary the opening
+- Every card MUST reference at least one specific song title, artist name, or named detail from the couple's actual answers. A card that could apply to any couple is a failure — ground it in what they specifically said.
 
 Structure: One sentence grounded in the specific feeling or choice they named. One or two sentences explaining why that direction works for this particular moment in a wedding. One closing sentence connecting their choice back to what they said they want from the day overall.
 

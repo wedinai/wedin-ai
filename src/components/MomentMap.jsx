@@ -744,6 +744,7 @@ export default function MomentMap({
 }) {
   const [activeMoment, setActiveMoment] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [expandedEducation, setExpandedEducation] = useState(null);
 
   useEffect(() => {
     setMounted(true);
@@ -949,7 +950,11 @@ export default function MomentMap({
                     index={index}
                   />
                   {status === "confirmed" && educationCards[moment.id] && (
-                    <EducationCard card={educationCards[moment.id]} />
+                    <EducationCard
+                      card={educationCards[moment.id]}
+                      isExpanded={expandedEducation === moment.id}
+                      onToggle={() => setExpandedEducation(prev => prev === moment.id ? null : moment.id)}
+                    />
                   )}
                 </div>
               );
