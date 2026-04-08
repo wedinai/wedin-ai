@@ -120,6 +120,10 @@ Coordinator Brief tab: generate-brief-b.js output, unchanged.
 - First dance song ground truth rule — FIRST DANCE SONG GROUND TRUTH instruction added, formatAnswers label renamed to 'Chosen first dance song — ground truth'
 - PreDrinksDeepDive + EntranceDeepDive — song question text input render block added (was rendering chips only)
 - wedin-test-scenarios.md — five test scenario seed scripts + RESET script, committed to repo
+- Email restore link — ?email= query parameter in portrait email, App.jsx triggers restore on load. Built and live.
+- Copy audit — banned words removed across all UI copy. Session 6 complete.
+- BriefScreen restructure — cost suppressed in Music Plan tab, How to Book tab live with costs and vetting questions. Session 8 complete.
+- Music Education Layer — education cards live per moment before recommendations. Session 7 complete.
 
 ---
 
@@ -131,17 +135,33 @@ See wedin-session-plan.md for the complete sequenced build plan with session-by-
 
 Stage 2 completion: venue type question, song question per moment, moment confirmation flow, session persistence to Supabase.
 
-Stage 3 (new): Music education layer — new generation function, new component, moment-by-moment education cards generated from couple's specific answers.
-
-Stage 4 rebalancing: MIL output reweighted 30/70 (recommendation/brief). Cost field suppressed in Music Plan tab. BriefScreen tab renamed.
-
-Stage 5 separation: How to Book tab — cost field rendered, vetting questions embedded, booking guidance.
-
 Stage 6 timing: Coordinator brief gates on Stage 4 confirmation (currently generates simultaneously with MIL — acceptable workaround at launch, clean build post-launch).
 
 Stage 7 (new): Artist brief — new generation function per act type (DJ, band, string quartet). Pricing model TBD.
 
-Spotify integration, PayFast migration, T&Cs/Privacy pages, cookie consent banner, rate limiting, Supabase RLS audit, data deletion mechanism, copy audit, coordinator brief email delivery via Resend, pre-launch QA.
+PayFast migration, T&Cs/Privacy pages, cookie consent banner, rate limiting, Supabase RLS audit, data deletion mechanism, coordinator brief email delivery via Resend, pre-launch QA.
+
+---
+
+## Spotify Integration — Architecture & Known Issues
+
+**Status:** Complete and live as of April 2026.
+
+**Critical endpoint fix:** Use `/v1/playlists/{id}/items` NOT `/v1/playlists/{id}/tracks`. The `/tracks` endpoint is deprecated for new Spotify apps created after November 2024 and returns 403 Forbidden with no useful error detail.
+
+**Auth script:** `scripts/spotify-auth.js` — must include `show_dialog=true` in the auth URL or Spotify silently reuses old approval without showing scope changes. Both scopes required: `playlist-modify-public` and `playlist-modify-private`.
+
+**How it works:** Playlists are created on the wedin.ai Spotify account. Couples receive a public shareable link. No couple login required. Playlist persists to localStorage and Supabase.
+
+**Playlist accumulation:** Every session creates a new playlist on the wedin.ai Spotify account. Test playlists accumulate — clean up manually periodically. Consider prefixing test runs with `"TEST —"` in `coupleName` to identify them.
+
+**Claude curation:** `generate-spotify-tracks.js` uses `claude-haiku-4-5-20251001`. Claude returns JSON wrapped in markdown fences despite instructions — fence stripping is implemented before `JSON.parse`. Secondary `[`/`]` boundary search included as fallback.
+
+**Env vars required:**
+- `SPOTIFY_CLIENT_ID`
+- `SPOTIFY_CLIENT_SECRET`
+- `SPOTIFY_REFRESH_TOKEN` (re-issue if scopes change — use `show_dialog=true`)
+- `SPOTIFY_USER_ID = 31ntvrhn56rayc2mi2v7khtgqpcy`
 
 ---
 
