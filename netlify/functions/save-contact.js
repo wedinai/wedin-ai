@@ -55,9 +55,15 @@ export const handler = async (event) => {
       <td>
         <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;color:#1C2B3A;margin:0 0 24px 0;line-height:1.2;">Your music portrait is ready.</p>
         ${narrative ? `<div style="background:#FFFFFF;border-left:3px solid #C4922A;padding:20px 24px;margin:0 0 32px 0;border-radius:0 8px 8px 0;"><p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;color:#1C2B3A;line-height:1.6;margin:0;font-style:italic;">${narrative}</p></div>` : ''}
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">Your wedding day has nine musical moments — from the first song guests hear as they arrive, to the last song that sends everyone home. Each one shapes how the day feels. Most couples never plan them. You're about to.</p>
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 24px 0;">Your Moment Map walks you through every moment in a conversation, not a form. When you're done, you'll have a complete music brief — one your coordinator can act on and your acts can deliver from.</p>
-        <p style="font-size:14px;color:#6B6560;margin:0 0 32px 0;">Unlock your Moment Map for R699 — a one-time fee for your complete wedding music plan.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">That portrait is the beginning.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">Your wedding day has nine musical moments — guest arrivals through to the last song. Most couples never plan them deliberately. The music just happens, and some of it lands and some of it doesn't.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">Your Moment Map changes that.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">It walks you through each moment in a conversation — not a form. You'll answer a few questions per moment, hear what that moment is actually for, and name the songs that matter to you. When you're done, wedin.ai assembles everything into a complete music brief: a document your coordinator can hand to every act with specific instructions, song references, and timing built in.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">It's the difference between a band that plays a wedding and a band that plays your wedding.</p>
+        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 24px 0;">This might be one of the best conversations you have while planning your wedding. Find a quiet hour, just the two of you.</p>
+        <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;color:#1C2B3A;margin:0 0 12px 0;line-height:1.3;">What you get for R699:</p>
+        <p style="font-size:15px;color:#1C2B3A;line-height:1.7;margin:0 0 24px 0;">— Nine moment deep-dives, each one building on your portrait<br>— A complete music brief, written and ready to send<br>— A Spotify playlist of your wedding soundtrack<br>— A coordinator's brief that does the briefing for you — your taste, your preferences, your approach, all translated into language your planner can act on from day one. Most planners have never received anything like it.</p>
+        <p style="font-size:14px;color:#6B6560;font-style:italic;margin:0 0 32px 0;">Your session is saved. Your portrait is waiting.</p>
         <a href="${returnUrl}" style="display:inline-block;background:#1C2B3A;color:#FAF7F2;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;text-decoration:none;padding:14px 28px;border-radius:8px;min-height:44px;line-height:1.6;">Open my Moment Map →</a>
         <p style="font-size:13px;color:#6B6560;margin:40px 0 0 0;">wedin.ai — Start with the music.</p>
       </td>
@@ -69,7 +75,7 @@ export const handler = async (event) => {
       const sendResult = await resend.emails.send({
         from: 'wedin.ai <hello@wedin.ai>',
         to: email.trim(),
-        subject: 'Your wedin.ai music portrait is ready',
+        subject: "Your music portrait is ready — here's what comes next.",
         html,
       })
     } catch (emailError) {
