@@ -161,7 +161,7 @@ PayFast migration, T&Cs/Privacy pages, cookie consent banner, rate limiting, Sup
 - `SPOTIFY_CLIENT_ID`
 - `SPOTIFY_CLIENT_SECRET`
 - `SPOTIFY_REFRESH_TOKEN` (re-issue if scopes change — use `show_dialog=true`)
-- `SPOTIFY_USER_ID = 31ntvrhn56rayc2mi2v7khtgqpcy`
+- `SPOTIFY_USER_ID = [see Netlify environment variables]`
 
 ---
 
