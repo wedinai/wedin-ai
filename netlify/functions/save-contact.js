@@ -47,28 +47,96 @@ export const handler = async (event) => {
       const html = `<!DOCTYPE html>
 <html>
 <head>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  .ew { background: #E8E4DC; padding: 48px 16px; font-family: 'DM Sans', sans-serif; }
+  .es { max-width: 560px; margin: 0 auto; background: #FAF7F2; border-radius: 16px; overflow: hidden; }
+
+  .eh { padding: 28px 48px; text-align: center; border-bottom: 1px solid rgba(28,43,58,0.07); }
+  .wm { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 20px; letter-spacing: 0.05em; color: #1C2B3A; text-decoration: none; }
+
+  .eb { padding: 44px 48px 0; }
+
+  .eh2 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 36px; color: #1C2B3A; margin: 0 0 36px; line-height: 1.15; }
+  .eh2 em { color: #C4922A; font-style: normal; }
+
+  .bp { font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.8; color: #1C2B3A; margin: 0 0 20px; }
+  .bi { font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.8; color: #1C2B3A; margin: 0 0 20px; font-style: italic; }
+
+  .div1 { border: none; border-top: 1px solid rgba(28,43,58,0.08); margin: 36px 0; }
+  .pl { font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #C4922A; margin: 0 0 14px; }
+  .pt { font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.8; color: #1C2B3A; margin: 0; }
+
+  .pc {
+    background: #FFFFFF;
+    border-left: 3px solid #C4922A;
+    border-radius: 12px;
+    padding: 28px 32px;
+    box-shadow: 0 4px 24px rgba(28,43,58,0.06), 0 1px 4px rgba(28,43,58,0.04);
+  }
+
+  .ef { padding: 36px 48px 40px; }
+
+  .cb { display: block; background: #1C2B3A; color: #FAF7F2; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 0.01em; text-align: center; text-decoration: none; padding: 17px 32px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(28,43,58,0.18); }
+  .cn { text-align: center; font-size: 13px; color: #6B6560; font-style: italic; margin: 0 0 36px; }
+
+  .fd { border: none; border-top: 1px solid rgba(28,43,58,0.08); margin: 0 0 28px; }
+  .fw { text-align: center; }
+  .fwm { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 15px; letter-spacing: 0.04em; color: #1C2B3A; display: block; margin-bottom: 4px; }
+  .ft { font-size: 12px; color: #6B6560; margin: 0; font-family: 'DM Sans', sans-serif; }
+
+  @media (max-width: 480px) {
+    .eb, .ef, .eh { padding-left: 24px; padding-right: 24px; }
+    .eh2 { font-size: 28px; }
+  }
+</style>
 </head>
-<body style="margin:0;padding:0;background:#FAF7F2;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;padding:48px 24px;font-family:'DM Sans',sans-serif;">
-    <tr>
-      <td>
-        <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;color:#1C2B3A;margin:0 0 24px 0;line-height:1.2;">Your music portrait is ready.</p>
-        ${narrative ? `<div style="background:#FFFFFF;border-left:3px solid #C4922A;padding:20px 24px;margin:0 0 32px 0;border-radius:0 8px 8px 0;"><p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:18px;color:#1C2B3A;line-height:1.6;margin:0;font-style:italic;">${narrative}</p></div>` : ''}
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">That portrait is the beginning.</p>
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">Your wedding day has nine musical moments — guest arrivals through to the last song. Most couples never plan them deliberately. The music just happens, and some of it lands and some of it doesn't.</p>
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">Your Moment Map changes that.</p>
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">It walks you through each moment in a conversation — not a form. You'll answer a few questions per moment, hear what that moment is actually for, and name the songs that matter to you. When you're done, wedin.ai assembles everything into a complete music brief: a document your coordinator can hand to every act with specific instructions, song references, and timing built in.</p>
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 16px 0;">It's the difference between a band that plays a wedding and a band that plays your wedding.</p>
-        <p style="font-size:16px;color:#1C2B3A;line-height:1.6;margin:0 0 24px 0;">This might be one of the best conversations you have while planning your wedding. Find a quiet hour, just the two of you.</p>
-        <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;color:#1C2B3A;margin:0 0 12px 0;line-height:1.3;">What you get for R699:</p>
-        <p style="font-size:15px;color:#1C2B3A;line-height:1.7;margin:0 0 24px 0;">— Nine moment deep-dives, each one building on your portrait<br>— A complete music brief, written and ready to send<br>— A Spotify playlist of your wedding soundtrack<br>— A coordinator's brief that does the briefing for you — your taste, your preferences, your approach, all translated into language your planner can act on from day one. Most planners have never received anything like it.</p>
-        <p style="font-size:14px;color:#6B6560;font-style:italic;margin:0 0 32px 0;">Your session is saved. Your portrait is waiting.</p>
-        <a href="${returnUrl}" style="display:inline-block;background:#1C2B3A;color:#FAF7F2;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;text-decoration:none;padding:14px 28px;border-radius:8px;min-height:44px;line-height:1.6;">Open my Moment Map →</a>
-        <p style="font-size:13px;color:#6B6560;margin:40px 0 0 0;">wedin.ai — Start with the music.</p>
-      </td>
-    </tr>
-  </table>
+<body>
+<div class="ew">
+  <div class="es">
+
+    <div class="eh">
+      <span class="wm">wedin.ai</span>
+    </div>
+
+    <div class="eb">
+      <h1 class="eh2">Your music portrait is <em>ready.</em></h1>
+
+      <p class="bp">You already know the music matters. It's the soul of the day — the thing that moves your guests from one moment to the next, that sets the tone for everything. The question is how you make it sound the way you've always pictured it.</p>
+
+      <p class="bp">What you said — about how you want your wedding to feel and what you want your guests and friends to carry home — that matters, and it's exactly what we'll build towards. The soul and soundtrack to your wedding.</p>
+
+      <p class="bp">What comes next is a conversation. Not a form, not a checklist. A guided walk through every moment of your day — wedin.ai leads it, you both answer together. Nine moments, from the music your guests hear arriving to the last song of the night. Every one of them mapped around what you tell us.</p>
+
+      <p class="bp">The spreadsheets aren't going anywhere. This is the good bit.</p>
+
+      <p class="bi">This might be one of the best conversations you have while planning your wedding. Find a quiet hour, just the two of you.</p>
+
+      <hr class="div1">
+
+      <div class="pc">
+        <p class="pl">Your music portrait</p>
+        <p class="pt">${narrative || ''}</p>
+      </div>
+    </div>
+
+    <div class="ef">
+      <a class="cb" href="${returnUrl}">Continue your Moment Map &rarr;</a>
+      <p class="cn">Your session is saved. Pick up where you left off.</p>
+
+      <hr class="fd">
+
+      <div class="fw">
+        <span class="fwm">wedin.ai</span>
+        <p class="ft">Start with the music.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
 </body>
 </html>`
 
