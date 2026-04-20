@@ -53,13 +53,16 @@ Per-act brief documents — specific instructions for each booked act (DJ, band,
 
 ## BriefScreen.jsx — Tab Structure
 
-Current tabs: Music Plan | Your Brief | Coordinator's Brief
-Required tabs: Music Plan | How to Book | Coordinator Brief
+Current tabs: Music Plan | How to Book | Coordinator Brief ✓ BUILT
 
-"Your Brief" is vague. Replace with "How to Book."
-Music Plan tab: MIL output with `cost` field suppressed.
-How to Book tab: same MIL JSON, `cost` field rendered, plus vetting questions and booking guidance.
-Coordinator Brief tab: generate-brief-b.js output, unchanged.
+Music Plan tab: MIL output with `cost` field suppressed. Built.
+How to Book tab: same MIL JSON, `cost` field rendered, act-specific 
+vetting questions per moment. Built.
+Coordinator Brief tab: generate-brief-b.js output. Built.
+
+Pending Session 8: coordinator_profile variable wired into 
+generate-brief-b.js to calibrate brief language and structure per 
+coordinator type (professional / venue / volunteer).
 
 ---
 
