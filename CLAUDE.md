@@ -127,19 +127,40 @@ Coordinator Brief tab: generate-brief-b.js output, unchanged.
 
 ---
 
-## ✗ NOT YET BUILT — Full Build Plan
+## ✗ NOT YET BUILT — Remaining Before Launch
 
-See wedin-session-plan.md for the complete sequenced build plan with session-by-session breakdown.
-
-**Summary of pending work:**
-
-Stage 2 completion: venue type question, song question per moment, moment confirmation flow, session persistence to Supabase.
-
-Stage 6 timing: Coordinator brief gates on Stage 4 confirmation (currently generates simultaneously with MIL — acceptable workaround at launch, clean build post-launch).
-
-Stage 7 (new): Artist brief — new generation function per act type (DJ, band, string quartet). Pricing model TBD.
-
-PayFast migration, T&Cs/Privacy pages, cookie consent banner, rate limiting, Supabase RLS audit, data deletion mechanism, coordinator brief email delivery via Resend, pre-launch QA.
+- Remarketing email — Supabase query: email present + no milComplete 
+  flag + created_at older than 24 hours → one Resend email re-showing 
+  portrait block with restore link CTA
+- Music Plan email — button on BriefScreen Music Plan tab, sends 
+  content to couple via Resend
+- Coordinator Brief email — couple inputs coordinator address, sent 
+  directly via Resend
+- MEL summary screen — new component MELSummaryScreen.jsx + new 
+  function generate-mel-summary.js (claude-sonnet-4-6). Appears after 
+  all 9 moments confirmed, before MILIntakeScreen. Single synthesised 
+  paragraph, one confirm button, email button with restore link.
+- Coordinator profile question — new chip on MILIntakeScreen: "Who 
+  will be coordinating the music on the day?" Values: professional / 
+  venue / volunteer. Key: coordinator_profile. Default: venue.
+- generate-brief-b.js coordinator profile calibration — accepts 
+  coordinator_profile, calibrates language register, structure, and 
+  cue language per wedin-planner-brief-SKILL-v5.md. No clock times 
+  in any output — duration and sequence only.
+- Artist Brief (Stage 7) — generate-artist-brief-dj.js + 
+  generate-artist-brief-band.js + generate-artist-brief-other.js + 
+  ArtistBriefScreen.jsx. Included in R699. coordinator_profile passes 
+  into all three functions.
+- MIL output rebalancing — 30% recommendation / 70% brief instruction. 
+  Caution protocol: Part A review in Claude.ai before any code opens. 
+  One rule at a time. Three scenario tests after each change.
+- PayFast integration — replace create-checkout-session.js and 
+  verify-payment.js. Webhook signature verification. Rate limiting. 
+  Supabase RLS audit. Data deletion (POPIA). Merchant account for 
+  Tones of Note PTY (Ltd) must be live before this session.
+- Pre-launch QA — full flow on real mobile. All 9 moments, all 7 
+  stages, real payment, all email flows, session restore from different 
+  device. Remove all diagnostic console.log lines.
 
 ---
 
