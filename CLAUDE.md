@@ -34,8 +34,15 @@ Discovery session + music portrait. Gate: email capture (portrait revealed first
 **Stage 2 — Moment by Moment** (~75% built)
 Payment gate → nine moment deep-dives (with song question per moment) → confirmation flow. Gate: payment (R699). Couple pays before accessing the Moment Map. This is the current architecture and it is correct.
 
-**Stage 3 — Music Education Layer** (NOT BUILT)
-Before receiving any recommendations, the couple receives moment-by-moment education cards — warm, specific to their answers, explaining why the direction they're heading works for what they said they want. Gate: reading and confirmation per moment.
+**Stage 3 — Music Education Layer** (PARTIALLY BUILT)
+Education cards live as collapsed dropdowns under each confirmed moment 
+on the Moment Map — warm, specific to the couple's answers, generated 
+per moment. Tap to expand. No gate currently in place.
+Not yet built: MEL summary screen — a single synthesised paragraph 
+appearing after all 9 moments confirmed and before MILIntakeScreen, 
+replacing the per-card gate. New component MELSummaryScreen.jsx + 
+generate-mel-summary.js (claude-sonnet-4-6). See Session 7 in 
+wedin-build-plan-april-17.md.
 
 **Stage 4 — The Emotional Music Plan** (EXISTS — needs rebalancing)
 MIL output, reweighted to 30% recommendation / 70% brief instruction. No costs. No booking logistics. The recommendation tells the couple what direction to go. The brief instruction tells their act how to execute it on the night. Gate: reading and confirmation → Stage 5 unlocks.
