@@ -477,20 +477,32 @@ DJ PLUS removed / Live vs PA golden rule / Function vs feature rule / Solo music
 
 ## Brief Architecture
 
-**generate-brief-a.js — Couple's brief:**
-- Second person to the couple
-- Starts with two-sentence overview from discovery session
-- Emotional mirror — no act recommendations
-- max_tokens: 2500, 3–4 sentences per moment maximum
+**generate-brief-a.js** — couple's brief, second person to couple, 
+emotional mirror, no act recommendations, max_tokens 2500. Not 
+affected by coordinator profile.
 
-**generate-brief-b.js — Coordinator's brief:**
-- Second person to coordinator
-- Every moment ends with verb-led operational instruction
-- Professional, direct, actionable
-- max_tokens: 2500, 3–4 sentences per moment maximum
-- JSON regex fallback: extracts coordinatorBrief value even from truncated response
+**generate-brief-b.js** — coordinator's brief, second person to 
+coordinator, verb-led operational instructions, max_tokens 2500, 
+JSON regex fallback active. Pending Session 8: accepts 
+coordinator_profile variable (professional / venue / volunteer, 
+default: venue) and calibrates language register, structure, and 
+cue language accordingly. Full specification in 
+wedin-planner-brief-SKILL-v5.md.
 
-**AbortController:** BriefScreen.jsx cancels in-flight requests on unmount, prevents 504 on repeat generation.
+**Timing rule — non-negotiable:** No clock times in any brief output. 
+Ever. Express all timing as duration and sequence only. 
+"Pre-drinks: approximately 60–75 minutes, directly following 
+ceremony recessional" not "Pre-drinks: 15:30–16:45". This applies 
+to generate-brief-a.js, generate-brief-b.js, and all future 
+generate-artist-brief-[type].js functions.
+
+**generate-artist-brief-[type].js** — Artist Brief, Stage 7, not yet 
+built. Three functions: generate-artist-brief-dj.js, 
+generate-artist-brief-band.js, generate-artist-brief-other.js. 
+Written directly to the musician. Accepts coordinator_profile. 
+Included in R699. See Session 9 in wedin-build-plan-april-17.md.
+
+**AbortController:** BriefScreen.jsx cancels in-flight requests on unmount.
 
 ---
 
