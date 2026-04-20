@@ -620,16 +620,22 @@ Research PayFast account setup for Tones of Note PTY (Ltd). Swap create-checkout
 
 ## What NOT to Build Without Asking
 
-- DJ PLUS as a standard recommendation — removed from MIL
-- Alternative tech stack choices
-- Freemium or free tier pricing
-- Account creation before portrait reveal
+- DJ PLUS as a standard recommendation
+- Alternative tech stack, freemium pricing, account creation before 
+  portrait reveal
 - Payment before Moment Map is shown
 - Specific artist recommendations by name (Phase 3)
-- Any feature outside the current session plan
 - MIL streaming / mil-a + mil-b collapse (post-launch only)
 - Feature branches — always commit to main
-- Stage 7 pricing model — decision deferred
+- Stage 7 pricing model change — included in R699, locked
+- Any feature outside the current session plan in 
+  wedin-build-plan-april-17.md
+- Clock times in any brief output — timing is always duration and 
+  sequence only, never absolute clock time
+- Removing or modifying the coordinator_profile question on 
+  MILIntakeScreen without explicit instruction
+- Changes to generate-mil-a.js or generate-mil-b.js system prompts 
+  without completing Part A review in Claude.ai first
 
 ---
 
