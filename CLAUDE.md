@@ -42,7 +42,7 @@ Not yet built: MEL summary screen — a single synthesised paragraph
 appearing after all 9 moments confirmed and before MILIntakeScreen, 
 replacing the per-card gate. New component MELSummaryScreen.jsx + 
 generate-mel-summary.js (claude-sonnet-4-6). See Session 7 in 
-wedin-build-plan-april-17.md.
+wedin-launch-sessions.md.
 
 **Stage 4 — The Emotional Music Plan** (EXISTS — needs rebalancing)
 MIL output, reweighted to 30% recommendation / 70% brief instruction. No costs. No booking logistics. The recommendation tells the couple what direction to go. The brief instruction tells their act how to execute it on the night. Gate: reading and confirmation → Stage 5 unlocks.
@@ -500,7 +500,7 @@ generate-artist-brief-[type].js functions.
 built. Three functions: generate-artist-brief-dj.js, 
 generate-artist-brief-band.js, generate-artist-brief-other.js. 
 Written directly to the musician. Accepts coordinator_profile. 
-Included in R699. See Session 9 in wedin-build-plan-april-17.md.
+Included in R699. See Session 9 in wedin-launch-sessions.md.
 
 **AbortController:** BriefScreen.jsx cancels in-flight requests on unmount.
 
@@ -629,7 +629,7 @@ Research PayFast account setup for Tones of Note PTY (Ltd). Swap create-checkout
 - Feature branches — always commit to main
 - Stage 7 pricing model change — included in R699, locked
 - Any feature outside the current session plan in 
-  wedin-build-plan-april-17.md
+  wedin-launch-sessions.md
 - Clock times in any brief output — timing is always duration and 
   sequence only, never absolute clock time
 - Removing or modifying the coordinator_profile question on 
