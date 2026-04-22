@@ -49,6 +49,9 @@
 [functions."create-spotify-playlist"]
   timeout = 26
 
+[functions."send-remarketing"]
+  schedule = "0 8 * * *"
+
 [dev]
   command = "npm run dev"
   targetPort = 5173

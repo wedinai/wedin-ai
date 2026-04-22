@@ -490,7 +490,7 @@ export default function App() {
   function handleMILComplete(answers, recommendations) {
     setMilRecommendations(recommendations)
     localStorage.setItem('wedin_mil_recommendations', JSON.stringify(recommendations))
-    persistState({ mil_recommendations: recommendations })
+    persistState({ mil_recommendations: recommendations, milComplete: true })
     setView('brief')
 
     // Non-blocking Spotify playlist generation — delayed 12s to avoid competing
