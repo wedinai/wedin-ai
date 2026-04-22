@@ -14,7 +14,7 @@ export const handler = async () => {
   // ── Touch 1 — 48 hours, portrait not yet completed ──────────────────────
   const { data: touch1Candidates, error: touch1QueryError } = await supabase
     .from('sessions')
-    .select('id, email, state')
+    .select('id, email, state, created_at')
     .not('email', 'is', null)
     .eq('remarketing_touch', 0)
     .lt('created_at', new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString())
@@ -24,8 +24,8 @@ export const handler = async () => {
     return { statusCode: 500, body: 'Touch 1 query failed' }
   }
 
-  const touch1Eligible = (touch1Candidates || []).filter(
-    s => !s.state || !s.state.milComplete
+  const touch1Eligible = dedupeByEmail(
+    (touch1Candidates || []).filter(s => !s.state || !s.state.milComplete)
   )
 
   for (const session of touch1Eligible) {
@@ -58,7 +58,7 @@ export const handler = async () => {
   // ── Touch 2 — 7 days, portrait not yet completed ─────────────────────────
   const { data: touch2Candidates, error: touch2QueryError } = await supabase
     .from('sessions')
-    .select('id, email, state')
+    .select('id, email, state, created_at')
     .not('email', 'is', null)
     .eq('remarketing_touch', 1)
     .lt('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
@@ -68,8 +68,8 @@ export const handler = async () => {
     return { statusCode: 500, body: 'Touch 2 query failed' }
   }
 
-  const touch2Eligible = (touch2Candidates || []).filter(
-    s => !s.state || !s.state.milComplete
+  const touch2Eligible = dedupeByEmail(
+    (touch2Candidates || []).filter(s => !s.state || !s.state.milComplete)
   )
 
   for (const session of touch2Eligible) {
@@ -104,6 +104,17 @@ export const handler = async () => {
 }
 
 // ── Email templates ──────────────────────────────────────────────────────────
+
+function dedupeByEmail(sessions) {
+  const seen = new Map()
+  for (const s of sessions) {
+    const existing = seen.get(s.email)
+    if (!existing || s.created_at > existing.created_at) {
+      seen.set(s.email, s)
+    }
+  }
+  return Array.from(seen.values())
+}
 
 function sharedStyles() {
   return `
