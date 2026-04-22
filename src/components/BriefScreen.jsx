@@ -266,6 +266,29 @@ function HowToBook({ milRecommendations }) {
   )
 }
 
+// ── Plain text extraction for Music Plan ──────────────────────────────────
+
+function buildMusicPlanText(milRecommendations) {
+  const lines = []
+  if (milRecommendations.moments) {
+    milRecommendations.moments.forEach((m) => {
+      lines.push(m.name.toUpperCase())
+      if (m.recommendation) lines.push(`Recommendation: ${m.recommendation}`)
+      if (m.why)            lines.push(`Why: ${m.why}`)
+      if (m.instruction)    lines.push(`Brief instruction: ${m.instruction}`)
+      lines.push('')
+    })
+  }
+  if (milRecommendations.productionCheck) {
+    const pc = milRecommendations.productionCheck
+    lines.push('PRODUCTION REALITY CHECK')
+    if (pc.totalEstimate) lines.push(`Total estimate: ${pc.totalEstimate}`)
+    if (pc.bookFirst)     lines.push(`Book first: ${pc.bookFirst}`)
+    if (pc.hiddenCosts)   lines.push(`Hidden costs: ${pc.hiddenCosts}`)
+  }
+  return lines.join('\n').trim()
+}
+
 // ── Main component ─────────────────────────────────────────────────────────
 
 export default function BriefScreen({
@@ -290,10 +313,18 @@ export default function BriefScreen({
   const [copyMusicPlanLabel, setCopyMusicPlanLabel] = useState('Copy to clipboard')
   const [mounted, setMounted] = useState(false)
   const abortRef = useRef(null)
+  const [musicPlanEmailStatus, setMusicPlanEmailStatus] = useState('idle')
+  const [storedEmail, setStoredEmail] = useState('')
+  const [inlineEmail, setInlineEmail] = useState('')
+  const [showInlineEmail, setShowInlineEmail] = useState(false)
+  const [coordEmail, setCoordEmail] = useState('')
+  const [coordSendStatus, setCoordSendStatus] = useState('idle')
 
   useEffect(() => {
     setMounted(true)
     generateBrief()
+    const saved = localStorage.getItem('wedin_email')
+    if (saved) setStoredEmail(saved)
     return () => {
       if (abortRef.current) abortRef.current.abort()
     }
@@ -338,27 +369,56 @@ export default function BriefScreen({
 
   function copyMusicPlan() {
     if (!milRecommendations) return
-    const lines = []
-    if (milRecommendations.moments) {
-      milRecommendations.moments.forEach((m) => {
-        lines.push(m.name.toUpperCase())
-        if (m.recommendation) lines.push(`Recommendation: ${m.recommendation}`)
-        if (m.why)            lines.push(`Why: ${m.why}`)
-        if (m.instruction)    lines.push(`Brief instruction: ${m.instruction}`)
-        lines.push('')
-      })
-    }
-    if (milRecommendations.productionCheck) {
-      const pc = milRecommendations.productionCheck
-      lines.push('PRODUCTION REALITY CHECK')
-      if (pc.totalEstimate) lines.push(`Total estimate: ${pc.totalEstimate}`)
-      if (pc.bookFirst)     lines.push(`Book first: ${pc.bookFirst}`)
-      if (pc.hiddenCosts)   lines.push(`Hidden costs: ${pc.hiddenCosts}`)
-    }
-    navigator.clipboard.writeText(lines.join('\n').trim()).then(() => {
+    navigator.clipboard.writeText(buildMusicPlanText(milRecommendations)).then(() => {
       setCopyMusicPlanLabel('Copied')
       setTimeout(() => setCopyMusicPlanLabel('Copy to clipboard'), 2000)
     })
+  }
+
+  async function handleEmailMusicPlan() {
+    const emailToUse = storedEmail || inlineEmail.trim()
+    if (!emailToUse) {
+      setShowInlineEmail(true)
+      return
+    }
+    if (!milRecommendations) return
+    setMusicPlanEmailStatus('sending')
+    try {
+      const res = await fetch('/.netlify/functions/send-music-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: emailToUse,
+          content: buildMusicPlanText(milRecommendations),
+          coupleName,
+        }),
+      })
+      if (!res.ok) throw new Error('failed')
+      if (!storedEmail) setStoredEmail(emailToUse)
+      setMusicPlanEmailStatus('sent')
+    } catch {
+      setMusicPlanEmailStatus('error')
+    }
+  }
+
+  async function handleEmailCoordinator() {
+    if (!coordEmail.trim()) return
+    setCoordSendStatus('sending')
+    try {
+      const res = await fetch('/.netlify/functions/send-coordinator-brief', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          coordinatorEmail: coordEmail.trim(),
+          content: coordinatorBrief,
+          coupleName,
+        }),
+      })
+      if (!res.ok) throw new Error('failed')
+      setCoordSendStatus('sent')
+    } catch {
+      setCoordSendStatus('error')
+    }
   }
 
   function handleCopy() {
@@ -794,74 +854,213 @@ export default function BriefScreen({
               </button>
             )}
 
+            {/* ── Music Plan tab actions ─────────────────────────────── */}
             {activeTab === 'musicPlan' && milRecommendations && (
-            <button
-              onClick={copyMusicPlan}
-              style={{
-                all: 'unset',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                padding: '14px 24px',
-                background: '#1C2B3A',
-                color: '#FAF7F2',
-                borderRadius: 10,
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 14,
-                fontWeight: 500,
-                textAlign: 'center',
-                transition: 'background 180ms ease',
-              }}
-            >
-              {copyMusicPlanLabel}
-              {copyMusicPlanLabel === 'Copied' ? (
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <path d="M3 8l4 4 6-7" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              ) : (
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <rect x="5" y="1" width="9" height="11" rx="2" stroke="#FAF7F2" strokeWidth="1.5" />
-                  <path d="M11 12v2a1 1 0 01-1 1H2a1 1 0 01-1-1V6a1 1 0 011-1h2" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              )}
-            </button>
+              <>
+                <button
+                  onClick={copyMusicPlan}
+                  style={{
+                    all: 'unset',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    padding: '14px 24px',
+                    background: '#1C2B3A',
+                    color: '#FAF7F2',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    transition: 'background 180ms ease',
+                  }}
+                >
+                  {copyMusicPlanLabel}
+                  {copyMusicPlanLabel === 'Copied' ? (
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                      <path d="M3 8l4 4 6-7" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                      <rect x="5" y="1" width="9" height="11" rx="2" stroke="#FAF7F2" strokeWidth="1.5" />
+                      <path d="M11 12v2a1 1 0 01-1 1H2a1 1 0 01-1-1V6a1 1 0 011-1h2" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </button>
+
+                {showInlineEmail && musicPlanEmailStatus === 'idle' && (
+                  <input
+                    type="email"
+                    value={inlineEmail}
+                    onChange={e => setInlineEmail(e.target.value)}
+                    placeholder="Your email address"
+                    style={{
+                      all: 'unset',
+                      width: '100%',
+                      padding: '13px 16px',
+                      background: '#FFFFFF',
+                      border: '1.5px solid rgba(28,43,58,0.15)',
+                      borderRadius: 10,
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 14,
+                      color: '#1C2B3A',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                )}
+
+                <button
+                  onClick={musicPlanEmailStatus === 'error' ? () => setMusicPlanEmailStatus('idle') : handleEmailMusicPlan}
+                  disabled={musicPlanEmailStatus === 'sending' || musicPlanEmailStatus === 'sent'}
+                  style={{
+                    all: 'unset',
+                    cursor: musicPlanEmailStatus === 'sending' || musicPlanEmailStatus === 'sent' ? 'default' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '14px 24px',
+                    border: '1.5px solid rgba(28,43,58,0.12)',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    color: musicPlanEmailStatus === 'error' ? '#C0392B' : '#1C2B3A',
+                    textAlign: 'center',
+                    opacity: musicPlanEmailStatus === 'sending' ? 0.5 : 1,
+                  }}
+                >
+                  {musicPlanEmailStatus === 'sent'
+                    ? `Sent to ${storedEmail} ✓`
+                    : musicPlanEmailStatus === 'error'
+                    ? 'Something went wrong — try again'
+                    : musicPlanEmailStatus === 'sending'
+                    ? 'Sending…'
+                    : 'Email me my music plan →'}
+                </button>
+              </>
             )}
 
-            {activeTab !== 'musicPlan' && (
-            <button
-              onClick={handleCopy}
-              style={{
-                all: 'unset',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                padding: '14px 24px',
-                background: '#1C2B3A',
-                color: '#FAF7F2',
-                borderRadius: 10,
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 14,
-                fontWeight: 500,
-                textAlign: 'center',
-                transition: 'background 180ms ease',
-              }}
-            >
-              {copyLabel}
-              {copyLabel === 'Copied' ? (
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <path d="M3 8l4 4 6-7" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              ) : (
-                <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <rect x="5" y="1" width="9" height="11" rx="2" stroke="#FAF7F2" strokeWidth="1.5" />
-                  <path d="M11 12v2a1 1 0 01-1 1H2a1 1 0 01-1-1V6a1 1 0 011-1h2" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              )}
-            </button>
+            {/* ── How to Book tab actions ────────────────────────────── */}
+            {activeTab === 'couple' && (
+              <button
+                onClick={handleCopy}
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  padding: '14px 24px',
+                  background: '#1C2B3A',
+                  color: '#FAF7F2',
+                  borderRadius: 10,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  transition: 'background 180ms ease',
+                }}
+              >
+                {copyLabel}
+                {copyLabel === 'Copied' ? (
+                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                    <path d="M3 8l4 4 6-7" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                    <rect x="5" y="1" width="9" height="11" rx="2" stroke="#FAF7F2" strokeWidth="1.5" />
+                    <path d="M11 12v2a1 1 0 01-1 1H2a1 1 0 01-1-1V6a1 1 0 011-1h2" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                )}
+              </button>
+            )}
+
+            {/* ── Coordinator Brief tab actions ──────────────────────── */}
+            {activeTab === 'coordinator' && (
+              <>
+                <button
+                  onClick={handleCopy}
+                  style={{
+                    all: 'unset',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    padding: '14px 24px',
+                    background: '#1C2B3A',
+                    color: '#FAF7F2',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    transition: 'background 180ms ease',
+                  }}
+                >
+                  {copyLabel}
+                  {copyLabel === 'Copied' ? (
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                      <path d="M3 8l4 4 6-7" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                      <rect x="5" y="1" width="9" height="11" rx="2" stroke="#FAF7F2" strokeWidth="1.5" />
+                      <path d="M11 12v2a1 1 0 01-1 1H2a1 1 0 01-1-1V6a1 1 0 011-1h2" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </button>
+
+                <input
+                  type="email"
+                  value={coordEmail}
+                  onChange={e => { setCoordEmail(e.target.value); if (coordSendStatus !== 'idle') setCoordSendStatus('idle') }}
+                  placeholder="Your coordinator's email address"
+                  style={{
+                    all: 'unset',
+                    width: '100%',
+                    padding: '13px 16px',
+                    background: '#FFFFFF',
+                    border: '1.5px solid rgba(28,43,58,0.15)',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    color: '#1C2B3A',
+                    boxSizing: 'border-box',
+                  }}
+                />
+
+                <button
+                  onClick={coordSendStatus === 'error' ? () => setCoordSendStatus('idle') : handleEmailCoordinator}
+                  disabled={coordSendStatus === 'sending' || coordSendStatus === 'sent' || !coordEmail.trim()}
+                  style={{
+                    all: 'unset',
+                    cursor: coordSendStatus === 'sending' || coordSendStatus === 'sent' || !coordEmail.trim() ? 'default' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '14px 24px',
+                    background: coordSendStatus === 'sent' ? 'rgba(28,43,58,0.06)' : '#1C2B3A',
+                    color: coordSendStatus === 'sent' ? '#1C2B3A' : coordSendStatus === 'error' ? '#C0392B' : '#FAF7F2',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    opacity: coordSendStatus === 'sending' || (!coordEmail.trim() && coordSendStatus === 'idle') ? 0.5 : 1,
+                  }}
+                >
+                  {coordSendStatus === 'sent'
+                    ? `Sent to ${coordEmail} ✓`
+                    : coordSendStatus === 'error'
+                    ? 'Something went wrong — try again'
+                    : coordSendStatus === 'sending'
+                    ? 'Sending…'
+                    : 'Send to coordinator →'}
+                </button>
+              </>
             )}
 
             <button

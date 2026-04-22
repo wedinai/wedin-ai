@@ -1,0 +1,106 @@
+import { Resend } from 'resend'
+
+export const handler = async (event) => {
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'Method Not Allowed' }
+  }
+
+  let body
+  try {
+    body = JSON.parse(event.body)
+  } catch {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }
+  }
+
+  const { coordinatorEmail, content, coupleName } = body
+
+  if (!coordinatorEmail || !coordinatorEmail.trim()) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Coordinator email is required' }) }
+  }
+  if (!content) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Content is required' }) }
+  }
+
+  if (!process.env.RESEND_API_KEY) {
+    return { statusCode: 500, body: JSON.stringify({ error: 'Email not configured' }) }
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const contentHtml = content
+    .split('\n\n')
+    .map(chunk => {
+      const trimmed = chunk.trim()
+      if (!trimmed) return ''
+      const headingMatch = trimmed.match(/^\*\*(.+?)\*\*$/)
+      if (headingMatch) {
+        return `<p style="margin:28px 0 6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:#C4922A;letter-spacing:0.1em;text-transform:uppercase;">${headingMatch[1]}</p>`
+      }
+      return `<p style="margin:0 0 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1C2B3A;line-height:1.75;">${trimmed}</p>`
+    })
+    .join('')
+
+  const displayName = coupleName && coupleName !== 'Your Wedding' ? coupleName : 'Your couple'
+
+  const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+  .ew { background: #E8E4DC; padding: 48px 16px; font-family: 'DM Sans', sans-serif; }
+  .es { max-width: 560px; margin: 0 auto; background: #FAF7F2; border-radius: 16px; overflow: hidden; }
+  .eh { padding: 28px 48px; text-align: center; border-bottom: 1px solid rgba(28,43,58,0.07); }
+  .wm { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 20px; letter-spacing: 0.05em; color: #1C2B3A; text-decoration: none; }
+  .eb { padding: 44px 48px 0; }
+  .eh2 { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 36px; color: #1C2B3A; margin: 0 0 8px; line-height: 1.15; }
+  .sub { font-family: 'DM Sans', sans-serif; font-size: 14px; color: #6B6560; margin: 0 0 32px; line-height: 1.6; }
+  .div1 { border: none; border-top: 1px solid rgba(28,43,58,0.08); margin: 32px 0; }
+  .ef { padding: 24px 48px 40px; }
+  .fd { border: none; border-top: 1px solid rgba(28,43,58,0.08); margin: 0 0 28px; }
+  .fw { text-align: center; }
+  .fwm { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 15px; letter-spacing: 0.04em; color: #1C2B3A; display: block; margin-bottom: 4px; }
+  .ft { font-size: 12px; color: #6B6560; margin: 0; font-family: 'DM Sans', sans-serif; }
+  @media (max-width: 480px) { .eb, .ef, .eh { padding-left: 24px; padding-right: 24px; } .eh2 { font-size: 28px; } }
+</style>
+</head>
+<body>
+<div class="ew">
+  <div class="es">
+    <div class="eh"><span class="wm">wedin.ai</span></div>
+    <div class="eb">
+      <h1 class="eh2">Music brief.</h1>
+      <p class="sub">${displayName} — assembled via wedin.ai. Everything you need to coordinate the music on the day.</p>
+      <hr class="div1">
+      ${contentHtml}
+    </div>
+    <div class="ef">
+      <hr class="fd">
+      <div class="fw">
+        <span class="fwm">wedin.ai</span>
+        <p class="ft">Start with the music.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>`
+
+  try {
+    await resend.emails.send({
+      from: 'wedin.ai <hello@wedin.ai>',
+      to: coordinatorEmail.trim(),
+      subject: `${displayName} — wedding music brief`,
+      html,
+    })
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ success: true }),
+    }
+  } catch (err) {
+    console.error('send-coordinator-brief Resend error:', err)
+    return { statusCode: 500, body: JSON.stringify({ error: 'Failed to send email' }) }
+  }
+}
