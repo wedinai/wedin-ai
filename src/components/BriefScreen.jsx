@@ -289,6 +289,32 @@ function buildMusicPlanText(milRecommendations) {
   return lines.join('\n').trim()
 }
 
+function buildHowToBookText(milRecommendations) {
+  const lines = []
+  if (milRecommendations.moments) {
+    milRecommendations.moments.forEach((m) => {
+      lines.push(m.name.toUpperCase())
+      if (m.recommendation) lines.push(`Recommendation: ${m.recommendation}`)
+      if (m.cost)           lines.push(`Cost estimate: ${m.cost}`)
+      lines.push('')
+      lines.push('BEFORE YOU BOOK')
+      const questions = getVettingQuestions(m.recommendation)
+      questions.forEach((q, i) => lines.push(`${i + 1}. ${q}`))
+      lines.push('')
+      lines.push(BOOKING_LEAD_TIME)
+      lines.push('')
+    })
+  }
+  if (milRecommendations.productionCheck) {
+    const pc = milRecommendations.productionCheck
+    lines.push('PRODUCTION REALITY CHECK')
+    if (pc.totalEstimate) lines.push(`Total estimate: ${pc.totalEstimate}`)
+    if (pc.bookFirst)     lines.push(`Book first: ${pc.bookFirst}`)
+    if (pc.hiddenCosts)   lines.push(`Hidden costs: ${pc.hiddenCosts}`)
+  }
+  return lines.join('\n').trim()
+}
+
 // ── Main component ─────────────────────────────────────────────────────────
 
 export default function BriefScreen({
@@ -319,6 +345,7 @@ export default function BriefScreen({
   const [showInlineEmail, setShowInlineEmail] = useState(false)
   const [coordEmail, setCoordEmail] = useState('')
   const [coordSendStatus, setCoordSendStatus] = useState('idle')
+  const [howToBookEmailStatus, setHowToBookEmailStatus] = useState('idle')
 
   useEffect(() => {
     setMounted(true)
@@ -340,6 +367,9 @@ export default function BriefScreen({
     setCoordinatorBrief('')
 
     try {
+      // TODO post-launch: generate-brief-a.js is called on every
+      // BriefScreen load but coupleBrief never surfaces in the UI.
+      // Remove this API call to save cost and reduce load time.
       const [res1, res2] = await Promise.all([
         fetch('/.netlify/functions/generate-brief-a', {
           method: 'POST',
@@ -421,8 +451,36 @@ export default function BriefScreen({
     }
   }
 
+  async function handleEmailHowToBook() {
+    const emailToUse = storedEmail || inlineEmail.trim()
+    if (!emailToUse) {
+      setShowInlineEmail(true)
+      return
+    }
+    if (!milRecommendations) return
+    setHowToBookEmailStatus('sending')
+    try {
+      const res = await fetch('/.netlify/functions/send-music-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: emailToUse,
+          content: buildHowToBookText(milRecommendations),
+          coupleName,
+        }),
+      })
+      if (!res.ok) throw new Error('failed')
+      if (!storedEmail) setStoredEmail(emailToUse)
+      setHowToBookEmailStatus('sent')
+    } catch {
+      setHowToBookEmailStatus('error')
+    }
+  }
+
   function handleCopy() {
-    const text = activeTab === 'couple' ? coupleBrief : coordinatorBrief
+    const text = (activeTab === 'couple' && milRecommendations)
+      ? buildHowToBookText(milRecommendations)
+      : activeTab === 'couple' ? coupleBrief : coordinatorBrief
     if (!text) return
     navigator.clipboard.writeText(text).then(() => {
       setCopyLabel('Copied')
@@ -943,38 +1001,89 @@ export default function BriefScreen({
 
             {/* ── How to Book tab actions ────────────────────────────── */}
             {activeTab === 'couple' && (
-              <button
-                onClick={handleCopy}
-                style={{
-                  all: 'unset',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  padding: '14px 24px',
-                  background: '#1C2B3A',
-                  color: '#FAF7F2',
-                  borderRadius: 10,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  textAlign: 'center',
-                  transition: 'background 180ms ease',
-                }}
-              >
-                {copyLabel}
-                {copyLabel === 'Copied' ? (
-                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                    <path d="M3 8l4 4 6-7" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
-                    <rect x="5" y="1" width="9" height="11" rx="2" stroke="#FAF7F2" strokeWidth="1.5" />
-                    <path d="M11 12v2a1 1 0 01-1 1H2a1 1 0 01-1-1V6a1 1 0 011-1h2" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
+              <>
+                <button
+                  onClick={handleCopy}
+                  style={{
+                    all: 'unset',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    padding: '14px 24px',
+                    background: '#1C2B3A',
+                    color: '#FAF7F2',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    transition: 'background 180ms ease',
+                  }}
+                >
+                  {copyLabel}
+                  {copyLabel === 'Copied' ? (
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                      <path d="M3 8l4 4 6-7" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
+                      <rect x="5" y="1" width="9" height="11" rx="2" stroke="#FAF7F2" strokeWidth="1.5" />
+                      <path d="M11 12v2a1 1 0 01-1 1H2a1 1 0 01-1-1V6a1 1 0 011-1h2" stroke="#FAF7F2" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  )}
+                </button>
+
+                {showInlineEmail && howToBookEmailStatus === 'idle' && (
+                  <input
+                    type="email"
+                    value={inlineEmail}
+                    onChange={e => setInlineEmail(e.target.value)}
+                    placeholder="Your email address"
+                    style={{
+                      all: 'unset',
+                      width: '100%',
+                      padding: '13px 16px',
+                      background: '#FFFFFF',
+                      border: '1.5px solid rgba(28,43,58,0.15)',
+                      borderRadius: 10,
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 14,
+                      color: '#1C2B3A',
+                      boxSizing: 'border-box',
+                    }}
+                  />
                 )}
-              </button>
+
+                <button
+                  onClick={howToBookEmailStatus === 'error' ? () => setHowToBookEmailStatus('idle') : handleEmailHowToBook}
+                  disabled={howToBookEmailStatus === 'sending' || howToBookEmailStatus === 'sent'}
+                  style={{
+                    all: 'unset',
+                    cursor: howToBookEmailStatus === 'sending' || howToBookEmailStatus === 'sent' ? 'default' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '14px 24px',
+                    border: '1.5px solid rgba(28,43,58,0.12)',
+                    borderRadius: 10,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    color: howToBookEmailStatus === 'error' ? '#C0392B' : '#1C2B3A',
+                    textAlign: 'center',
+                    opacity: howToBookEmailStatus === 'sending' ? 0.5 : 1,
+                  }}
+                >
+                  {howToBookEmailStatus === 'sent'
+                    ? `Sent to ${storedEmail} ✓`
+                    : howToBookEmailStatus === 'error'
+                    ? 'Something went wrong — try again'
+                    : howToBookEmailStatus === 'sending'
+                    ? 'Sending…'
+                    : 'Email me my how to book guide →'}
+                </button>
+              </>
             )}
 
             {/* ── Coordinator Brief tab actions ──────────────────────── */}
