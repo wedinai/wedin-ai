@@ -229,7 +229,7 @@ export default function App() {
             if (s.mil_recommendations) {
               setView('brief')
             } else if (confirmedCount >= 9) {
-              setView('postBrief')
+              setView('brief')
             } else {
               setView('momentMap')
             }
@@ -375,7 +375,7 @@ export default function App() {
   }
 
   function handleGenerateBrief() {
-    setView('postBrief')
+    setView('brief')
   }
 
   function handleConfirmMoment(feedback) {
@@ -743,7 +743,7 @@ export default function App() {
         coupleName={coupleName}
         sessionAnswers={sessionAnswers}
         onBack={() => setView('momentMap')}
-        onStartMIL={() => setView('mil')}
+        onStartMIL={() => setView('melSummary')}
         milRecommendations={milRecommendations}
         initialTab={milRecommendations ? 'musicPlan' : 'couple'}
         spotifyPlaylistUrl={spotifyPlaylistUrl}
