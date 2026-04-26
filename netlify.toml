@@ -46,9 +46,6 @@
 [functions."generate-spotify-tracks"]
   timeout = 26
 
-[functions."generate-mel-summary"]
-  timeout = 26
-
 [functions."create-spotify-playlist"]
   timeout = 26
 
