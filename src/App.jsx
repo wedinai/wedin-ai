@@ -16,6 +16,7 @@ import PostBriefScreen from './components/PostBriefScreen.jsx'
 import MILIntakeScreen from './components/MILIntakeScreen.jsx'
 import MomentConfirmationScreen from './components/MomentConfirmationScreen.jsx'
 import MomentSummaryScreen from './components/MomentSummaryScreen.jsx'
+import MELSummaryScreen from './components/MELSummaryScreen.jsx'
 
 export default function App() {
   const [view, setView] = useState(() => {
@@ -24,7 +25,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'postBrief' | 'brief' | 'mil' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'postBrief' | 'melSummary' | 'brief' | 'mil' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -714,9 +715,22 @@ export default function App() {
     const allConfirmed = confirmedList.length >= 9
     return (
       <PostBriefScreen
-        onStartMIL={() => { if (allConfirmed) setView('mil') }}
+        onStartMIL={() => { if (allConfirmed) setView('melSummary') }}
         allConfirmed={allConfirmed}
         confirmedCount={confirmedList.length}
+      />
+    )
+  }
+
+  if (view === 'melSummary') {
+    return (
+      <MELSummaryScreen
+        sessionAnswers={sessionAnswers}
+        momentAnswers={momentAnswers}
+        portrait={portrait}
+        coupleName={coupleName}
+        email={email}
+        onConfirm={() => setView('mil')}
       />
     )
   }
