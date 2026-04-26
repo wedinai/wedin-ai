@@ -1,11 +1,10 @@
+import Anthropic from '@anthropic-ai/sdk'
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
-  }
-
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
-    return { statusCode: 500, body: JSON.stringify({ error: 'API key not configured' }) }
   }
 
   let body
@@ -22,6 +21,10 @@ export const handler = async (event) => {
   }
   if (!momentAnswers) {
     return { statusCode: 400, body: JSON.stringify({ error: 'momentAnswers is required' }) }
+  }
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return { statusCode: 500, body: JSON.stringify({ error: 'API not configured' }) }
   }
 
   const systemPrompt = `You are generating a single paragraph for wedin.ai — a wedding music planning product. This paragraph appears between the couple completing their nine moment deep-dives and seeing their Music Plan for the first time. It is the second emotional peak of the product after the music portrait.
@@ -68,32 +71,14 @@ Moment-by-moment answers across all nine deep-dives:
 ${JSON.stringify(momentAnswers, null, 2)}`
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 500,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userMessage }],
-      }),
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 500,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
     })
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      console.error('generate-mel-summary Anthropic error:', err)
-      return {
-        statusCode: res.status,
-        body: JSON.stringify({ error: err?.error?.message || 'Anthropic API error' }),
-      }
-    }
-
-    const data = await res.json()
-    const melSummary = data.content?.[0]?.text?.trim() ?? ''
+    const melSummary = response.content[0]?.text?.trim() ?? ''
 
     return {
       statusCode: 200,
