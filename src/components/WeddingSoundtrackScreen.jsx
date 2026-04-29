@@ -243,20 +243,41 @@ export default function WeddingSoundtrackScreen({
               marginBottom: 40,
             }}
           >
-            {paragraphs.map((para, i) => (
-              <p
-                key={i}
-                style={{
-                  margin: i === paragraphs.length - 1 ? 0 : '0 0 16px',
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 15,
-                  color: '#1C2B3A',
-                  lineHeight: 1.75,
-                }}
-              >
-                {para}
-              </p>
-            ))}
+            {paragraphs.map((para, i) => {
+              const headingMatch = para.match(/^\*\*(.+?)\*\*$/)
+              if (headingMatch) {
+                return (
+                  <p
+                    key={i}
+                    style={{
+                      margin: '24px 0 8px',
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      color: '#C4922A',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {headingMatch[1]}
+                  </p>
+                )
+              }
+              return (
+                <p
+                  key={i}
+                  style={{
+                    margin: i === paragraphs.length - 1 ? 0 : '0 0 16px',
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 15,
+                    color: '#1C2B3A',
+                    lineHeight: 1.75,
+                  }}
+                >
+                  {para}
+                </p>
+              )
+            })}
           </div>
 
           {/* Email button */}
