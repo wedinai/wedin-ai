@@ -328,6 +328,7 @@ export default function BriefScreen({
   initialTab = null,
   spotifyPlaylistUrl = null,
   spotifyLoading = false,
+  coupleBrief: coupleBriefProp = '',
 }) {
   const [status, setStatus] = useState('loading') // 'loading' | 'ready' | 'error'
   const [coupleBrief, setCoupleBrief] = useState('')
@@ -363,31 +364,44 @@ export default function BriefScreen({
     abortRef.current = controller
 
     setStatus('loading')
-    setCoupleBrief('')
     setCoordinatorBrief('')
 
+    // If coupleBrief arrived as a prop (generated on WeddingSoundtrackScreen),
+    // use it directly — skip the generate-brief-a call to avoid a second non-deterministic generation.
+    if (coupleBriefProp) {
+      setCoupleBrief(coupleBriefProp)
+    } else {
+      setCoupleBrief('')
+    }
+
     try {
-      // TODO post-launch: generate-brief-a.js is called on every
-      // BriefScreen load but coupleBrief never surfaces in the UI.
-      // Remove this API call to save cost and reduce load time.
-      const [res1, res2] = await Promise.all([
-        fetch('/.netlify/functions/generate-brief-a', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
-          signal: controller.signal,
-        }),
-        fetch('/.netlify/functions/generate-brief-b', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
-          signal: controller.signal,
-        }),
+      const briefAPromise = coupleBriefProp
+        ? Promise.resolve(null) // skip — prop already has the value
+        : fetch('/.netlify/functions/generate-brief-a', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
+            signal: controller.signal,
+          })
+
+      const briefBPromise = fetch('/.netlify/functions/generate-brief-b', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
+        signal: controller.signal,
+      })
+
+      const [res1, res2] = await Promise.all([briefAPromise, briefBPromise])
+      if (res1 && !res1.ok) throw new Error('Brief generation failed')
+      if (!res2.ok) throw new Error('Brief generation failed')
+
+      const [data1, data2] = await Promise.all([
+        res1 ? res1.json() : Promise.resolve(null),
+        res2.json(),
       ])
-      if (!res1.ok || !res2.ok) throw new Error('Brief generation failed')
-      const [data1, data2] = await Promise.all([res1.json(), res2.json()])
       if (controller.signal.aborted) return
-      setCoupleBrief(data1.coupleBrief || '')
+
+      if (data1) setCoupleBrief(data1.coupleBrief || '')
       setCoordinatorBrief(data2.coordinatorBrief || '')
       setStatus('ready')
     } catch (e) {

@@ -12,6 +12,7 @@ import SpeechesDeepDive from './components/SpeechesDeepDive.jsx'
 import DancingDeepDive from './components/DancingDeepDive.jsx'
 import LastSongDeepDive from './components/LastSongDeepDive.jsx'
 import BriefScreen from './components/BriefScreen.jsx'
+import WeddingSoundtrackScreen from './components/WeddingSoundtrackScreen.jsx'
 import PostBriefScreen from './components/PostBriefScreen.jsx'
 import MILIntakeScreen from './components/MILIntakeScreen.jsx'
 import MomentConfirmationScreen from './components/MomentConfirmationScreen.jsx'
@@ -24,7 +25,7 @@ export default function App() {
       return 'paymentConfirming'
     }
     return 'discovery'
-  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'postBrief' | 'brief' | 'mil' | 'paymentConfirming'
+  }) // 'discovery' | 'portrait' | 'momentMap' | 'arrivals' | 'predrinks' | 'ceremony' | 'entrance' | 'firstdance' | 'dinner' | 'speeches' | 'dancing' | 'lastsong' | 'weddingSoundtrack' | 'postBrief' | 'brief' | 'mil' | 'paymentConfirming'
   const [sessionAnswers, setSessionAnswers] = useState({})
   const [sessionId, setSessionId] = useState(null)
   const [coupleName, setCoupleName] = useState('Your Wedding')
@@ -48,6 +49,7 @@ export default function App() {
     () => localStorage.getItem('wedin_spotify_playlist') || null
   )
   const [spotifyLoading, setSpotifyLoading] = useState(false)
+  const [coupleBrief, setCoupleBrief] = useState('')
 
   // ── Supabase state persistence ────────────────────────────────────────────
   // Called after each deep-dive confirmation and after MIL completion.
@@ -228,7 +230,7 @@ export default function App() {
             if (s.mil_recommendations) {
               setView('brief')
             } else if (confirmedCount >= 9) {
-              setView('postBrief')
+              setView('weddingSoundtrack')
             } else {
               setView('momentMap')
             }
@@ -374,7 +376,7 @@ export default function App() {
   }
 
   function handleGenerateBrief() {
-    setView('postBrief')
+    setView('weddingSoundtrack')
   }
 
   function handleConfirmMoment(feedback) {
@@ -709,6 +711,20 @@ export default function App() {
     )
   }
 
+  if (view === 'weddingSoundtrack') {
+    return (
+      <WeddingSoundtrackScreen
+        momentAnswers={momentAnswers}
+        portrait={portrait}
+        coupleName={coupleName}
+        sessionAnswers={sessionAnswers}
+        userEmail={email}
+        onConfirm={() => setView('mil')}
+        onSetCoupleBrief={setCoupleBrief}
+      />
+    )
+  }
+
   if (view === 'postBrief') {
     const confirmedList = Object.keys(momentConfirmed).filter((k) => momentConfirmed[k])
     const allConfirmed = confirmedList.length >= 9
@@ -734,6 +750,7 @@ export default function App() {
         initialTab={milRecommendations ? 'musicPlan' : 'couple'}
         spotifyPlaylistUrl={spotifyPlaylistUrl}
         spotifyLoading={spotifyLoading}
+        coupleBrief={coupleBrief}
       />
     )
   }
