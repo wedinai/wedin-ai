@@ -141,7 +141,7 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
                 className="font-sans mb-6"
                 style={{ fontSize: '0.9375rem', color: 'var(--grey)', lineHeight: 1.6 }}
               >
-                Your Moment Map is waiting — nine musical moments, each one ready to be planned. Open it whenever you're ready.
+                At the end of your nine moments, you'll have your wedding soundtrack — and a complete music plan your coordinator and every act can work from.
               </p>
               <button
                 onClick={onViewMomentMap}
@@ -173,7 +173,7 @@ export default function MusicPortrait({ answers, sessionId, coupleName, onStartO
                 className="font-sans mb-6"
                 style={{ fontSize: '0.9375rem', color: 'var(--grey)', lineHeight: 1.6 }}
               >
-                You've just mapped the musical identity of your wedding day. Add your email and we'll send you your portrait — then step inside your Moment Map, where every moment of the day is waiting to be shaped.
+                You've just told us who you are musically. Add your email and we'll send you your portrait — then step inside your Moment Map, where every moment of the day is waiting to be shaped.
               </p>
               <form onSubmit={handleEmailSubmit}>
                 <input

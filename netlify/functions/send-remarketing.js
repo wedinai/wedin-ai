@@ -238,7 +238,7 @@ function buildTouch2Html(returnUrl) {
 
       <p class="bp">Most couples who complete their Moment Map tell us it's the first time the music conversation with their planner felt manageable. Not because the planning got easier — because they finally had words for what they wanted.</p>
 
-      <p class="bp">Here's what's waiting: arrivals, ceremony, pre-drinks, entrance, dinner, speeches, first dance, dancing, last song. Nine moments, each one mapped around what you both told us. At the end, a complete brief — for your coordinator and your acts.</p>
+      <p class="bp">Here's what's waiting: arrivals, ceremony, pre-drinks, entrance, dinner, speeches, first dance, dancing, last song. Nine moments, each one mapped around what you both told us. At the end, your wedding soundtrack — and a complete music plan your coordinator and acts can work from.</p>
     </div>
 
     <div class="ef">

@@ -670,7 +670,7 @@ function UnlockBanner({ onUnlock, completedCount, isUnlocking = false }) {
           lineHeight: 1.3,
         }}
       >
-        Your music plan covers 9 moments.
+        Your nine moments are ready.
       </p>
       <p
         style={{
@@ -681,8 +681,8 @@ function UnlockBanner({ onUnlock, completedCount, isUnlocking = false }) {
           lineHeight: 1.5,
         }}
       >
-        Complete each one to build your full brief — the document your planner
-        and every act will work from.
+        Work through them at your own pace — at the end, your wedding soundtrack
+        and a complete music plan, ready to share.
       </p>
 
       <button
@@ -711,7 +711,7 @@ function UnlockBanner({ onUnlock, completedCount, isUnlocking = false }) {
           opacity: isUnlocking ? 0.7 : 1,
         }}
       >
-        {isUnlocking ? 'Setting up…' : 'Start planning →'}
+        {isUnlocking ? 'Setting up…' : 'Unlock my Moment Map →'}
         {!isUnlocking && (
           <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
             <path
@@ -900,7 +900,7 @@ export default function MomentMap({
             {completedCount === 0
               ? "Start with any moment — we'll suggest the best order."
               : completedCount === MOMENTS.length
-              ? "Your music plan is complete. Ready to generate your brief."
+              ? "All nine moments mapped. Your wedding soundtrack is ready to build."
               : `${MOMENTS.length - completedCount} moments remaining. Your brief grows with each one.`}
           </p>
 
@@ -1003,7 +1003,7 @@ export default function MomentMap({
                       fontWeight: 500,
                     }}
                   >
-                    Build my brief →
+                    Build my wedding soundtrack →
                     <svg width="16" height="16" fill="none" viewBox="0 0 16 16">
                       <path
                         d="M8 1l7 7-7 7M1 8h14"

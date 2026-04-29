@@ -323,8 +323,8 @@ export default function BriefScreen({
   coupleName,
   sessionAnswers,
   onBack,
-  onStartMIL,
   milRecommendations = null,
+  milBudget = '',
   initialTab = null,
   spotifyPlaylistUrl = null,
   spotifyLoading = false,
@@ -699,7 +699,7 @@ export default function BriefScreen({
               lineHeight: 1.15,
             }}
           >
-            Your music brief.
+            Your music plan.
           </h1>
           <p
             style={{
@@ -710,7 +710,7 @@ export default function BriefScreen({
               lineHeight: 1.6,
             }}
           >
-            Every moment, every instruction — assembled from your planning sessions.
+            What we'd recommend, and how to make it happen.
           </p>
 
           {/* Spotify playlist banner */}
@@ -813,6 +813,18 @@ export default function BriefScreen({
         >
           {activeTab === 'musicPlan' && milRecommendations ? (
             <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              {milBudget === 'not_sure' && (
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 14,
+                  color: '#6B6560',
+                  fontStyle: 'italic',
+                  marginBottom: 24,
+                  lineHeight: 1.6,
+                }}>
+                  Cost estimates below are indicative — treat them as reference points and confirm directly with acts.
+                </p>
+              )}
               {isMILJson ? (
                 <>
                   {milRecommendations.moments?.map((moment, i) => (
@@ -900,32 +912,6 @@ export default function BriefScreen({
               marginBottom: 64,
             }}
           >
-            {onStartMIL && !milRecommendations && (
-              <button
-                onClick={onStartMIL}
-                style={{
-                  all: 'unset',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  padding: '14px 24px',
-                  background: '#1C2B3A',
-                  color: '#FAF7F2',
-                  borderRadius: 10,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                  fontWeight: 500,
-                  textAlign: 'center',
-                  transition: 'background 180ms ease',
-                  boxSizing: 'border-box',
-                }}
-              >
-                Build my music plan →
-              </button>
-            )}
-
             {/* ── Music Plan tab actions ─────────────────────────────── */}
             {activeTab === 'musicPlan' && milRecommendations && (
               <>

@@ -36,6 +36,7 @@ export default function App() {
   const [momentAnswers, setMomentAnswers] = useState({}) // { guestArrivals: {…}, ceremony: {…}, … }
   const [portrait, setPortrait] = useState(null)
   const [milRecommendations, setMilRecommendations] = useState(null)
+  const [milBudget, setMilBudget] = useState('')
   const [momentConfirmed, setMomentConfirmed] = useState({})
   const [momentFeedback, setMomentFeedback] = useState({})
   const [pendingConfirmation, setPendingConfirmation] = useState(null) // { momentId, momentName }
@@ -490,6 +491,7 @@ export default function App() {
   }
 
   function handleMILComplete(answers, recommendations) {
+    setMilBudget(answers.mil_budget || '')
     setMilRecommendations(recommendations)
     localStorage.setItem('wedin_mil_recommendations', JSON.stringify(recommendations))
     persistState({ mil_recommendations: recommendations, milComplete: true })
@@ -745,12 +747,12 @@ export default function App() {
         coupleName={coupleName}
         sessionAnswers={sessionAnswers}
         onBack={() => setView('momentMap')}
-        onStartMIL={() => setView('mil')}
         milRecommendations={milRecommendations}
         initialTab={milRecommendations ? 'musicPlan' : 'couple'}
         spotifyPlaylistUrl={spotifyPlaylistUrl}
         spotifyLoading={spotifyLoading}
         coupleBrief={coupleBrief}
+        milBudget={milBudget}
       />
     )
   }

@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 
 const BUDGET_OPTIONS = [
+  { id: 'not_sure',     label: "Not yet — show us what's possible" },
   { id: 'under_30k',    label: 'Under R30,000' },
   { id: '30k_60k',      label: 'R30,000 – R60,000' },
   { id: '60k_100k',     label: 'R60,000 – R100,000' },
   { id: '100k_150k',    label: 'R100,000 – R150,000' },
   { id: 'over_150k',    label: 'Over R150,000' },
-  { id: 'not_sure',     label: "We're not sure yet — show us what's possible" },
 ]
 
 const BOOKING_OPTIONS = [
-  { id: 'nothing_booked',  label: 'No — everything is still open' },
+  { id: 'nothing_booked',  label: 'Nothing booked yet' },
   { id: 'dj_booked',       label: 'Yes — we have a DJ booked' },
   { id: 'band_booked',     label: 'Yes — we have a band booked' },
   { id: 'dj_and_live',     label: 'Yes — we have a DJ and some live acts booked' },
@@ -58,7 +58,7 @@ export default function MILIntakeScreen({
   coupleName,
   ceremonySummary,
 }) {
-  const [step, setStep] = useState(0)           // 0 = Q1, 1 = Q2
+  const [showBookings, setShowBookings] = useState(false)
   const [milBudget, setMilBudget] = useState(null)
   const [milBookings, setMilBookings] = useState(null)
   const [phase, setPhase] = useState('questions') // 'questions' | 'loading' | 'error'
@@ -67,7 +67,7 @@ export default function MILIntakeScreen({
   function handleBudgetSelect(id) {
     setMilBudget(id)
     setSelectedAnswers((prev) => ({ ...prev, mil_budget: id }))
-    setTimeout(() => setStep(1), 350)
+    setTimeout(() => setShowBookings(true), 350)
   }
 
   function handleBookingsSelect(id) {
@@ -257,7 +257,7 @@ export default function MILIntakeScreen({
           flexDirection: 'column',
         }}
       >
-        {/* Progress bar strip */}
+        {/* Progress bar strip — fixed at 100% on single screen */}
         <div
           style={{
             height: 3,
@@ -268,40 +268,14 @@ export default function MILIntakeScreen({
           <div
             style={{
               height: '100%',
-              width: step === 0 ? '50%' : '100%',
+              width: '100%',
               background: 'linear-gradient(90deg, #1C2B3A, #C4922A)',
-              transition: 'width 400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
           />
         </div>
 
-        {/* Step label */}
-        <div
-          style={{
-            padding: '16px 24px 0',
-            maxWidth: 560,
-            margin: '0 auto',
-            width: '100%',
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
-              fontWeight: 500,
-              color: '#6B6560',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Step {step + 1} of 2
-          </p>
-        </div>
-
         {/* Content */}
         <div
-          key={step}
           style={{
             flex: 1,
             display: 'flex',
@@ -314,22 +288,47 @@ export default function MILIntakeScreen({
             animation: 'fadeUp 300ms ease both',
           }}
         >
-          {step === 0 && (
-            <>
-              {/* Educate line */}
-              <p
-                style={{
-                  margin: '0 0 28px',
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                  fontStyle: 'italic',
-                  color: '#6B6560',
-                  lineHeight: 1.65,
-                }}
-              >
-                This covers everything — your act, any DJ, live musicians across the whole day. Even a rough range is enough.
-              </p>
+          {/* Budget question */}
+          <p
+            style={{
+              margin: '0 0 20px',
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 14,
+              fontStyle: 'italic',
+              color: '#6B6560',
+              lineHeight: 1.65,
+            }}
+          >
+            Most couples haven't thought about this yet — and that's fine. If you have a range in mind, select it. If not, we'll show you what's possible at different levels and help you figure out what makes sense.
+          </p>
 
+          <h2
+            style={{
+              margin: '0 0 24px',
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 26,
+              fontWeight: 400,
+              color: '#1C2B3A',
+              lineHeight: 1.25,
+            }}
+          >
+            Have you thought about a music budget yet?
+          </h2>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {BUDGET_OPTIONS.map((opt) => (
+              <ChipOption
+                key={opt.id}
+                label={opt.label}
+                selected={milBudget === opt.id}
+                onClick={() => handleBudgetSelect(opt.id)}
+              />
+            ))}
+          </div>
+
+          {/* Bookings question — fades in after budget selection */}
+          {showBookings && (
+            <div style={{ marginTop: 40, animation: 'fadeUp 300ms ease both' }}>
               <h2
                 style={{
                   margin: '0 0 24px',
@@ -340,35 +339,7 @@ export default function MILIntakeScreen({
                   lineHeight: 1.25,
                 }}
               >
-                What's your total music budget for the day?
-              </h2>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {BUDGET_OPTIONS.map((opt) => (
-                  <ChipOption
-                    key={opt.id}
-                    label={opt.label}
-                    selected={milBudget === opt.id}
-                    onClick={() => handleBudgetSelect(opt.id)}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-
-          {step === 1 && (
-            <>
-              <h2
-                style={{
-                  margin: '0 0 24px',
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 26,
-                  fontWeight: 400,
-                  color: '#1C2B3A',
-                  lineHeight: 1.25,
-                }}
-              >
-                Have you already booked any acts or a DJ?
+                One more thing — have you already booked any acts?
               </h2>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -381,7 +352,7 @@ export default function MILIntakeScreen({
                   />
                 ))}
               </div>
-            </>
+            </div>
           )}
         </div>
 

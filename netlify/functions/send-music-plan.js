@@ -75,7 +75,7 @@ export const handler = async (event) => {
       ${contentHtml}
     </div>
     <div class="ef">
-      <a class="cb" href="${returnUrl}">Open your full brief &rarr;</a>
+      <a class="cb" href="${returnUrl}">Return to your Moment Map &rarr;</a>
       <hr class="fd">
       <div class="fw">
         <span class="fwm">wedin.ai</span>
@@ -91,7 +91,7 @@ export const handler = async (event) => {
     await resend.emails.send({
       from: 'wedin.ai <hello@wedin.ai>',
       to: email.trim(),
-      subject: 'Your wedin.ai music plan',
+      subject: `Your music plan — ${coupleName && coupleName !== 'Your Wedding' ? coupleName : 'your wedding'}`,
       html,
     })
     return {

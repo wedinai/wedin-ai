@@ -93,7 +93,7 @@ export default function CompletionScreen({ answers, onViewPlan }) {
 
       {/* Next step CTA */}
       <button className="btn-primary w-full mb-4" onClick={onViewPlan}>
-        View your music plan
+        View your music portrait
       </button>
 
       <button
