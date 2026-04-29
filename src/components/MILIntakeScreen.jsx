@@ -17,6 +17,12 @@ const BOOKING_OPTIONS = [
   { id: 'planner_handling', label: 'We have a planner who is handling this' },
 ]
 
+const COORDINATOR_OPTIONS = [
+  { id: 'professional', label: 'We have a professional coordinator' },
+  { id: 'venue',        label: 'The venue is providing a coordinator' },
+  { id: 'volunteer',    label: 'A friend or family member is helping out' },
+]
+
 // ── Chip option button ─────────────────────────────────────────────────────
 
 function ChipOption({ label, selected, onClick }) {
@@ -59,8 +65,10 @@ export default function MILIntakeScreen({
   ceremonySummary,
 }) {
   const [showBookings, setShowBookings] = useState(false)
+  const [showCoordinatorProfile, setShowCoordinatorProfile] = useState(false)
   const [milBudget, setMilBudget] = useState(null)
   const [milBookings, setMilBookings] = useState(null)
+  const [coordinatorProfile, setCoordinatorProfile] = useState(null)
   const [phase, setPhase] = useState('questions') // 'questions' | 'loading' | 'error'
   const [selectedAnswers, setSelectedAnswers] = useState({})
 
@@ -73,6 +81,13 @@ export default function MILIntakeScreen({
   function handleBookingsSelect(id) {
     setMilBookings(id)
     const answers = { ...selectedAnswers, mil_existing_bookings: id }
+    setSelectedAnswers(answers)
+    setTimeout(() => setShowCoordinatorProfile(true), 350)
+  }
+
+  function handleCoordinatorSelect(id) {
+    setCoordinatorProfile(id)
+    const answers = { ...selectedAnswers, coordinator_profile: id }
     setSelectedAnswers(answers)
     setTimeout(() => generateMIL(answers), 350)
   }
@@ -349,6 +364,34 @@ export default function MILIntakeScreen({
                     label={opt.label}
                     selected={milBookings === opt.id}
                     onClick={() => handleBookingsSelect(opt.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Coordinator profile question — fades in after bookings selection */}
+          {showCoordinatorProfile && (
+            <div style={{ marginTop: 40, animation: 'fadeUp 300ms ease both' }}>
+              <h2
+                style={{
+                  margin: '0 0 24px',
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 26,
+                  fontWeight: 400,
+                  color: '#1C2B3A',
+                  lineHeight: 1.25,
+                }}
+              >
+                One last thing — who will be coordinating the music on the day?
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {COORDINATOR_OPTIONS.map((opt) => (
+                  <ChipOption
+                    key={opt.id}
+                    label={opt.label}
+                    selected={coordinatorProfile === opt.id}
+                    onClick={() => handleCoordinatorSelect(opt.id)}
                   />
                 ))}
               </div>

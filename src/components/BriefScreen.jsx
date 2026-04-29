@@ -325,6 +325,7 @@ export default function BriefScreen({
   onBack,
   milRecommendations = null,
   milBudget = '',
+  coordinatorProfile = 'venue',
   initialTab = null,
   spotifyPlaylistUrl = null,
   spotifyLoading = false,
@@ -387,7 +388,7 @@ export default function BriefScreen({
       const briefBPromise = fetch('/.netlify/functions/generate-brief-b', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
+        body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers, coordinatorProfile }),
         signal: controller.signal,
       })
 

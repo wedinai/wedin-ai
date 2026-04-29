@@ -1,6 +1,6 @@
 // generate-brief-b.js — Coordinator's brief only (operational document)
 
-const SYSTEM_PROMPT = `You are a wedding music specialist for wedin.ai. Generate the coordinator's brief only — the operational document.
+const BASE_PROMPT = `You are a wedding music specialist for wedin.ai. Generate the coordinator's brief only — the operational document.
 
 Built for a professional working fast. Each moment section includes the musical approach and ends with a clear, specific operational instruction. Direct and professional tone. Saves the coordinator 45 minutes of music discovery calls. Every moment tells the coordinator exactly what to brief the act or DJ.
 
@@ -21,6 +21,21 @@ Rules:
 STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences plus one operational instruction. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness. If approaching token limit, shorten earlier sections before starting new ones. Never leave a JSON object unclosed.
 
 Return ONLY valid JSON: {"coordinatorBrief": "..."}`
+
+const PROFILE_INSTRUCTIONS = {
+  professional: `COORDINATOR PROFILE — PROFESSIONAL: This brief is for an experienced professional coordinator who has managed weddings before. You may use industry-standard terminology where it aids precision: cue sheet, pre-brief, sound check window, load-in, PA spec. Write peer-to-peer — concise and precise. Assume they understand what a DJ handoff means and do not need every action explained. Focus on what is specific to this couple, not general process.`,
+
+  venue: `COORDINATOR PROFILE — VENUE: This brief is for a venue coordinator. They know the space and logistics but may not know this couple's musical taste. Provide enough context on the couple's preferences that the coordinator can brief the acts confidently without further discovery calls. Professional but fully self-contained — do not assume prior knowledge of this couple.`,
+
+  volunteer: `COORDINATOR PROFILE — VOLUNTEER: This brief is for a friend or family member helping to coordinate on the day. Write in plain language — no industry jargon. Each moment should have one clear, simple action. At every transition between moments, name the specific person the volunteer should find, speak to, or hand off to — for example, 'find the DJ and tell them to begin' or 'check with the couple before the next moment starts'. Where something could go wrong, state what to do in plain terms. Warm and encouraging tone — they are helping, not managing a production.`,
+}
+
+const TIMING_RULE = `TIMING: Never include clock times in any section. Express all timing as duration and sequence only — for example, 'approximately 45 minutes, following the ceremony recessional', never '16:00–16:45'. This applies to every moment section.`
+
+function getSystemPrompt(coordinatorProfile = 'venue') {
+  const profile = PROFILE_INSTRUCTIONS[coordinatorProfile] || PROFILE_INSTRUCTIONS.venue
+  return `${BASE_PROMPT}\n\n${profile}\n\n${TIMING_RULE}`
+}
 
 // ── Answer formatter ─────────────────────────────────────────────────────────
 
@@ -150,6 +165,7 @@ export const handler = async (event) => {
     portrait = '',
     coupleName,
     sessionAnswers = {},
+    coordinatorProfile = 'venue',
   } = body
 
   const name = coupleName && coupleName !== 'Your Wedding' ? coupleName : 'this couple'
@@ -187,7 +203,7 @@ Return ONLY valid JSON: {"coordinatorBrief": "..."}`
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 3000,
-        system: SYSTEM_PROMPT,
+        system: getSystemPrompt(coordinatorProfile),
         messages: [{ role: 'user', content: prompt }],
       }),
     })

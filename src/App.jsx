@@ -37,6 +37,7 @@ export default function App() {
   const [portrait, setPortrait] = useState(null)
   const [milRecommendations, setMilRecommendations] = useState(null)
   const [milBudget, setMilBudget] = useState('')
+  const [coordinatorProfile, setCoordinatorProfile] = useState('venue')
   const [momentConfirmed, setMomentConfirmed] = useState({})
   const [momentFeedback, setMomentFeedback] = useState({})
   const [pendingConfirmation, setPendingConfirmation] = useState(null) // { momentId, momentName }
@@ -492,6 +493,7 @@ export default function App() {
 
   function handleMILComplete(answers, recommendations) {
     setMilBudget(answers.mil_budget || '')
+    setCoordinatorProfile(answers.coordinator_profile || 'venue')
     setMilRecommendations(recommendations)
     localStorage.setItem('wedin_mil_recommendations', JSON.stringify(recommendations))
     persistState({ mil_recommendations: recommendations, milComplete: true })
@@ -753,6 +755,7 @@ export default function App() {
         spotifyLoading={spotifyLoading}
         coupleBrief={coupleBrief}
         milBudget={milBudget}
+        coordinatorProfile={coordinatorProfile}
       />
     )
   }
