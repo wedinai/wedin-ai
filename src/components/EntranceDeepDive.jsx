@@ -376,6 +376,7 @@ export default function EntranceDeepDive({
                   placeholder={currentStep.placeholder}
                   rows={4}
                   autoFocus
+                  maxLength={currentStep.id === 'song_question' ? 400 : 200}
                   style={{
                     display: 'block',
                     width: '100%',
@@ -389,7 +390,7 @@ export default function EntranceDeepDive({
                     outline: 'none',
                     resize: 'none',
                     lineHeight: 1.6,
-                    marginBottom: 12,
+                    marginBottom: 8,
                     boxSizing: 'border-box',
                   }}
                   onFocus={(e) => {
@@ -401,6 +402,19 @@ export default function EntranceDeepDive({
                     e.target.style.boxShadow = 'none'
                   }}
                 />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <p style={{ margin: 0, fontSize: 12, fontStyle: 'italic', color: '#6B6560' }}>
+                    {currentStep.id === 'song_question'
+                      ? 'List up to four songs — these become the ground truth for your plan.'
+                      : 'Specific answers give you the best recommendations.'}
+                  </p>
+                  <span style={{ marginLeft: 16, fontSize: 12, whiteSpace: 'nowrap', flexShrink: 0,
+                    color: songText.length >= (currentStep.id === 'song_question' ? 400 : 200) ? '#E53E3E'
+                         : songText.length >= Math.floor((currentStep.id === 'song_question' ? 400 : 200) * 0.8) ? '#C4922A'
+                         : '#6B6560' }}>
+                    {songText.length} / {currentStep.id === 'song_question' ? 400 : 200}
+                  </span>
+                </div>
                 <button
                   onClick={() => { if (songText.trim()) saveAndAdvance(songText.trim()) }}
                   disabled={!songText.trim()}

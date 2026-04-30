@@ -486,6 +486,7 @@ export default function FirstDanceDeepDive({
                   onChange={(e) => setTextValue(e.target.value)}
                   placeholder={currentStep.placeholder}
                   rows={4}
+                  maxLength={currentStep.id === 'song_question' ? 400 : 200}
                   onFocus={(e) => { e.target.style.borderColor = '#1C2B3A' }}
                   onBlur={(e) => { e.target.style.borderColor = 'rgba(28,43,58,0.12)' }}
                   onKeyDown={(e) => {
@@ -507,11 +508,24 @@ export default function FirstDanceDeepDive({
                     resize: 'none',
                     outline: 'none',
                     transition: 'border-color 180ms ease',
-                    marginBottom: 12,
+                    marginBottom: 8,
                     minHeight: 120,
                     boxSizing: 'border-box',
                   }}
                 />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <p style={{ margin: 0, fontSize: 12, fontStyle: 'italic', color: '#6B6560' }}>
+                    {currentStep.id === 'song_question'
+                      ? 'List up to four songs — these become the ground truth for your plan.'
+                      : 'Specific answers give you the best recommendations.'}
+                  </p>
+                  <span style={{ marginLeft: 16, fontSize: 12, whiteSpace: 'nowrap', flexShrink: 0,
+                    color: textValue.length >= (currentStep.id === 'song_question' ? 400 : 200) ? '#E53E3E'
+                         : textValue.length >= Math.floor((currentStep.id === 'song_question' ? 400 : 200) * 0.8) ? '#C4922A'
+                         : '#6B6560' }}>
+                    {textValue.length} / {currentStep.id === 'song_question' ? 400 : 200}
+                  </span>
+                </div>
                 <button
                   onClick={handleTextSubmit}
                   disabled={!textValue.trim()}

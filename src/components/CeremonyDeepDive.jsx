@@ -735,6 +735,7 @@ export default function CeremonyDeepDive({
                   onChange={(e) => setCurrentText(e.target.value)}
                   placeholder={currentStep.placeholder || ''}
                   rows={4}
+                  maxLength={currentStep.id === 'song_question' ? 400 : 200}
                   style={{
                     display: 'block',
                     width: '100%',
@@ -748,12 +749,25 @@ export default function CeremonyDeepDive({
                     lineHeight: 1.6,
                     outline: 'none',
                     resize: 'vertical',
-                    marginBottom: 16,
+                    marginBottom: 8,
                     transition: 'border-color 200ms',
                   }}
                   onFocus={(e) => { e.target.style.borderColor = '#1C2B3A' }}
                   onBlur={(e) => { e.target.style.borderColor = 'rgba(28,43,58,0.12)' }}
                 />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <p style={{ margin: 0, fontSize: 12, fontStyle: 'italic', color: '#6B6560' }}>
+                    {currentStep.id === 'song_question'
+                      ? 'List up to four songs — these become the ground truth for your plan.'
+                      : 'Specific answers give you the best recommendations.'}
+                  </p>
+                  <span style={{ marginLeft: 16, fontSize: 12, whiteSpace: 'nowrap', flexShrink: 0,
+                    color: currentText.length >= (currentStep.id === 'song_question' ? 400 : 200) ? '#E53E3E'
+                         : currentText.length >= Math.floor((currentStep.id === 'song_question' ? 400 : 200) * 0.8) ? '#C4922A'
+                         : '#6B6560' }}>
+                    {currentText.length} / {currentStep.id === 'song_question' ? 400 : 200}
+                  </span>
+                </div>
                 <div style={{ display: 'flex', gap: 12 }}>
                   <button
                     onClick={handleTextContinue}
