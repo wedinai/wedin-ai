@@ -528,7 +528,7 @@ export default function CeremonyDeepDive({
                   lineHeight: 1.75,
                 }}
               >
-                {summary}
+                {summary.replace(/\*+/g, '')}
               </p>
             </div>
           ) : (

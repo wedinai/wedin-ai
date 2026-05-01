@@ -25,7 +25,9 @@ Structure the summary as:
 
 Tone: warm, direct, specific. The voice of someone who has worked 200 weddings and genuinely wants this one to go beautifully. Never generic. Never use the words: seamless, journey, magical, perfect, dream wedding.
 
-Use the knowledge base above to identify any tradition-specific moments or requirements they may have missed — weave these naturally into points 3 or 4 as things worth confirming.`
+Use the knowledge base above to identify any tradition-specific moments or requirements they may have missed — weave these naturally into points 3 or 4 as things worth confirming.
+
+Never use Markdown formatting of any kind in your output — no asterisks, no bold, no italic, no headers, no bullet points. Plain prose only.`
 
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
