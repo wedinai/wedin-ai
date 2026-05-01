@@ -1,9 +1,14 @@
 # wedin.ai — MIL Test Scenario Seed Scripts
-## Updated April 2026 — 25 Scenarios
+## Updated April 29, 2026 — 19 Scenarios
 
 Paste any script into browser DevTools console on the live app. Type `allow pasting` first if Chrome blocks. Each script clears existing wedin.ai localStorage, injects the scenario, and reloads automatically.
 
-After reload: Moment Map shows all 9 moments Complete. Click **Generate brief** → PostBriefScreen → **Build my music plan** → MILIntakeScreen. Enter budget and bookings manually, then wait ~30 seconds.
+After reload: Moment Map shows all 9 moments Complete. Click **Build my wedding soundtrack →** → WeddingSoundtrackScreen → **Build my music plan →** → MILIntakeScreen. Select budget, bookings, and coordinator profile chips — then wait ~30 seconds for the Music Plan to generate. The coordinator_profile value is now pre-set in the seed script — select the matching chip in the UI when prompted.
+
+**Coordinator profile assignments per scenario:**
+- Scenario 13 (Marco & Isabella) → **professional**
+- Scenario 17 (Jason & Caitlin) → **volunteer**
+- All other scenarios → **venue** (default)
 
 ---
 
@@ -37,6 +42,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Sophie and Liam have a clear musical identity — warm, acoustic, emotionally honest. Their listening world is Norah Jones, Jack Johnson, Ben Harper. They want guests to feel at home from the moment they arrive and the day to build organically toward joy.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -56,6 +62,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Emma and Tom know exactly who they are. Their music lives in the folk-acoustic world — Mumford, Fleet Foxes, Bon Iver — and their farm venue is an extension of that identity. The outdoor setting is central to their vision and a significant practical consideration for everything acoustic.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -75,6 +82,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Charlotte and James have exacting taste — contemporary classical, post-rock, and the kind of refinement that only comes from genuinely loving the music. Their wedding needs to feel like a piece of music itself: structured, considered, building to something.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r100_150k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -94,6 +102,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Thabo and Priya have deeply personal, intimate taste — but their guest count and venue create a real tension the MIL must surface honestly. A solo acoustic guitarist cannot hold a hotel ballroom with 280 people. The MIL's job here is to honour their taste while being honest about what the room requires.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'under_r30k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -102,6 +111,7 @@ location.reload()
 ## SCENARIO 5 — Naledi & David
 **Test: PRODUCTION CHECK COHERENCE**
 Full day of live acts across all 9 moments → Expected: Production check total accounts for ALL acts not just mil-b moments.
+**Coordinator profile: venue** (complex production — venue coordinator realistic)
 
 ```javascript
 Object.keys(localStorage).filter(k=>k.startsWith('wedin_')).forEach(k=>localStorage.removeItem(k))
@@ -113,6 +123,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Naledi and David are the maximum-expression test case: full budget, full ambition, deeply South African identity, multigenerational and multicultural guest list. Their vision is genuinely complex — marimba arrivals, choir ceremony, jazz dinner, live band into DJ. The production check coherence test is the primary target.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r150k_plus',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -136,6 +147,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Michael and Sarah are traditional in the best sense — they want a wedding that honours the ceremony, makes older family feel included, and builds toward genuine celebration. The Anglican ceremony structure is important to them and to their families.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -155,6 +167,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Daniel and Rebecca are joyful and culturally connected. The hora is non-negotiable and the ceremony must honour Jewish tradition — but their personal taste is firmly contemporary. The MIL must navigate tradition and personal expression without making either feel like a compromise.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -174,6 +187,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Ahmed and Fatima are planning a walimah that honours Islamic values while celebrating with genuine joy. The nikah has specific religious requirements around music. The MIL must navigate this with cultural intelligence — not generic wedding logic.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -193,6 +207,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Raj and Meera are planning a full Hindu celebration — the ceremony is sacred and the party is exuberant. The MIL must understand the difference between the two and not recommend Western music for moments that require traditional Indian content.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r100_150k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -212,6 +227,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Sibusiso and Zanele are planning a celebration rooted in Zulu culture and Ubuntu. The ceremony is ancestral and requires traditional musicians. The MIL must understand the difference between cultural ceremony requirements and contemporary reception preferences.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -231,6 +247,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Pieter and Marié are rooted in Afrikaner culture — the NG Kerk ceremony is important to their families and the reception is a farm celebration. The MIL must respect the church tradition and understand the Afrikaner braai-party culture that follows.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -254,6 +271,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"James and Kate are the sparse-data challenge. They have no strong musical opinions and minimal input. The MIL must work with what it has — one named song (Perfect by Ed Sheeran) — and build a coherent, appropriate recommendation without inventing taste signals that were never there.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'under_r30k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -262,6 +280,7 @@ location.reload()
 ## SCENARIO 13 — Marco & Isabella
 **Test: STRONG OPINIONS, VERY SPECIFIC TASTE — MINIMAL DIRECTION NEEDED**
 Couple knows exactly what they want, every moment answered with specific songs
+**Coordinator profile: professional** — select 'We have a professional coordinator' when the chip appears
 
 ```javascript
 Object.keys(localStorage).filter(k=>k.startsWith('wedin_')).forEach(k=>localStorage.removeItem(k))
@@ -273,6 +292,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Marco and Isabella have a complete, coherent vision for every moment. The MIL's job is to validate and execute their vision, not to redirect it. Every recommendation should reference the specific songs and artists they named.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r100_150k',mil_existing_bookings:'nothing_booked',coordinator_profile:'professional'}))
 location.reload()
 ```
 
@@ -292,6 +312,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"David and Mark know exactly who they are and this wedding is a full expression of that. The MIL must reflect their specific taste — Hozier, Troye Sivan, Kylie, Robyn — without defaulting to generic wedding language.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -311,6 +332,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Richard and Anne are not trying to impress anyone. This is a small, intimate gathering of people who love them. The MIL must match that register — no big production recommendations, no live acts for the sake of it. Warmth and quality over spectacle.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r30_60k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -330,6 +352,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Kwame and Ama are pan-African and proud. Their wedding is a meeting point between Ghanaian and South African culture, with guests from both countries and internationally. The outdoor destination venue triggers the amplification rule — AND their cultural context requires specific knowledge.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r100_150k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -338,6 +361,7 @@ location.reload()
 ## SCENARIO 17 — Jason & Caitlin
 **Test: EXTREME BUDGET MISMATCH — BIG VISION, TINY BUDGET**
 Couple wants full live band experience on under R30k budget
+**Coordinator profile: volunteer** — select 'A friend or family member is helping out' when the chip appears
 
 ```javascript
 Object.keys(localStorage).filter(k=>k.startsWith('wedin_')).forEach(k=>localStorage.removeItem(k))
@@ -349,6 +373,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Jason and Caitlin want everything live, everything big, everything loud. Their vision is legitimate and their enthusiasm is genuine. But their budget (under R30k) cannot deliver a full live band experience. The MIL must be honest about this mismatch and redirect to what is actually achievable — without crushing their excitement.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'under_r30k',mil_existing_bookings:'nothing_booked',coordinator_profile:'volunteer'}))
 location.reload()
 ```
 
@@ -368,6 +393,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Tom is the musician in this relationship — deeply into jazz, opinionated, and specific. Sarah trusts him on music but wants guests to be happy and the dancing to work for everyone. The MIL must honour Tom's taste while finding bridges to the broader crowd for the dancing section.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -387,6 +413,7 @@ localStorage.setItem('wedin_moment_answers',JSON.stringify({guestArrivals:{arriv
 localStorage.setItem('wedin_completed_moments',JSON.stringify(['arrivals','ceremony','predrinks','entrance','dinner','speeches','firstdance','dancing','lastsong']))
 localStorage.setItem('wedin_moment_confirmed',JSON.stringify({arrivals:true,ceremony:true,predrinks:true,entrance:true,dinner:true,speeches:true,firstdance:true,dancing:true,lastsong:true}))
 localStorage.setItem('wedin_portrait',"Luke and Amy are navigating two family traditions with grace and genuine love. The ceremony requires cultural intelligence — both a Catholic priest and Jewish officiant. The hora must happen. The MIL must serve both families without making either feel like an afterthought.")
+localStorage.setItem('wedin_mil_answers',JSON.stringify({mil_budget:'r60_100k',mil_existing_bookings:'nothing_booked',coordinator_profile:'venue'}))
 location.reload()
 ```
 
@@ -394,7 +421,7 @@ location.reload()
 
 ## RULE VERIFICATION CHECKLIST
 
-After running each scenario through MIL intake, check the following:
+After running each scenario through MIL intake, check the following. Select the coordinator profile chip matching the scenario assignment before generating.
 
 ### Scenario 1 — Entrance Rule
 - [ ] Entrance recommendation = PA, not live musicians
@@ -455,3 +482,30 @@ After running each scenario through MIL intake, check the following:
 - [ ] Hora recommended and supported
 - [ ] Ceremony respects dual tradition
 - [ ] Both families' expectations addressed
+
+---
+
+## COORDINATOR PROFILE CHECKLIST
+
+Run after generating the Coordinator Brief tab. Use the three designated scenarios.
+
+### Scenario 13 — Professional Profile (Marco & Isabella)
+- [ ] Brief uses concise, peer-to-peer register — no hand-holding
+- [ ] Industry terminology present where it aids precision: cue sheet, pre-brief, sound check window, load-in, or PA spec
+- [ ] Brief focuses on what is specific to Marco and Isabella — not general process
+- [ ] No over-explanation of what a DJ handoff or sound check means
+- [ ] No clock times anywhere in the brief
+
+### Scenario 17 — Volunteer Profile (Jason & Caitlin)
+- [ ] Plain language throughout — no industry jargon
+- [ ] Each moment has one clear, single action
+- [ ] Named person identified at every transition — e.g. 'find the DJ and tell them to begin' or 'check with Jason and Caitlin before the next moment starts'
+- [ ] At least one 'if something goes wrong' instruction present
+- [ ] Warm, encouraging tone — not a production manual
+- [ ] No clock times anywhere in the brief
+
+### Any Scenario — Venue Profile (default)
+- [ ] Brief is fully self-contained — does not assume prior knowledge of the couple
+- [ ] Enough context on couple's preferences that coordinator can brief acts without a discovery call
+- [ ] Professional but accessible register
+- [ ] No clock times anywhere in the brief

@@ -52,7 +52,8 @@ const authUrl =
   `?client_id=${CLIENT_ID}` +
   `&response_type=code` +
   `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-  `&scope=${encodeURIComponent(SCOPE)}`
+  `&scope=${encodeURIComponent(SCOPE)}` +
+  `&show_dialog=true`
 
 console.log('\n──────────────────────────────────────────────')
 console.log('  wedin.ai — Spotify One-Time Auth Setup')

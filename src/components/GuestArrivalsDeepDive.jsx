@@ -265,75 +265,92 @@ export default function GuestArrivalsDeepDive({
             </h2>
 
             {/* Text input */}
-            {currentStep.type === 'text' && (
-              <div>
-                <textarea
-                  value={currentText}
-                  onChange={(e) => setCurrentText(e.target.value)}
-                  placeholder={currentStep.placeholder || ''}
-                  rows={4}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    background: '#FFFFFF',
-                    border: '1.5px solid rgba(28,43,58,0.12)',
-                    borderRadius: 10,
-                    padding: '14px 16px',
-                    fontSize: 15,
-                    fontFamily: "'DM Sans', sans-serif",
-                    color: '#1C2B3A',
-                    lineHeight: 1.6,
-                    outline: 'none',
-                    resize: 'vertical',
-                    marginBottom: 16,
-                    transition: 'border-color 200ms',
-                  }}
-                  onFocus={(e) => { e.target.style.borderColor = '#1C2B3A' }}
-                  onBlur={(e) => { e.target.style.borderColor = 'rgba(28,43,58,0.12)' }}
-                />
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <button
-                    onClick={handleTextContinue}
+            {currentStep.type === 'text' && (() => {
+              const maxLen = currentStep.id === 'song_question' ? 400 : 200
+              const charCount = currentText.length
+              const counterColor = charCount >= maxLen ? '#E53E3E' : charCount >= Math.floor(maxLen * 0.8) ? '#C4922A' : '#6B6560'
+              const trustCopy = currentStep.id === 'song_question'
+                ? 'List up to four songs — these become the ground truth for your plan.'
+                : 'Specific answers give you the best recommendations.'
+              return (
+                <div>
+                  <textarea
+                    value={currentText}
+                    onChange={(e) => setCurrentText(e.target.value)}
+                    placeholder={currentStep.placeholder || ''}
+                    maxLength={maxLen}
+                    rows={4}
                     style={{
-                      all: 'unset',
-                      boxSizing: 'border-box',
-                      cursor: 'pointer',
-                      flex: 1,
-                      padding: '14px 24px',
-                      background: '#1C2B3A',
-                      color: '#FAF7F2',
+                      display: 'block',
+                      width: '100%',
+                      background: '#FFFFFF',
+                      border: '1.5px solid rgba(28,43,58,0.12)',
                       borderRadius: 10,
-                      fontFamily: "'DM Sans', sans-serif",
+                      padding: '14px 16px',
                       fontSize: 15,
-                      fontWeight: 500,
-                      textAlign: 'center',
+                      fontFamily: "'DM Sans', sans-serif",
+                      color: '#1C2B3A',
+                      lineHeight: 1.6,
+                      outline: 'none',
+                      resize: 'vertical',
+                      marginBottom: 8,
+                      transition: 'border-color 200ms',
                     }}
-                  >
-                    Continue
-                  </button>
-                  {!currentText.trim() && (
+                    onFocus={(e) => { e.target.style.borderColor = '#1C2B3A' }}
+                    onBlur={(e) => { e.target.style.borderColor = 'rgba(28,43,58,0.12)' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontStyle: 'italic', color: '#6B6560', lineHeight: 1.4 }}>
+                      {trustCopy}
+                    </p>
+                    <span style={{ marginLeft: 16, fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: counterColor, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                      {charCount} / {maxLen}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 12 }}>
                     <button
-                      onClick={() => saveAndAdvance(null)}
+                      onClick={handleTextContinue}
                       style={{
                         all: 'unset',
                         boxSizing: 'border-box',
                         cursor: 'pointer',
-                        padding: '14px 20px',
-                        border: '1.5px solid rgba(28,43,58,0.12)',
+                        flex: 1,
+                        padding: '14px 24px',
+                        background: '#1C2B3A',
+                        color: '#FAF7F2',
                         borderRadius: 10,
                         fontFamily: "'DM Sans', sans-serif",
-                        fontSize: 14,
-                        color: '#6B6560',
+                        fontSize: 15,
+                        fontWeight: 500,
                         textAlign: 'center',
-                        whiteSpace: 'nowrap',
                       }}
                     >
-                      Skip for now
+                      Continue
                     </button>
-                  )}
+                    {!currentText.trim() && (
+                      <button
+                        onClick={() => saveAndAdvance(null)}
+                        style={{
+                          all: 'unset',
+                          boxSizing: 'border-box',
+                          cursor: 'pointer',
+                          padding: '14px 20px',
+                          border: '1.5px solid rgba(28,43,58,0.12)',
+                          borderRadius: 10,
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: 14,
+                          color: '#6B6560',
+                          textAlign: 'center',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        Skip for now
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            })()}
 
             {/* Chips */}
             {currentStep.type === 'chips' && (
