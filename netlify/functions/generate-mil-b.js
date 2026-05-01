@@ -105,7 +105,7 @@ OUTDOOR AMPLIFICATION RULE — THREE CONDITIONS ALL MUST BE TRUE: (1) VENUE: ven
 
 CLASSICAL ACT CAVEAT: When recommending a string quartet, string duo, violin soloist, classical pianist, or any classical ensemble — the instruction field for that moment MUST include this sentence: 'Confirm repertoire range before booking — ask specifically whether they can perform [named song or style] and request a sample recording of that piece.' Replace [named song or style] with the actual song or style the couple named; if none was named, use the emotional style described (e.g. contemporary acoustic, classical pop). This must appear in the instruction field of every moment where a classical act is recommended. Placing it only in productionCheck is not sufficient.
 
-PRODUCTION CHECK COHERENCE: You are generating the productionCheck but can only see moments 6–9 directly. Moments 1–5 were generated in a parallel function. Before writing totalEstimate, reason through all nine moments using the couple's own answers: (1) For each of moments 1–5, read the couple's answer for that moment — if it says 'recorded', 'playlist', 'curated', 'background music', or 'no live act', exclude live act cost for that moment; if it indicates live musicians, include a conservative estimate based on the budget tier. (2) Add the acts you are directly recommending in moments 6–9. (3) Sum the cost ranges across all nine moments — use lower bounds for the minimum total and upper bounds for the maximum total, stating the result as R[min]–R[max]. If a moment uses recorded music or is covered within a DJ booking, add R0. (4) The totalEstimate must never be less than the sum of the four moments in this batch alone — it always reflects all nine. (5) Never name an act category in totalEstimate that the couple's answers contradict for that moment.
+PRODUCTION CHECK COHERENCE: You are generating the productionCheck and can see moments 1–4 (Guest Arrivals, Ceremony, Pre-drinks, Entrance) only through the couple's answers — those moments were generated in a parallel function. Dinner is in your direct batch. Before writing totalEstimate, reason through all nine moments: (1) For moments 1–4, read the couple's answers and estimate live act costs conservatively based on budget tier. (2) Use your directly generated Dinner recommendation for Dinner cost. (3) Add the acts you are directly recommending in Speeches, First Dance, Dancing, Last Song. (4) Sum all cost ranges across all nine moments — lower bounds for minimum, upper bounds for maximum, stated as R[min]–R[max]. (5) The totalEstimate must never be less than the sum of the five moments in this batch alone. (6) Never name an act category that the couple's answers contradict for that moment.
 
 BUDGET OVERRUN RULE: Budget tier ceilings — under_30k: R30,000 | 30k_60k: R60,000 | 60k_100k: R100,000 | 100k_150k: R150,000 | over_150k: no ceiling. After calculating the totalEstimate range, compare the minimum of the range against the selected budget tier ceiling. If the minimum exceeds the ceiling, append this exact sentence to the hiddenCosts field — do not soften or omit it: 'Honest note: the music plan above exceeds your stated budget. The recommendations reflect what this day genuinely needs — review each moment and identify where you would reduce to bring the total within range.' Do not add this sentence if the total minimum is within the budget tier.
 
@@ -114,7 +114,7 @@ OUTPUT LENGTH RULES: Every field is ONE sentence maximum. Brief instruction fiel
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
-Generate recommendations for these 4 moments only: Speeches, First Dance, Dancing, Last Song. Include productionCheck.
+Generate recommendations for these 5 moments only: Dinner, Speeches, First Dance, Dancing, Last Song. Dinner is the first moment in your array. Include productionCheck.
 Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ], "productionCheck": { "totalEstimate": "...", "bookFirst": "...", "hiddenCosts": "..." } }`
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -137,6 +137,15 @@ function section(heading, lines) {
 function formatAnswers(ma) {
   const sections = []
   const push = (s) => { if (s) sections.push(s) }
+
+  const di = ma.dinner || {}
+  push(section('DINNER', [
+    line('Atmosphere', di.dinner_atmosphere),
+    line('Musical style or mood', di.dinner_style),
+    line('Live or recorded', di.dinner_live_or_recorded),
+    line('Energy toward speeches', di.dinner_energy_shift),
+    line('Songs named for this moment', di.song_question),
+  ]))
 
   const sp = ma.speeches || {}
   push(section('SPEECHES', [
@@ -284,7 +293,7 @@ ${momentBlock || 'No moment answers provided'}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2000,
+        max_tokens: 2200,
         system: systemPrompt,
         messages: [
           { role: 'user', content: prompt },

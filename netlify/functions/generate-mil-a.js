@@ -108,7 +108,7 @@ OUTPUT LENGTH RULES: Every field is ONE sentence maximum. Brief instruction fiel
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
-Generate recommendations for these 5 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner. Begin the moments array with the overview as the first entry — name: "Your Wedding", recommendation: a two-sentence string summarising the couple's emotional intent, drawing from three_words, home_listening, crowd_vs_taste, and driving_home. This is the north star for all recommendations that follow. The remaining 5 entries are the moment recommendations.
+Generate recommendations for these 4 moments only: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance. Begin the moments array with the overview as the first entry — name: "Your Wedding", recommendation: a two-sentence string summarising the couple's emotional intent, drawing from three_words, home_listening, crowd_vs_taste, and driving_home. This is the north star for all recommendations that follow. The remaining 4 entries are the moment recommendations.
 Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ] }
 No productionCheck.`
 
@@ -167,15 +167,6 @@ function formatAnswers(ma) {
     line('Space transition', en.entrance_transition),
     line('Live musicians for entrance', en.entrance_live_musicians),
     line('Songs named for this moment', en.song_question),
-  ]))
-
-  const di = ma.dinner || {}
-  push(section('DINNER', [
-    line('Atmosphere', di.dinner_atmosphere),
-    line('Musical style or mood', di.dinner_style),
-    line('Live or recorded', di.dinner_live_or_recorded),
-    line('Energy toward speeches', di.dinner_energy_shift),
-    line('Songs named for this moment', di.song_question),
   ]))
 
   return sections.join('\n')
