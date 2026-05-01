@@ -347,8 +347,7 @@ export default function CeremonyDeepDive({
   const [currentText, setCurrentText] = useState('')
   const [otherText, setOtherText] = useState('')
   const [otherSelected, setOtherSelected] = useState(false)
-  const [screen, setScreen] = useState('question') // 'question' | 'loading' | 'complete'
-  const [summary, setSummary] = useState(null)
+  const [screen, setScreen] = useState('question') // 'question' | 'loading'
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
@@ -382,6 +381,7 @@ export default function CeremonyDeepDive({
 
   async function generateSummary(finalAnswers) {
     setScreen('loading')
+    let resolvedSummary = null
     try {
       const res = await fetch('/.netlify/functions/generate-ceremony-summary', {
         method: 'POST',
@@ -393,12 +393,11 @@ export default function CeremonyDeepDive({
         }),
       })
       const data = res.ok ? await res.json() : {}
-      setSummary(data.summary || null)
+      resolvedSummary = data.summary || null
     } catch (e) {
       console.error('Ceremony summary failed:', e)
-      setSummary(null)
     }
-    setScreen('complete')
+    onComplete(finalAnswers, resolvedSummary)
   }
 
   function handleBack() {
@@ -463,124 +462,6 @@ export default function CeremonyDeepDive({
         >
           Writing your ceremony summary…
         </p>
-      </div>
-    )
-  }
-
-  // ── Completion screen ──────────────────────────────────────────────────────
-  if (screen === 'complete') {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#FAF7F2',
-          fontFamily: "'DM Sans', sans-serif",
-        }}
-      >
-        <div style={{ maxWidth: 560, margin: '0 auto', padding: '48px 24px 64px' }}>
-
-          {/* Eyebrow */}
-          <p
-            style={{
-              margin: '0 0 8px',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
-              fontWeight: 500,
-              color: '#C4922A',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-            }}
-          >
-            Ceremony · Complete
-          </p>
-
-          {/* Heading */}
-          <h1
-            style={{
-              margin: '0 0 32px',
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 32,
-              fontWeight: 400,
-              color: '#1C2B3A',
-              lineHeight: 1.2,
-            }}
-          >
-            Your ceremony is planned.
-          </h1>
-
-          {/* AI summary */}
-          {summary ? (
-            <div
-              style={{
-                borderLeft: '2px solid #C4922A',
-                paddingLeft: 20,
-                marginBottom: 40,
-              }}
-            >
-              <p
-                style={{
-                  margin: 0,
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 19,
-                  fontStyle: 'italic',
-                  fontWeight: 400,
-                  color: '#1C2B3A',
-                  lineHeight: 1.75,
-                }}
-              >
-                {summary.replace(/\*+/g, '')}
-              </p>
-            </div>
-          ) : (
-            <div
-              style={{
-                background: '#FFFFFF',
-                borderRadius: 12,
-                border: '1.5px solid rgba(28,43,58,0.08)',
-                padding: '20px 24px',
-                marginBottom: 40,
-              }}
-            >
-              <p
-                style={{
-                  margin: 0,
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                  color: '#6B6560',
-                  lineHeight: 1.6,
-                }}
-              >
-                We're still writing your ceremony summary — it'll appear here in a moment.
-              </p>
-            </div>
-          )}
-
-          {/* Continue to confirmation flow */}
-          <button
-            onClick={() => onComplete?.(answers, summary)}
-            style={{
-              all: 'unset',
-              boxSizing: 'border-box',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              padding: '15px 24px',
-              background: '#1C2B3A',
-              color: '#FAF7F2',
-              borderRadius: 10,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 15,
-              fontWeight: 500,
-              textAlign: 'center',
-              minHeight: 52,
-            }}
-          >
-            Continue →
-          </button>
-
-        </div>
       </div>
     )
   }
