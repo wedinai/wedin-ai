@@ -285,13 +285,15 @@ export default function BriefScreen({
   spotifyPlaylistUrl = null,
   spotifyLoading = false,
   coupleBrief: coupleBriefProp = '',
+  budgetData = null,
+  onBudgetGenerated,
 }) {
   const [status, setStatus] = useState('loading') // 'loading' | 'ready' | 'error'
   const [coupleBrief, setCoupleBrief] = useState('')
   const [coordinatorBrief, setCoordinatorBrief] = useState('')
   const [activeTab, setActiveTab] = useState(
     initialTab || (milRecommendations ? 'musicPlan' : 'couple')
-  ) // 'musicPlan' | 'couple' | 'coordinator'
+  ) // 'musicPlan' | 'couple' | 'coordinator' | 'budget'
   const [copyLabel, setCopyLabel] = useState('Copy to clipboard')
   const [copyMusicPlanLabel, setCopyMusicPlanLabel] = useState('Copy to clipboard')
   const [mounted, setMounted] = useState(false)
@@ -303,6 +305,8 @@ export default function BriefScreen({
   const [coordEmail, setCoordEmail] = useState('')
   const [coordSendStatus, setCoordSendStatus] = useState('idle')
   const [howToBookEmailStatus, setHowToBookEmailStatus] = useState('idle')
+  const [budgetLoading, setBudgetLoading] = useState(false)
+  const [budgetError, setBudgetError] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -447,6 +451,47 @@ export default function BriefScreen({
     }
   }
 
+  async function generateBudget() {
+    if (!milRecommendations) return
+    setBudgetLoading(true)
+    setBudgetError(false)
+    try {
+      const res = await fetch('/.netlify/functions/generate-budget', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          coupleName,
+          milRecommendations,
+          sessionAnswers,
+          milAnswers: { mil_budget: milBudget },
+        }),
+      })
+      if (!res.ok) throw new Error('failed')
+      const data = await res.json()
+      if (onBudgetGenerated) onBudgetGenerated(data)
+    } catch {
+      setBudgetError(true)
+    } finally {
+      setBudgetLoading(false)
+    }
+  }
+
+  function handleDownloadBudget() {
+    if (!budgetData?.data) return
+    const binary = atob(budgetData.data)
+    const bytes = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+    const blob = new Blob([bytes], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = budgetData.filename
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   function handleCopy() {
     const text = (activeTab === 'couple' && milRecommendations)
       ? buildHowToBookText(milRecommendations)
@@ -457,6 +502,12 @@ export default function BriefScreen({
       setTimeout(() => setCopyLabel('Copy to clipboard'), 2000)
     })
   }
+
+  useEffect(() => {
+    if (activeTab === 'budget' && !budgetData && !budgetLoading) {
+      generateBudget()
+    }
+  }, [activeTab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!mounted) return null
 
@@ -754,6 +805,11 @@ export default function BriefScreen({
               active={activeTab === 'coordinator'}
               onClick={() => setActiveTab('coordinator')}
             />
+            <Tab
+              label="What This Costs"
+              active={activeTab === 'budget'}
+              onClick={() => setActiveTab('budget')}
+            />
           </div>
         </div>
 
@@ -767,7 +823,96 @@ export default function BriefScreen({
             animation: 'fadeUp 250ms ease both',
           }}
         >
-          {activeTab === 'musicPlan' && milRecommendations ? (
+          {activeTab === 'budget' ? (
+            <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              {budgetLoading && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, paddingTop: 40 }}>
+                  <p style={{
+                    margin: 0,
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: 22,
+                    fontWeight: 400,
+                    fontStyle: 'italic',
+                    color: '#1C2B3A',
+                    textAlign: 'center',
+                    animation: 'pulse 2s ease infinite',
+                  }}>
+                    Building your budget plan…
+                  </p>
+                  <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#6B6560', textAlign: 'center' }}>
+                    This takes about 20 seconds.
+                  </p>
+                </div>
+              )}
+
+              {budgetError && !budgetLoading && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, paddingTop: 40 }}>
+                  <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: '#6B6560', textAlign: 'center', lineHeight: 1.6 }}>
+                    We couldn't generate your budget plan. Try again in a moment.
+                  </p>
+                  <button
+                    onClick={generateBudget}
+                    style={{
+                      all: 'unset',
+                      cursor: 'pointer',
+                      padding: '13px 28px',
+                      background: '#1C2B3A',
+                      color: '#FAF7F2',
+                      borderRadius: 10,
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 14,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Try again
+                  </button>
+                </div>
+              )}
+
+              {budgetData && !budgetLoading && (
+                <>
+                  <div style={{
+                    background: '#FFFFFF',
+                    border: '1px solid rgba(28,43,58,0.06)',
+                    borderLeft: '3px solid #C4922A',
+                    borderRadius: '0 8px 8px 0',
+                    padding: '16px 20px',
+                    marginBottom: 24,
+                  }}>
+                    <p style={{ margin: '0 0 6px', fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, color: '#1C2B3A' }}>
+                      Your music budget
+                    </p>
+                    <p style={{ margin: 0, fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#6B6560', lineHeight: 1.6 }}>
+                      A planning spreadsheet with illustrative costs for each moment, a booking timeline, and a hidden costs checklist. Update it as real quotes come in.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handleDownloadBudget}
+                    style={{
+                      all: 'unset',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '100%',
+                      padding: '14px 24px',
+                      background: '#1C2B3A',
+                      color: '#FAF7F2',
+                      borderRadius: 10,
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      textAlign: 'center',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    Download your budget plan →
+                  </button>
+                </>
+              )}
+            </div>
+          ) : activeTab === 'musicPlan' && milRecommendations ? (
             <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
               {milBudget === 'not_sure' && (
                 <p style={{

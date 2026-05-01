@@ -37,6 +37,9 @@
 [functions."generate-brief-b"]
   timeout = 26
 
+[functions."generate-budget"]
+  timeout = 26
+
 [functions."generate-moment-summary"]
   timeout = 26
 

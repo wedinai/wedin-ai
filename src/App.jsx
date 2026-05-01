@@ -52,6 +52,7 @@ export default function App() {
   )
   const [spotifyLoading, setSpotifyLoading] = useState(false)
   const [coupleBrief, setCoupleBrief] = useState('')
+  const [budgetData, setBudgetData] = useState(null)
 
   // ── Supabase state persistence ────────────────────────────────────────────
   // Called after each deep-dive confirmation and after MIL completion.
@@ -756,6 +757,8 @@ export default function App() {
         coupleBrief={coupleBrief}
         milBudget={milBudget}
         coordinatorProfile={coordinatorProfile}
+        budgetData={budgetData}
+        onBudgetGenerated={setBudgetData}
       />
     )
   }
