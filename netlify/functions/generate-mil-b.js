@@ -114,8 +114,8 @@ OUTPUT LENGTH RULES: Every field is ONE sentence maximum. Brief instruction fiel
 Return ONLY a valid JSON object — no markdown, no preamble, no explanation. Never leave a JSON object unclosed.`
 
 const BATCH_INSTRUCTION = `
-Generate recommendations for these 6 moments only: Your Entrance, Dinner, Speeches, First Dance, Dancing, Last Song. Your Entrance is the first moment in your array, Dinner is second. Include productionCheck.
-Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ], "productionCheck": { "totalEstimate": "...", "bookFirst": "...", "hiddenCosts": "..." } }`
+Generate recommendations for these 6 moments only: Your Entrance, Dinner, Speeches, First Dance, Dancing, Last Song. Your Entrance is the first moment in your array, Dinner is second.
+Return: { "moments": [ { "name": "...", "recommendation": "...", "why": "...", "cost": "...", "instruction": "..." } ] }`
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
