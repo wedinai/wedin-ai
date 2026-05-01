@@ -231,37 +231,6 @@ function HowToBook({ milRecommendations }) {
         </div>
       ))}
 
-      {milRecommendations.productionCheck && (
-        <div
-          style={{
-            background: '#1C2B3A',
-            borderRadius: '12px',
-            padding: '24px',
-            marginTop: '8px',
-          }}
-        >
-          <h3
-            style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: '20px',
-              color: '#FAF7F2',
-              margin: '0 0 16px 0',
-              fontWeight: 400,
-            }}
-          >
-            Production Reality Check
-          </h3>
-          <div style={{ color: '#FAF7F2', fontSize: '14px', marginBottom: '8px' }}>
-            <strong>Total estimate:</strong> {milRecommendations.productionCheck.totalEstimate}
-          </div>
-          <div style={{ color: '#FAF7F2', fontSize: '14px', marginBottom: '8px' }}>
-            <strong>Book first:</strong> {milRecommendations.productionCheck.bookFirst}
-          </div>
-          <div style={{ color: 'rgba(250,247,242,0.7)', fontSize: '13px' }}>
-            {milRecommendations.productionCheck.hiddenCosts}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
@@ -278,13 +247,6 @@ function buildMusicPlanText(milRecommendations) {
       if (m.instruction)    lines.push(`Brief instruction: ${m.instruction}`)
       lines.push('')
     })
-  }
-  if (milRecommendations.productionCheck) {
-    const pc = milRecommendations.productionCheck
-    lines.push('PRODUCTION REALITY CHECK')
-    if (pc.totalEstimate) lines.push(`Total estimate: ${pc.totalEstimate}`)
-    if (pc.bookFirst)     lines.push(`Book first: ${pc.bookFirst}`)
-    if (pc.hiddenCosts)   lines.push(`Hidden costs: ${pc.hiddenCosts}`)
   }
   return lines.join('\n').trim()
 }
@@ -304,13 +266,6 @@ function buildHowToBookText(milRecommendations) {
       lines.push(BOOKING_LEAD_TIME)
       lines.push('')
     })
-  }
-  if (milRecommendations.productionCheck) {
-    const pc = milRecommendations.productionCheck
-    lines.push('PRODUCTION REALITY CHECK')
-    if (pc.totalEstimate) lines.push(`Total estimate: ${pc.totalEstimate}`)
-    if (pc.bookFirst)     lines.push(`Book first: ${pc.bookFirst}`)
-    if (pc.hiddenCosts)   lines.push(`Hidden costs: ${pc.hiddenCosts}`)
   }
   return lines.join('\n').trim()
 }
@@ -867,31 +822,6 @@ export default function BriefScreen({
                       )}
                     </div>
                   ))}
-                  {milRecommendations.productionCheck && (
-                    <div style={{
-                      background: '#1C2B3A',
-                      borderRadius: '12px',
-                      padding: '24px',
-                      marginTop: '8px',
-                    }}>
-                      <h3 style={{
-                        fontFamily: "'Cormorant Garamond', Georgia, serif",
-                        fontSize: '20px',
-                        color: '#FAF7F2',
-                        margin: '0 0 16px 0',
-                        fontWeight: 400,
-                      }}>Production Reality Check</h3>
-                      <div style={{ color: '#FAF7F2', fontSize: '14px', marginBottom: '8px' }}>
-                        <strong>Total estimate:</strong> {milRecommendations.productionCheck.totalEstimate}
-                      </div>
-                      <div style={{ color: '#FAF7F2', fontSize: '14px', marginBottom: '8px' }}>
-                        <strong>Book first:</strong> {milRecommendations.productionCheck.bookFirst}
-                      </div>
-                      <div style={{ color: 'rgba(250,247,242,0.7)', fontSize: '13px' }}>
-                        {milRecommendations.productionCheck.hiddenCosts}
-                      </div>
-                    </div>
-                  )}
                 </>
               ) : (
                 <div dangerouslySetInnerHTML={{ __html: milRecommendations }} />
