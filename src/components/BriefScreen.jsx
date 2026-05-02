@@ -307,12 +307,17 @@ export default function BriefScreen({
   const [howToBookEmailStatus, setHowToBookEmailStatus] = useState('idle')
   const [budgetLoading, setBudgetLoading] = useState(false)
   const [budgetError, setBudgetError] = useState(false)
+  const [completePlanStatus, setCompletePlanStatus] = useState('idle')
+  const [completePlanEmail, setCompletePlanEmail] = useState('')
 
   useEffect(() => {
     setMounted(true)
     generateBrief()
     const saved = localStorage.getItem('wedin_email')
-    if (saved) setStoredEmail(saved)
+    if (saved) {
+      setStoredEmail(saved)
+      setCompletePlanEmail(saved)
+    }
     return () => {
       if (abortRef.current) abortRef.current.abort()
     }
@@ -448,6 +453,23 @@ export default function BriefScreen({
       setHowToBookEmailStatus('sent')
     } catch {
       setHowToBookEmailStatus('error')
+    }
+  }
+
+  async function handleSendCompletePlan() {
+    const emailToUse = completePlanEmail.trim()
+    if (!emailToUse) return
+    setCompletePlanStatus('sending')
+    try {
+      const res = await fetch('/.netlify/functions/send-complete-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailToUse, coupleName, coupleBrief, milRecommendations }),
+      })
+      if (!res.ok) throw new Error('failed')
+      setCompletePlanStatus('sent')
+    } catch {
+      setCompletePlanStatus('error')
     }
   }
 
@@ -661,27 +683,6 @@ export default function BriefScreen({
             animation: 'fadeUp 400ms ease both',
           }}
         >
-          {/* Back */}
-          <button
-            onClick={onBack}
-            style={{
-              all: 'unset',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 13,
-              color: '#6B6560',
-              marginBottom: 32,
-            }}
-          >
-            <svg width="14" height="14" fill="none" viewBox="0 0 14 14">
-              <path d="M9 1L3 7l6 6" stroke="#6B6560" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Your music map
-          </button>
-
           {/* Title */}
           <p
             style={{
@@ -1248,25 +1249,143 @@ export default function BriefScreen({
               </>
             )}
 
-            <button
-              onClick={onBack}
+          </div>
+        </div>
+
+        {/* ── Completion card ───────────────────────────────────────────── */}
+        <div
+          style={{
+            maxWidth: 680,
+            margin: '0 auto',
+            padding: '32px 24px 64px',
+          }}
+        >
+          <div
+            style={{
+              background: '#FFFFFF',
+              border: '1px solid rgba(28,43,58,0.06)',
+              borderLeft: '3px solid #C4922A',
+              borderRadius: 16,
+              padding: 24,
+            }}
+          >
+            <p
               style={{
-                all: 'unset',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '14px 24px',
-                border: '1.5px solid rgba(28,43,58,0.12)',
-                borderRadius: 10,
+                margin: '0 0 12px',
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: 14,
+                fontSize: 18,
+                fontWeight: 500,
                 color: '#1C2B3A',
-                textAlign: 'center',
               }}
             >
-              Back to Moment Map
-            </button>
+              You're ready.
+            </p>
+            <p
+              style={{
+                margin: 0,
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 15,
+                color: '#6B6560',
+                lineHeight: 1.7,
+              }}
+            >
+              Your wedding soundtrack, music plan, coordinator brief, and budget guide are all here. Your next move is the first booking conversation — start with whoever your plan recommends, and book early.
+            </p>
+            <p
+              style={{
+                margin: '12px 0 0',
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 13,
+                color: '#6B6560',
+                opacity: 0.65,
+              }}
+            >
+              Your plan is saved. Use the link in your portrait email to come back any time.
+            </p>
+
+            <div style={{ marginTop: 20 }}>
+              <p
+                style={{
+                  margin: '0 0 8px',
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 13,
+                  color: '#6B6560',
+                }}
+              >
+                Send everything to:
+              </p>
+              <input
+                type="email"
+                value={completePlanEmail}
+                onChange={e => {
+                  setCompletePlanEmail(e.target.value)
+                  if (completePlanStatus !== 'idle') setCompletePlanStatus('idle')
+                }}
+                placeholder="your@email.com"
+                style={{
+                  all: 'unset',
+                  display: 'block',
+                  width: '100%',
+                  padding: '13px 16px',
+                  background: '#FAF7F2',
+                  border: '1.5px solid rgba(28,43,58,0.15)',
+                  borderRadius: 10,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 14,
+                  color: '#1C2B3A',
+                  boxSizing: 'border-box',
+                  marginBottom: 12,
+                }}
+              />
+              <button
+                onClick={completePlanStatus === 'error' ? () => setCompletePlanStatus('idle') : handleSendCompletePlan}
+                disabled={completePlanStatus === 'sending' || completePlanStatus === 'sent' || !completePlanEmail.trim()}
+                style={{
+                  all: 'unset',
+                  cursor: completePlanStatus === 'sending' || completePlanStatus === 'sent' ? 'default' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: 44,
+                  background: completePlanStatus === 'sent' ? 'rgba(28,43,58,0.06)' : '#1C2B3A',
+                  color: completePlanStatus === 'sent' ? '#C4922A' : completePlanStatus === 'error' ? '#C0392B' : '#FAF7F2',
+                  borderRadius: 10,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  boxSizing: 'border-box',
+                  opacity: completePlanStatus === 'sending' || !completePlanEmail.trim() ? 0.5 : 1,
+                }}
+              >
+                {completePlanStatus === 'sent'
+                  ? `Sent to ${completePlanEmail} ✓`
+                  : completePlanStatus === 'error'
+                  ? 'Something went wrong — try again'
+                  : completePlanStatus === 'sending'
+                  ? 'Sending…'
+                  : 'Email me everything →'}
+              </button>
+
+              <div style={{ textAlign: 'center', marginTop: 16 }}>
+                <button
+                  onClick={onBack}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: 13,
+                    color: '#6B6560',
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    opacity: 0.65,
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  Want to update an answer? Return to your moment map
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

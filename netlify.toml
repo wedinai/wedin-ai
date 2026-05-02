@@ -40,6 +40,9 @@
 [functions."generate-budget"]
   timeout = 26
 
+[functions."send-complete-plan"]
+  timeout = 26
+
 [functions."generate-moment-summary"]
   timeout = 26
 
