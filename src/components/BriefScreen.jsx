@@ -646,11 +646,16 @@ export default function BriefScreen({
           <button
             onClick={onBack}
             style={{
-              all: 'unset',
-              cursor: 'pointer',
-              fontFamily: "'DM Sans', sans-serif",
+              background: 'none',
+              border: 'none',
               fontSize: 13,
               color: '#6B6560',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              opacity: 0.65,
+              fontFamily: "'DM Sans', sans-serif",
+              marginTop: 12,
+              display: 'block',
             }}
           >
             Back to Moment Map
