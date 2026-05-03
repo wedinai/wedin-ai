@@ -35,10 +35,13 @@ export const handler = async (event) => {
     .map(line => {
       const trimmed = line.trim()
       if (!trimmed) return '<br>'
-      if (trimmed === trimmed.toUpperCase() && trimmed.length > 2) {
-        return `<p style="margin:24px 0 6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:#C4922A;letter-spacing:0.1em;text-transform:uppercase;">${trimmed}</p>`
+      // Strip surrounding asterisks
+      const stripped = trimmed.replace(/^\*+|\*+$/g, '').trim()
+      // Detect heading: ALL-CAPS after stripping, length > 2, contains at least one letter
+      if (stripped === stripped.toUpperCase() && stripped.length > 2 && /[A-Z]/.test(stripped)) {
+        return `<p style="margin:24px 0 6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:#C4922A;letter-spacing:0.1em;text-transform:uppercase;">${stripped}</p>`
       }
-      return `<p style="margin:0 0 8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1C2B3A;line-height:1.75;">${trimmed}</p>`
+      return `<p style="margin:0 0 8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1C2B3A;line-height:1.75;">${stripped}</p>`
     })
     .join('')
 
