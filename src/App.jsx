@@ -58,7 +58,7 @@ export default function App() {
   // Called after each deep-dive confirmation and after MIL completion.
   // Reads current closure values + applies overrides for newly-computed values
   // that haven't been committed to React state yet.
-  function persistState(overrides = {}) {
+  async function persistState(overrides = {}) {
     const em = localStorage.getItem('wedin_email')
     if (!sessionId || !em) return
     const state = {
@@ -71,11 +71,25 @@ export default function App() {
       mil_recommendations: milRecommendations,
       ...overrides,
     }
-    fetch('/.netlify/functions/save-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_id: sessionId, email: em, state }),
-    }).catch(e => console.error('persistState failed:', e))
+    const attempt = async () => {
+      const res = await fetch('/.netlify/functions/save-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, email: em, state }),
+      })
+      if (!res.ok) throw new Error(`save-session ${res.status}`)
+    }
+    try {
+      await attempt()
+    } catch (e1) {
+      console.warn('persistState: first attempt failed, retrying in 2s…', e1.message)
+      await new Promise(r => setTimeout(r, 2000))
+      try {
+        await attempt()
+      } catch (e2) {
+        console.error('persistState: both attempts failed', e2.message)
+      }
+    }
   }
 
   // Persist completedMoments and momentAnswers to localStorage whenever they change
