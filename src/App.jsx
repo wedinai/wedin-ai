@@ -554,7 +554,12 @@ export default function App() {
         if (playlistUrl) {
           setSpotifyPlaylistUrl(playlistUrl)
           localStorage.setItem('wedin_spotify_playlist', playlistUrl)
-          persistState({ mil_recommendations: recommendations, spotify_playlist_url: playlistUrl })
+          persistState({
+            mil_recommendations: recommendations,
+            spotify_playlist_url: playlistUrl,
+            mil_budget: answers.mil_budget || '',
+            coordinator_profile: answers.coordinator_profile || 'venue',
+          })
         }
       } catch (e) {
         console.error('Spotify playlist generation failed:', e)
