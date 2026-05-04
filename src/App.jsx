@@ -69,6 +69,9 @@ export default function App() {
       completed_moments: completedMoments,
       moment_confirmed: momentConfirmed,
       mil_recommendations: milRecommendations,
+      couple_brief: coupleBrief,
+      mil_budget: milBudget,
+      coordinator_profile: coordinatorProfile,
       ...overrides,
     }
     const attempt = async () => {
@@ -240,6 +243,9 @@ export default function App() {
             if (s.completed_moments) setCompletedMoments(s.completed_moments)
             if (s.moment_confirmed) setMomentConfirmed(s.moment_confirmed)
             if (s.mil_recommendations) setMilRecommendations(s.mil_recommendations)
+            if (s.couple_brief) setCoupleBrief(s.couple_brief)
+            if (s.mil_budget) setMilBudget(s.mil_budget)
+            if (s.coordinator_profile) setCoordinatorProfile(s.coordinator_profile)
             const storedIsPaid = localStorage.getItem('wedin_is_paid')
             if (storedIsPaid === 'true') setIsPaid(true)
             // Navigate based on restored state
@@ -511,7 +517,12 @@ export default function App() {
     setCoordinatorProfile(answers.coordinator_profile || 'venue')
     setMilRecommendations(recommendations)
     localStorage.setItem('wedin_mil_recommendations', JSON.stringify(recommendations))
-    persistState({ mil_recommendations: recommendations, milComplete: true })
+    persistState({
+      mil_recommendations: recommendations,
+      milComplete: true,
+      mil_budget: answers.mil_budget || '',
+      coordinator_profile: answers.coordinator_profile || 'venue',
+    })
     setView('brief')
 
     // Non-blocking Spotify playlist generation — delayed 12s to avoid competing
@@ -739,7 +750,10 @@ export default function App() {
         sessionAnswers={sessionAnswers}
         userEmail={email}
         onConfirm={() => setView('mil')}
-        onSetCoupleBrief={setCoupleBrief}
+        onSetCoupleBrief={(brief) => {
+          setCoupleBrief(brief)
+          persistState({ couple_brief: brief })
+        }}
       />
     )
   }
