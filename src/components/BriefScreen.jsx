@@ -114,13 +114,14 @@ const VETTING_QUESTIONS_BY_TYPE = {
   ],
 }
 
-function getVettingQuestions(recommendation) {
+function getVettingQuestions(momentName, recommendation) {
+  if (momentName === 'Your Wedding') return []
   if (!recommendation) return VETTING_QUESTIONS_BY_TYPE.dj
   const r = recommendation.toLowerCase()
   if (r.includes('choir')) return VETTING_QUESTIONS_BY_TYPE.choir
   if (r.includes('quartet') || r.includes('string') || r.includes('classical')) return VETTING_QUESTIONS_BY_TYPE.strings
   if (r.includes('band')) return VETTING_QUESTIONS_BY_TYPE.band
-  if (r.includes('acoustic') || r.includes('solo') || r.includes('duo')) return VETTING_QUESTIONS_BY_TYPE.acoustic
+  if (r.includes('acoustic') || r.includes('solo') || r.includes('duo') || r.includes('jazz') || r.includes('marimba') || r.includes('saxophone') || r.includes('sax')) return VETTING_QUESTIONS_BY_TYPE.acoustic
   if (r.includes('recorded') || r.includes('playlist')) return VETTING_QUESTIONS_BY_TYPE.recorded
   if (r.includes('dj')) return VETTING_QUESTIONS_BY_TYPE.dj
   return VETTING_QUESTIONS_BY_TYPE.dj
@@ -170,32 +171,33 @@ function HowToBook({ milRecommendations }) {
             </div>
           )}
 
-          <div
-            style={{
-              background: '#FFFFFF',
-              border: '1px solid rgba(28,43,58,0.08)',
-              borderLeft: '3px solid #C4922A',
-              borderRadius: '0 8px 8px 0',
-              padding: '14px 16px',
-              marginBottom: '12px',
-            }}
-          >
-            <p
-              style={{
-                margin: '0 0 10px',
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: 11,
-                fontWeight: 600,
-                color: '#C4922A',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Before you book
-            </p>
-            {(() => {
-              const questions = getVettingQuestions(moment.recommendation)
-              return (
+          {(() => {
+            const questions = getVettingQuestions(moment.name, moment.recommendation)
+            if (!questions.length) return null
+            return (
+              <div
+                style={{
+                  background: '#FFFFFF',
+                  border: '1px solid rgba(28,43,58,0.08)',
+                  borderLeft: '3px solid #C4922A',
+                  borderRadius: '0 8px 8px 0',
+                  padding: '14px 16px',
+                  marginBottom: '12px',
+                }}
+              >
+                <p
+                  style={{
+                    margin: '0 0 10px',
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: '#C4922A',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Before you book
+                </p>
                 <ol style={{ margin: 0, paddingLeft: '18px' }}>
                   {questions.map((q, qi) => (
                     <li
@@ -212,9 +214,9 @@ function HowToBook({ milRecommendations }) {
                     </li>
                   ))}
                 </ol>
-              )
-            })()}
-          </div>
+              </div>
+            )
+          })()}
 
           <p
             style={{
@@ -259,9 +261,11 @@ function buildHowToBookText(milRecommendations) {
       if (m.recommendation) lines.push(`Recommendation: ${m.recommendation}`)
       if (m.cost)           lines.push(`Cost estimate: ${m.cost}`)
       lines.push('')
-      lines.push('BEFORE YOU BOOK')
-      const questions = getVettingQuestions(m.recommendation)
-      questions.forEach((q, i) => lines.push(`${i + 1}. ${q}`))
+      const questions = getVettingQuestions(m.name, m.recommendation)
+      if (questions.length) {
+        lines.push('BEFORE YOU BOOK')
+        questions.forEach((q, i) => lines.push(`${i + 1}. ${q}`))
+      }
       lines.push('')
       lines.push(BOOKING_LEAD_TIME)
       lines.push('')
