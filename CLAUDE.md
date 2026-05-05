@@ -237,13 +237,27 @@ Sheet 3 — Hidden Costs
   - Rule 1: OVERVIEW RULE second person addition — "Overview must be second person only — 'You want', never '[Names] want'." — generate-mil-a.js only
   - Rule 3: BUDGET OVERRUN RULE key names corrected in generate-mil-b.js to match payload values (under_r30k, r30_60k, r60_100k, r100_150k, r150k_plus)
   - Character limits deployed on all 9 deep-dive components — 200 chars descriptive / 400 chars song fields
+- **Session 10b — Budget Tab ✓** (May 1, 2026)
+  - generate-budget.js — new Netlify function, three-sheet Excel, one Claude Haiku call for Sheets 2+3
+  - "What This Costs" fourth tab in BriefScreen — triggers generate-budget.js on first activation
+  - budgetData state in App.jsx, onBudgetGenerated callback — mirrors coupleBrief pattern
+  - Three-sheet Excel: Music Budget (deterministic from MIL cost fields) / Booking Timeline / Hidden Costs
+  - Pricing disclaimer on Sheet 1 (mandatory): "These are market reference ranges based on SA wedding pricing as of early 2026..."
+  - exceljs@^4.4.0 added to package.json
+- **Session 10c — Completion card + consolidated email ✓** (May 3, 2026)
+  - Completion card added to BriefScreen below all tabs — always visible regardless of active tab
+  - Gold left-border card: "You're ready." heading, body copy, reassurance line, email input, send button, secondary link
+  - send-complete-plan.js — new Netlify function, consolidated email with Wedding Soundtrack + Music Plan key moments + other outputs note
+  - Email renderer strips `**asterisks**` before heading detection — no raw Markdown visible in email
+  - "Back to Moment Map" reinstated in error state (was accidentally removed in Session 10c changes)
+  - "Return to Moment Map" primary button removed from ready state — replaced by secondary underlined link at bottom of completion card
+  - persistState() converted to async with one retry on failure (2-second delay) — silent to couple, protects session restore
+  - Redundant ceremony summary screen removed from CeremonyDeepDive.jsx — ceremony flow now matches all other moments (summary + two CTAs on one screen)
+  - Landing page copy updated — all eight approved changes live on wedin.ai (output names, nav CTA, deliverables, pricing list)
 
 ---
 
 ## ✗ NOT YET BUILT — Remaining Before Launch
-
-**Session 10b — Budget Tab:**
-New generate-budget.js function. Three-sheet Excel output. New "What This Costs" tab in BriefScreen. Illustrative pricing disclaimer. Booking timeline. Hidden costs checklist. See Budget Tab section above.
 
 **Session 11 — PayFast + security:**
 PayFast merchant account must be live before this session. Rate limiting, Supabase RLS audit, data deletion (POPIA), post-payment confirmation state. Stripe test mode currently live.
@@ -408,7 +422,8 @@ wedin.ai/
       generate-mil-b.js            — Your Entrance + Dinner + Speeches + First Dance + Dancing +
                                      Last Song (6 moments, no productionCheck). max_tokens: 2400.
                                      Rule 3 (budget key fix) active.
-      generate-budget.js           — PENDING Session 10b. Budget Excel download.
+      generate-budget.js           — Three-sheet Excel download. ✓ BUILT Session 10b.
+      send-complete-plan.js        — Consolidated email: Wedding Soundtrack + Music Plan key moments + restore link. ✓ BUILT Session 10c.
       restore-session.js           — queries by email, returns most recent, never errors app
       send-remarketing.js          — scheduled daily, two-touch sequence, deduplication active
       send-music-plan.js           — Music Plan email to couple
@@ -752,6 +767,8 @@ Full details in wedin-infrastructure-reference.md (project file). Key facts:
 - Persistent in-document storage — post-launch only
 - productionCheck — removed from MIL architecture. Do not re-add to generate-mil-b.js. Budget information goes to generate-budget.js (Session 10b)
 - Moving Dinner or Your Entrance back to generate-mil-a.js — architectural decision locked May 1 2026
+- Re-adding the redundant ceremony summary screen — CeremonyDeepDive.jsx now matches all other moments. Do not restore the intermediate screen.
+- Re-adding "Back to Moment Map" as a primary button in the BriefScreen ready state — it exists only as a secondary underlined link in the completion card and in the error state
 
 ---
 

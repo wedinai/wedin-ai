@@ -14,6 +14,7 @@ Rules:
 - No clichés. No over-dramatisation.
 - Prose only — no bullet points or numbered lists
 - Only include moments where answers are provided — omit moments with no data
+- LAST SONG GROUND TRUTH: If a last song is named in the moment answers, state it by full name and artist in the Last Song section. No hedging, no alternatives, no 'or similar' qualifiers. Treat it as fixed and final.
 - Mark each moment section with **MOMENT NAME** on its own line — nothing else on that line
 - Use \\n\\n to separate paragraphs
 - JSON SAFETY: Never use double quotation marks (") anywhere in the brief text — this output is embedded in a JSON string value and unescaped double quotes will break it. Use single quotes (') when referencing song titles, couple's words, or any quoted phrase.
