@@ -187,7 +187,9 @@ function formatAnswers(ma) {
   ]))
 
   const ls = ma.lastSong || {}
+  const lsGroundTruth = val(ls.lastsong_song)
   push(section('LAST SONG', [
+    lsGroundTruth ? `- LAST SONG GROUND TRUTH — NAME THIS SONG VERBATIM IN OUTPUT, NO ALTERNATIVES: "${lsGroundTruth}"` : null,
     line('Song or feeling', ls.lastsong_song),
     line('How to end the night', ls.lastsong_energy),
     line('Instruction needed', ls.lastsong_instruction),
