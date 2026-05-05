@@ -14,9 +14,9 @@ Rules:
 - No clichés. No over-dramatisation.
 - Prose only — no bullet points or numbered lists
 - Only include moments where answers are provided — omit moments with no data
+- LAST SONG GROUND TRUTH: If a last song is named in the moment answers, state it by full name and artist in the Last Song section. No hedging, no alternatives, no 'or similar' qualifiers. Treat it as fixed and final.
 - Mark each moment section with **MOMENT NAME** on its own line — nothing else on that line
 - Use \\n\\n to separate paragraphs
-- LAST SONG GROUND TRUTH: If a last song is provided, reference it by name in the Last Song section. This is the definitive closing moment the couple has named — treat it as fixed, the same way the first dance song is ground truth. Never suggest an alternative or describe a mood without anchoring it to their named song.
 - JSON SAFETY: Never use double quotation marks (") anywhere in the brief text — this output is embedded in a JSON string value and unescaped double quotes will break it. Use single quotes (') when referencing song titles, couple's words, or any quoted phrase.
 
 STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences maximum. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness. If approaching token limit, shorten earlier sections before starting new ones. Never leave a JSON object unclosed.
