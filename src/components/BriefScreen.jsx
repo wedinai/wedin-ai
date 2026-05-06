@@ -107,6 +107,13 @@ const VETTING_QUESTIONS_BY_TYPE = {
     'Do they have experience with weddings and cultural ceremonies specifically?',
     'Ask for a sample recording of the traditional pieces you need.',
   ],
+  traditional: [
+    'Do they have specific experience performing at weddings within your cultural tradition?',
+    'Can they perform the named pieces — ask for a sample recording of each one?',
+    'Do they have their own PA for outdoor spaces?',
+    'What is their standard set length and can they sustain it for your required duration?',
+    'Will the same musicians perform on your day or do they use deputies?',
+  ],
   recorded: [
     'Confirm your venue\'s PA system is adequate for your guest count.',
     'Does your DJ have the specific songs you named in their library?',
@@ -114,16 +121,29 @@ const VETTING_QUESTIONS_BY_TYPE = {
   ],
 }
 
-function getVettingQuestions(momentName, recommendation) {
+function getVettingQuestions(momentName, recommendation, cost) {
   if (momentName === 'Your Wedding') return []
   if (!recommendation) return VETTING_QUESTIONS_BY_TYPE.dj
   const r = recommendation.toLowerCase()
-  if (r.includes('choir')) return VETTING_QUESTIONS_BY_TYPE.choir
-  if (r.includes('quartet') || r.includes('string') || r.includes('classical')) return VETTING_QUESTIONS_BY_TYPE.strings
-  if (r.includes('band')) return VETTING_QUESTIONS_BY_TYPE.band
-  if (r.includes('acoustic') || r.includes('solo') || r.includes('duo') || r.includes('jazz') || r.includes('marimba') || r.includes('saxophone') || r.includes('sax')) return VETTING_QUESTIONS_BY_TYPE.acoustic
-  if (r.includes('recorded') || r.includes('playlist')) return VETTING_QUESTIONS_BY_TYPE.recorded
-  if (r.includes('dj')) return VETTING_QUESTIONS_BY_TYPE.dj
+
+  // No act — suppress entirely
+  if (r.includes('no music') || r.includes('silence')) return []
+
+  // Classical
+  if (r.includes('string quartet') || r.includes('strings') || r.includes('classical')) return VETTING_QUESTIONS_BY_TYPE.strings
+
+  // Jazz — uses acoustic questions
+  if (r.includes('jazz trio') || r.includes('jazz duo') || r.includes('jazz band')) return VETTING_QUESTIONS_BY_TYPE.acoustic
+
+  // Acoustic / folk / band
+  if (r.includes('acoustic duo') || r.includes('acoustic trio') || r.includes('acoustic guitarist') || r.includes('folk') || r.includes('band')) return VETTING_QUESTIONS_BY_TYPE.acoustic
+
+  // Traditional / cultural
+  if (r.includes('dhol') || r.includes('shehnai') || r.includes('traditional') || r.includes('ensemble') || r.includes('choir') || r.includes('marimba')) return VETTING_QUESTIONS_BY_TYPE.traditional
+
+  // DJ / PA / playlist / recorded / curated
+  if (r.includes('dj') || r.includes('playlist') || r.includes('recorded') || r.includes('pa system') || r.includes('curated')) return VETTING_QUESTIONS_BY_TYPE.dj
+
   return VETTING_QUESTIONS_BY_TYPE.dj
 }
 
@@ -172,7 +192,7 @@ function HowToBook({ milRecommendations }) {
           )}
 
           {(() => {
-            const questions = getVettingQuestions(moment.name, moment.recommendation)
+            const questions = getVettingQuestions(moment.name, moment.recommendation, moment.cost)
             if (!questions.length) return null
             return (
               <div
@@ -261,7 +281,7 @@ function buildHowToBookText(milRecommendations) {
       if (m.recommendation) lines.push(`Recommendation: ${m.recommendation}`)
       if (m.cost)           lines.push(`Cost estimate: ${m.cost}`)
       lines.push('')
-      const questions = getVettingQuestions(m.name, m.recommendation)
+      const questions = getVettingQuestions(m.name, m.recommendation, m.cost)
       if (questions.length) {
         lines.push('BEFORE YOU BOOK')
         questions.forEach((q, i) => lines.push(`${i + 1}. ${q}`))
