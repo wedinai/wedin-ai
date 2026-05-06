@@ -129,20 +129,20 @@ function getVettingQuestions(momentName, recommendation, cost) {
   // No act — suppress entirely
   if (r.includes('no music') || r.includes('silence')) return []
 
+  // Traditional / cultural
+  if (r.includes('dhol') || r.includes('shehnai') || r.includes('traditional') || r.includes('ensemble') || r.includes('choir') || r.includes('marimba') || r.includes('ragas') || r.includes('percussion ensemble') || r.includes('drum ensemble') || r.includes('drummers') || r.includes('isicathamiya') || r.includes('maskanda') || r.includes('baraat') || r.includes('mbira')) return VETTING_QUESTIONS_BY_TYPE.traditional
+
+  // Jazz — uses acoustic questions
+  if (r.includes('jazz trio') || r.includes('jazz duo') || r.includes('jazz band') || r.includes('jazz quartet') || r.includes('quartet') || r.includes('swing')) return VETTING_QUESTIONS_BY_TYPE.acoustic
+
   // Classical
   if (r.includes('string quartet') || r.includes('strings') || r.includes('classical')) return VETTING_QUESTIONS_BY_TYPE.strings
 
-  // Jazz — uses acoustic questions
-  if (r.includes('jazz trio') || r.includes('jazz duo') || r.includes('jazz band')) return VETTING_QUESTIONS_BY_TYPE.acoustic
-
   // Acoustic / folk / band
-  if (r.includes('acoustic duo') || r.includes('acoustic trio') || r.includes('acoustic guitarist') || r.includes('folk') || r.includes('band')) return VETTING_QUESTIONS_BY_TYPE.acoustic
-
-  // Traditional / cultural
-  if (r.includes('dhol') || r.includes('shehnai') || r.includes('traditional') || r.includes('ensemble') || r.includes('choir') || r.includes('marimba')) return VETTING_QUESTIONS_BY_TYPE.traditional
+  if (r.includes('acoustic duo') || r.includes('acoustic trio') || r.includes('acoustic guitarist') || r.includes('folk') || r.includes('band') || r.includes('function band') || r.includes('rock band') || r.includes('live band') || r.includes('cover band')) return VETTING_QUESTIONS_BY_TYPE.acoustic
 
   // DJ / PA / playlist / recorded / curated
-  if (r.includes('dj') || r.includes('playlist') || r.includes('recorded') || r.includes('pa system') || r.includes('curated')) return VETTING_QUESTIONS_BY_TYPE.dj
+  if (r.includes('dj') || r.includes('playlist') || r.includes('recorded') || r.includes('pa system') || r.includes('curated') || r.includes('original recording') || r.includes('recorded original') || r.includes('recorded version') || r.includes('pa playback')) return VETTING_QUESTIONS_BY_TYPE.dj
 
   return VETTING_QUESTIONS_BY_TYPE.dj
 }
