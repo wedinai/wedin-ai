@@ -17,6 +17,7 @@ Rules:
 - Use \\n\\n to separate paragraphs
 - Each moment section must end with a clear operational instruction
 - JSON SAFETY: Never use double quotation marks (") anywhere in the brief text — this output is embedded in a JSON string value and unescaped double quotes will break it. Use single quotes (') when referencing song titles, couple's words, or any quoted phrase.
+- NO INVENTED EVENTS: Do not include father-daughter dances, mother-son dances, parent dances, surprise performances, or any event not explicitly confirmed in the couple's moment answers. If the firstdance_additional field is 'No' or is absent, omit all mention of additional dances entirely. This applies to every section of the brief.
 
 STRICT OUTPUT LIMIT: Keep each moment section to 2–3 sentences plus one operational instruction. The entire brief must stay under 2200 tokens. Do not pad or elaborate — clarity over completeness. If approaching token limit, shorten earlier sections before starting new ones. Never leave a JSON object unclosed.
 
