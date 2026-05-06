@@ -1,942 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>wedin.ai — Start with the music.</title>
-<meta name="description" content="An AI-powered wedding music planning companion. Tell us how you want the day to feel. We map every moment and generate your wedding soundtrack, music plan, coordinator brief, and budget guide — ready to share.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --cream: #FAF7F2;
-    --navy:  #1C2B3A;
-    --gold:  #C4922A;
-    --grey:  #6B6560;
-    --white: #FFFFFF;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--cream);
-    color: var(--navy);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-
-  .label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gold);
-    display: block;
-    margin-bottom: 24px;
-  }
-
-  .gold { color: var(--gold); }
-
-  .btn-primary {
-    display: inline-block;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--cream);
-    background: var(--navy);
-    border: none;
-    border-radius: 10px;
-    padding: 0 32px;
-    height: 48px;
-    line-height: 48px;
-    cursor: pointer;
-    text-decoration: none;
-    letter-spacing: 0.01em;
-    transition: box-shadow 0.2s, transform 0.15s;
-    box-shadow: 0 2px 8px rgba(28,43,58,0.18);
-    white-space: nowrap;
-  }
-  .btn-primary:hover {
-    box-shadow: 0 6px 20px rgba(28,43,58,0.26);
-    transform: translateY(-1px);
-  }
-
-  .btn-primary-light {
-    display: inline-block;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--navy);
-    background: var(--cream);
-    border: none;
-    border-radius: 10px;
-    padding: 0 32px;
-    height: 48px;
-    line-height: 48px;
-    cursor: pointer;
-    text-decoration: none;
-    letter-spacing: 0.01em;
-    transition: box-shadow 0.2s, transform 0.15s;
-    box-shadow: 0 2px 8px rgba(28,43,58,0.12);
-    white-space: nowrap;
-  }
-  .btn-primary-light:hover {
-    box-shadow: 0 6px 20px rgba(28,43,58,0.18);
-    transform: translateY(-1px);
-  }
-
-  .btn-outlined-gold {
-    display: inline-block;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--navy);
-    background: var(--cream);
-    border: 1.5px solid var(--gold);
-    border-radius: 10px;
-    padding: 0 32px;
-    height: 48px;
-    line-height: 46px;
-    cursor: pointer;
-    text-decoration: none;
-    letter-spacing: 0.01em;
-    transition: box-shadow 0.2s, transform 0.15s, border-color 0.2s;
-    white-space: nowrap;
-  }
-  .btn-outlined-gold:hover {
-    border-color: rgba(196,146,42,0.85);
-    box-shadow: 0 2px 8px rgba(28,43,58,0.18);
-    transform: translateY(-1px);
-  }
-
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 48px;
-    background: rgba(250,247,242,0.94);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  nav.scrolled {
-    border-bottom-color: rgba(28,43,58,0.08);
-    box-shadow: 0 2px 16px rgba(28,43,58,0.06);
-  }
-
-  .wordmark {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    color: var(--navy);
-    text-decoration: none;
-  }
-
-  .hero {
-    min-height: 100vh;
-    padding: 80px 48px 64px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .hero-text { position: relative; z-index: 1; }
-
-  .hero-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(56px, 7.5vw, 96px);
-    font-weight: 300;
-    line-height: 1.0;
-    letter-spacing: -0.02em;
-    color: var(--navy);
-    margin-bottom: 32px;
-  }
-
-  .hero-sub {
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 1.7;
-    color: var(--grey);
-    max-width: 460px;
-    margin-bottom: 48px;
-  }
-
-  .hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 28px;
-    flex-wrap: wrap;
-  }
-
-  .hero-image-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  #hero-image-placeholder {
-    width: 100%;
-    max-width: 520px;
-    aspect-ratio: 4 / 5;
-    min-height: 520px;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 40px rgba(28,43,58,0.07);
-  }
-
-  .bridge-section {
-    padding: 80px 48px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .bridge-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 300;
-    line-height: 1.15;
-    color: var(--navy);
-    letter-spacing: -0.01em;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto 48px;
-  }
-
-  .bridge-image {
-    width: 100%;
-    height: 480px;
-    object-fit: cover;
-    border-radius: 16px;
-    display: block;
-    margin-bottom: 48px;
-  }
-
-  .bridge-proof {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 64px;
-    align-items: center;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .testimonial-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .testimonial-quote {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(18px, 2.5vw, 22px);
-    font-weight: 300;
-    font-style: italic;
-    color: var(--navy);
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  .testimonial-attr {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    color: var(--grey);
-    letter-spacing: 0.02em;
-    margin: 0;
-  }
-
-  .stat-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .stat-number {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(52px, 6vw, 72px);
-    font-weight: 300;
-    line-height: 1;
-    color: var(--navy);
-    letter-spacing: -0.02em;
-    display: block;
-  }
-  .stat-number.gold { color: var(--gold); }
-
-  .stat-body {
-    font-size: 14px;
-    color: var(--grey);
-    line-height: 1.65;
-    max-width: 320px;
-    margin: 0 auto;
-  }
-
-  .how-section {
-    padding: 80px 48px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .how-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 5vw, 52px);
-    font-weight: 300;
-    line-height: 1.1;
-    color: var(--navy);
-    max-width: 520px;
-    margin-bottom: 0;
-  }
-
-  .how-subtitle {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    color: var(--grey);
-    margin-top: 24px;
-    margin-bottom: 48px;
-    max-width: 520px;
-  }
-
-  .how-section .label { margin-bottom: 14px; }
-
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 48px;
-  }
-
-  .step-number {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 48px;
-    font-weight: 300;
-    color: var(--gold);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    margin-bottom: 12px;
-  }
-
-  .step-divider {
-    width: 32px;
-    height: 2px;
-    background: var(--gold);
-    margin-bottom: 20px;
-  }
-
-  .step-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--navy);
-    margin-bottom: 12px;
-    line-height: 1.3;
-  }
-
-  .step-body {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--grey);
-  }
-
-  .moments-section {
-    padding: 80px 48px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .moments-header { margin-bottom: 64px; }
-
-  .moments-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(40px, 5.5vw, 60px);
-    font-weight: 300;
-    line-height: 1.1;
-    color: var(--navy);
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-
-  .moments-subhead {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    color: var(--grey);
-    line-height: 1.6;
-    max-width: 520px;
-    margin: 24px 0 0;
-  }
-
-  .moments-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  .moment-card {
-    background: var(--white);
-    border: 1px solid rgba(28,43,58,0.06);
-    border-radius: 16px;
-    padding: 28px 24px;
-    transition: box-shadow 0.2s, border-color 0.2s;
-    cursor: default;
-  }
-  .moment-card:hover {
-    box-shadow: 0 4px 24px rgba(28,43,58,0.07);
-    border-color: rgba(196,146,42,0.2);
-  }
-
-  .moment-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--navy);
-    margin-bottom: 8px;
-    line-height: 1.2;
-  }
-
-  .moment-desc {
-    font-size: 13px;
-    color: var(--grey);
-    line-height: 1.6;
-  }
-
-  .deliverables-section {
-    padding: 80px 48px;
-    background: var(--cream);
-    border-top: 1px solid rgba(28,43,58,0.07);
-  }
-
-  .deliverables-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  .portrait-intro-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 5vw, 52px);
-    font-weight: 300;
-    line-height: 1.15;
-    color: var(--navy);
-    margin-bottom: 40px;
-    letter-spacing: -0.01em;
-  }
-
-  .portrait-intro-body {
-    font-size: 17px;
-    color: var(--grey);
-    line-height: 1.75;
-    margin-bottom: 24px;
-  }
-
-  .deliverables-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-  }
-
-  .deliverable-card {
-    background: var(--white);
-    border: 1px solid rgba(28,43,58,0.06);
-    border-radius: 16px;
-    padding: 32px 28px;
-  }
-
-  .deliverable-title {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 17px;
-    font-weight: 500;
-    color: var(--navy);
-    margin-bottom: 12px;
-  }
-
-  .deliverable-body {
-    font-size: 15px;
-    color: var(--grey);
-    line-height: 1.7;
-  }
-
-  .pricing-section {
-    background: var(--navy);
-    padding: 80px 48px;
-  }
-
-  .pricing-inner {
-    max-width: 960px;
-    margin: 0 auto;
-  }
-
-  .pricing-header {
-    text-align: center;
-    margin-bottom: 64px;
-  }
-
-  .pricing-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 5vw, 52px);
-    font-weight: 300;
-    line-height: 1.1;
-    color: var(--cream);
-    letter-spacing: -0.01em;
-  }
-
-  .pricing-columns {
-    display: grid;
-    grid-template-columns: 2fr 3fr;
-    gap: 64px;
-    align-items: center;
-  }
-
-  .pricing-amount {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(72px, 10vw, 104px);
-    font-weight: 300;
-    color: var(--gold);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    display: block;
-    margin-bottom: 8px;
-  }
-
-  .pricing-note {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 400;
-    color: rgba(250,247,242,0.65);
-    margin-bottom: 0;
-  }
-
-  .pricing-cta-wrap { margin-top: 48px; }
-
-  .pricing-small {
-    font-size: 13px;
-    color: rgba(250,247,242,0.45);
-    margin-top: 16px;
-    line-height: 1.6;
-  }
-
-  .pricing-list { list-style: none; }
-
-  .pricing-list li {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: var(--cream);
-    line-height: 2.2;
-  }
-
-  .pricing-list li::before {
-    content: '— ';
-    color: var(--gold);
-  }
-
-  .closing-section {
-    padding: 80px 48px;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .closing-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(36px, 5.5vw, 60px);
-    font-weight: 300;
-    line-height: 1.15;
-    color: var(--navy);
-    margin-bottom: 24px;
-    letter-spacing: -0.01em;
-  }
-
-  .closing-sub {
-    font-size: 17px;
-    color: var(--grey);
-    line-height: 1.7;
-    margin-bottom: 48px;
-  }
-
-  footer {
-    padding: 40px 48px;
-    border-top: 1px solid rgba(28,43,58,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-  }
-
-  .footer-wordmark {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    color: var(--navy);
-    text-decoration: none;
-  }
-
-  .footer-tagline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 15px;
-    font-style: italic;
-    color: var(--grey);
-  }
-
-  .footer-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-  }
-
-  .footer-copy {
-    font-size: 12px;
-    color: var(--grey);
-    opacity: 0.65;
-  }
-
-  .footer-links { display: flex; gap: 16px; }
-
-  .footer-links a {
-    font-size: 12px;
-    color: var(--grey);
-    opacity: 0.65;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-  .footer-links a:hover { opacity: 1; }
-
-  .divider {
-    height: 1px;
-    background: rgba(28,43,58,0.07);
-    margin: 0 48px;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .fade-in { opacity: 0; animation: fadeUp 0.7s ease forwards; }
-  .fade-in.d1 { animation-delay: 0.15s; }
-  .fade-in.d2 { animation-delay: 0.3s; }
-  .fade-in.d3 { animation-delay: 0.45s; }
-  .fade-in.d4 { animation-delay: 0.6s; }
-
-  @media (max-width: 768px) {
-    nav { padding: 18px 24px; }
-
-    .hero {
-      grid-template-columns: 1fr;
-      padding: 56px 24px 56px;
-      gap: 48px;
-      min-height: auto;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- Primary -->
+    <title>wedin.ai — Wedding Music Planning, Start with the Music</title>
+    <meta name="description" content="AI-powered wedding music planning for South African couples. Discover your music portrait, plan every moment, get a complete brief. R699 one-time fee." />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="wedin.ai — Wedding Music Planning, Start with the Music" />
+    <meta property="og:description" content="AI-powered wedding music planning for South African couples. Discover your music portrait, plan every moment, get a complete brief. R699 one-time fee." />
+    <meta property="og:url" content="https://wedin.ai" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="wedin.ai" />
+
+    <!-- Twitter/X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="wedin.ai — Wedding Music Planning, Start with the Music" />
+    <meta name="twitter:description" content="AI-powered wedding music planning for South African couples. R699 one-time fee." />
+
+    <!-- Schema: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "wedin.ai",
+      "legalName": "Tones of Note PTY Ltd",
+      "url": "https://wedin.ai",
+      "email": "hello@wedin.ai",
+      "foundingDate": "2026",
+      "founder": {
+        "@type": "Person",
+        "name": "Rus Nerwich",
+        "jobTitle": "Founder"
+      },
+      "description": "AI-powered wedding music planning. Start with the music.",
+      "areaServed": {
+        "@type": "Country",
+        "name": "South Africa"
+      }
     }
+    </script>
 
-    .hero-image-wrap { order: -1; }
-
-    #hero-image-placeholder {
-      max-width: 100%;
-      aspect-ratio: 3 / 2;
-      min-height: 320px;
+    <!-- Schema: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "wedin.ai",
+      "description": "AI-powered wedding music planning companion. Start with the music. wedin.ai guides couples through a moment-by-moment music planning session and generates a complete music brief for their planner and acts.",
+      "applicationCategory": "Wedding Planning",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "699",
+        "priceCurrency": "ZAR",
+        "description": "Complete wedding music plan — discovery session, music portrait, 9-moment deep-dive, planner brief"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "Tones of Note PTY Ltd",
+        "url": "https://wedin.ai"
+      },
+      "url": "https://wedin.ai",
+      "featureList": [
+        "AI-guided wedding music discovery session",
+        "Personalised music portrait",
+        "9-moment wedding music planning",
+        "Automatic planner brief generation",
+        "SA-specific act recommendations and pricing",
+        "Wedding DJ brief generation"
+      ]
     }
+    </script>
 
-    .bridge-section { padding: 56px 24px; }
-    .bridge-image { height: 260px; }
-    .bridge-proof { grid-template-columns: 1fr; gap: 40px; text-align: center; }
-    .how-section { padding: 56px 24px; }
-    .how-subtitle { font-size: 16px; }
-    .steps { grid-template-columns: 1fr; gap: 40px; }
-    .moments-section { padding: 56px 24px; }
-    .moments-subhead { font-size: 16px; }
-    .moments-grid { grid-template-columns: 1fr; gap: 12px; }
-    .deliverables-section { padding: 56px 24px; }
-    .deliverables-grid { grid-template-columns: 1fr; gap: 20px; }
-    .pricing-section { padding: 56px 24px; }
-    .pricing-columns { grid-template-columns: 1fr; gap: 40px; }
-    .pricing-amount { text-align: center; }
-    .pricing-note { text-align: center; }
-    .pricing-cta-wrap { display: flex; flex-direction: column; align-items: center; }
-    .pricing-small { text-align: center; }
-    .closing-section { padding: 56px 24px; }
-    footer { padding: 32px 24px; flex-direction: column; text-align: center; gap: 16px; }
-    .footer-right { align-items: center; }
-    .divider { margin: 0 24px; }
-    .hero-headline { font-size: 40px; }
-    .hero-actions { flex-direction: column; gap: 12px; }
-    .hero-actions .btn-primary { width: 100%; text-align: center; box-sizing: border-box; }
-    .bridge-headline { font-size: 32px; }
-    .stat-number { font-size: 40px; }
-    .testimonial-quote { font-size: 17px; }
-    .how-headline { font-size: 32px; }
-    .moments-headline { font-size: 32px; }
-    .moment-card { padding: 20px 16px; }
-    .moment-name { font-size: 18px; }
-    .portrait-intro-headline { font-size: 32px; }
-    .portrait-intro-body { font-size: 15px; }
-    .deliverable-card { padding: 24px 20px; }
-    .pricing-amount { font-size: 56px; }
-    .closing-headline { font-size: 32px; }
-    .closing-sub { font-size: 15px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .fade-in { animation: none; opacity: 1; }
-    html { scroll-behavior: auto; }
-  }
-
-</style>
-</head>
-<body>
-
-<!-- NAV -->
-<nav id="main-nav">
-  <a href="#" class="wordmark">wedin.ai</a>
-  <a href="https://wedin-ai-app.netlify.app" class="btn-primary">Start with the music →</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-text">
-    <span class="label fade-in d1">Wedding music planning</span>
-    <h1 class="hero-headline fade-in d2">
-      Start with<br><span class="gold">the music.</span>
-    </h1>
-    <p class="hero-sub fade-in d3">The music at your wedding will outlast the flowers, the food, and the décor. It lives in the memory of everyone in the room. It deserves to sound exactly the way you've always pictured it.</p>
-    <div class="testimonial-block fade-in d4" style="margin: 24px 0; text-align: left;">
-      <p class="testimonial-quote">"I thought I knew what I wanted musically. Turns out I knew what songs I liked, which is completely different. The conversation changed how we thought about the whole day."</p>
-      <p class="testimonial-attr">— Priya & James Okafor, married November 2024</p>
-    </div>
-    <div class="hero-actions fade-in d4">
-      <a href="#nine-moments" class="btn-primary">See the nine moments →</a>
-    </div>
-  </div>
-  <div class="hero-image-wrap">
-    <div id="hero-image-placeholder">
-      <img
-        src="weddin.ai-3.jpg"
-        alt="A wedding moment"
-        style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block;"
-      >
-    </div>
-  </div>
-</section>
-
-<!-- BRIDGE -->
-<section class="bridge-section">
-  <h2 class="bridge-headline">You already know the music matters. Most couples only find out how much when it's too late.</h2>
-  <img src="weddin.ai-4-2.jpg" alt="A wedding moment" class="bridge-image">
-  <div class="bridge-proof">
-    <div class="testimonial-block">
-      <p class="testimonial-quote">"Planning the music together was one of the best evenings of our engagement. The brief it produced meant our coordinator knew exactly what to book, nothing got lost in translation, and the music was awesome."</p>
-      <p class="testimonial-attr">— Sarah & Tom Mitchell, married March 2025</p>
-    </div>
-    <div class="stat-block">
-      <span class="stat-number gold">100+</span>
-      <p class="stat-body">Weddings behind wedin.ai. Every question comes from real experience of what goes right — and what goes wrong.</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- NINE MOMENTS -->
-<section class="moments-section" id="nine-moments">
-  <span class="label">Every moment, considered</span>
-  <div class="moments-header">
-    <h2 class="moments-headline">Nine moments.<br>One complete day.</h2>
-    <p class="moments-subhead">Every moment of your wedding day carries a feeling. These are the nine that matter most.</p>
-  </div>
-  <div class="moments-grid">
-    <div class="moment-card">
-      <p class="moment-name">Guest Arrivals</p>
-      <p class="moment-desc">The music that tells your guests they've arrived somewhere special for something special.</p>
-    </div>
-    <div class="moment-card">
-      <p class="moment-name">Ceremony</p>
-      <p class="moment-desc">The moment the day stops being a plan and becomes real. The right music makes it feel exactly how you hoped.</p>
-    </div>
-    <div class="moment-card">
-      <p class="moment-name">Pre-drinks</p>
-      <p class="moment-desc">The first hour where everyone relaxes into the day. Most couples never think about it. Every guest feels it.</p>
-    </div>
-    <div class="moment-card">
-      <p class="moment-name">Your Entrance</p>
-      <p class="moment-desc">Not a transition. A declaration. Your first moment as a married couple in a room ready to celebrate you.</p>
-    </div>
-    <div class="moment-card">
-      <p class="moment-name">Dinner</p>
-      <p class="moment-desc">Ninety minutes where the day breathes. The music sets whether guests talk, laugh, and stay — or start watching the clock.</p>
-    </div>
-    <div class="moment-card">
-      <p class="moment-name">Speeches</p>
-      <p class="moment-desc">The words people have been holding for months. The music before and after decides whether they land.</p>
-    </div>
-    <div class="moment-card">
-      <p class="moment-name">First Dance</p>
-      <p class="moment-desc">The song you'll hear in your head for the rest of your lives. It deserves more than a last-minute decision.</p>
-    </div>
-    <div class="moment-card">
-      <p class="moment-name">Dancing</p>
-      <p class="moment-desc">Where the wedding becomes the party. The shape of the night matters more than any single song.</p>
-    </div>
-    <div class="moment-card">
-      <p class="moment-name">Last Song</p>
-      <p class="moment-desc">Not the end of the party. The end of the day. Everyone carries this one home.</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- HOW IT WORKS -->
-<section class="how-section" id="how-it-works">
-  <span class="label">How it works</span>
-  <h2 class="how-headline">The right questions, in the right order.</h2>
-  <p class="how-subtitle">A guided conversation through each important moment of your day.</p>
-  <div class="steps">
-    <div class="step">
-      <div class="step-number">01</div>
-      <div class="step-divider"></div>
-      <h3 class="step-title">Bring what you have. We'll find the rest.</h3>
-      <p class="step-body">Not what songs you like. How you want the room to sound when you walk in. How the floor should feel at 10pm. Not a form, not a checklist.</p>
-    </div>
-    <div class="step">
-      <div class="step-number">02</div>
-      <div class="step-divider"></div>
-      <h3 class="step-title">We walk you through each moment</h3>
-      <p class="step-body">From the processional to the last song, each moment of your day gets the attention it deserves. Nothing left unthought.</p>
-    </div>
-    <div class="step">
-      <div class="step-number">03</div>
-      <div class="step-divider"></div>
-      <h3 class="step-title">Your wedding soundtrack and music plan, ready to share</h3>
-      <p class="step-body">Your wedding soundtrack — a written reflection of how every moment of your day should feel. A music plan your coordinator can act on. A Spotify playlist to share with every act you speak to. And a budget guide so you know what to expect before the first quote lands.</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- WHAT YOU GET -->
-<section class="deliverables-section">
-  <div class="deliverables-inner">
-    <span class="label">What you get</span>
-
-    <div style="max-width:760px; margin-bottom: 48px;">
-      <h2 class="portrait-intro-headline">Start with your portrait. It's free.</h2>
-      <p class="portrait-intro-body">Before anything else, wedin.ai builds you a music portrait — a written reflection of your musical character as a couple. Not a genre list. Not a mood board. Something drawn from the questions nobody else thinks to ask — what's actually playing at home on a Sunday, the song that makes you both stop, the feeling you want your guests to carry home at the end of the night.</p>
-      <p class="portrait-intro-body">It captures who you actually are, musically. And it becomes the foundation everything else is built from.</p>
-      <p class="portrait-intro-body" style="margin-bottom: 40px;">It takes about twenty minutes. You'll want to do it together.</p>
-      <a href="https://wedin-ai-app.netlify.app" class="btn-primary">Get your free music portrait →</a>
-    </div>
-
-    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--grey);text-align:center;margin:48px 0;font-size:clamp(17px,2vw,20px);line-height:1.5;">When you're ready to go further — R699, once.</p>
-
-    <div class="deliverables-grid">
-
-      <div class="deliverable-card">
-        <h3 class="deliverable-title">Your wedding soundtrack</h3>
-        <p class="deliverable-body">A written reflection of how every moment of your day should feel — guest arrivals through to the last song. Something to read together, share with family, and carry into every music conversation you have from here.</p>
-      </div>
-
-      <div class="deliverable-card">
-        <h3 class="deliverable-title">Your music plan</h3>
-        <p class="deliverable-body">Every moment of your day, mapped — act recommendations, reasoning, and specific instructions. Specific enough to brief a band before you've even met them. When you walk into that first conversation, you'll already know exactly what you want.</p>
-      </div>
-
-      <div class="deliverable-card">
-        <h3 class="deliverable-title">Your coordinator brief</h3>
-        <p class="deliverable-body">If you're working with a coordinator or planner, there's a separate document written directly to them — your taste, your approach, your priorities, in language they can act on from day one. Most planners have never received anything like it.</p>
-      </div>
-
-      <div class="deliverable-card">
-        <h3 class="deliverable-title">Your budget guide</h3>
-        <p class="deliverable-body">An illustrative cost breakdown for every moment, a booking timeline, and a hidden costs checklist — in a spreadsheet you can update as real quotes come in. Market reference ranges for the SA wedding music market, so you know what to expect before the first conversation.</p>
-      </div>
-
-      <div class="deliverable-card">
-        <h3 class="deliverable-title">Your Spotify playlist</h3>
-        <p class="deliverable-body">Every song you named, plus songs that sound like your day. The first thing you'll want to play when you leave. A reference point for every act you speak to.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="pricing-section">
-  <div class="pricing-inner">
-    <div class="pricing-header">
-      <span class="label" style="color:rgba(250,247,242,0.55); display:block; margin-bottom:24px;">Simple pricing</span>
-      <h2 class="pricing-headline">One fee. Everything you need to get the music right.</h2>
-    </div>
-    <div class="pricing-columns">
-      <div class="pricing-left">
-        <span class="pricing-amount">R699</span>
-        <p class="pricing-note">One-time payment. No subscription.</p>
-        <div class="pricing-cta-wrap">
-          <a href="https://wedin-ai-app.netlify.app" class="btn-primary-light">Start with the music →</a>
-          <p class="pricing-small">Start with the free discovery session. Pay only when you're ready to build your plan.</p>
-        </div>
-      </div>
-      <div class="pricing-right">
-        <ul class="pricing-list">
-          <li>Discovery session — free, no account needed</li>
-          <li>A guided conversation through every moment of your day</li>
-          <li>Your wedding soundtrack — how your day sounds, in writing</li>
-          <li>Your music plan — act recommendations and instructions for every moment</li>
-          <li>Your coordinator brief — ready to send to whoever is managing music on the day</li>
-          <li>Your Spotify playlist — every song you named, plus songs that sound like your day</li>
-          <li>Your budget guide — illustrative costs, booking timeline, and hidden costs checklist</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CLOSING CTA -->
-<section class="closing-section">
-  <h2 class="closing-headline">This might be one of the best conversations you have while planning your wedding.</h2>
-  <p class="closing-sub">Find a quiet hour, just the two of you.</p>
-  <p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6B6560;text-align:center;margin-bottom:24px;">The spreadsheets aren't going anywhere. This is the good bit.</p>
-  <a href="https://wedin-ai-app.netlify.app" class="btn-outlined-gold">Start the conversation →</a>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <a href="#" class="footer-wordmark">wedin.ai</a>
-  <span class="footer-tagline">Start with the music.</span>
-  <div class="footer-right">
-    <span class="footer-copy">© 2026 wedin.ai · South Africa</span>
-    <div class="footer-links">
-      <a href="/terms">Terms</a>
-      <a href="/privacy">Privacy</a>
-    </div>
-  </div>
-</footer>
-
-<script>
-  const nav = document.getElementById('main-nav');
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 8) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
+    <!-- Schema: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What does wedin.ai do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "wedin.ai is an AI-powered wedding music planning companion. It guides couples through a discovery session to understand their musical taste, generates a personalised music portrait, then walks through every musical moment of the wedding day — from guest arrivals to the last song. It produces a complete written music brief for the wedding planner and the acts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does wedin.ai cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "wedin.ai costs R699 as a one-time fee. This covers the complete wedding music planning session including the discovery session, music portrait, all 9 moment deep-dives, and the full planner brief."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does it take to plan wedding music with wedin.ai?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The discovery session takes approximately 10 minutes. Each of the 9 moment deep-dives takes 3–5 minutes. The complete wedding music plan — from first question to finished brief — typically takes 45–60 minutes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does a wedding DJ cost in South Africa?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A wedding DJ in South Africa typically costs R8,000–R22,000 for a full reception. Full-day packages range from R15,000–R20,000. Prices are based on 2026 data from GigHeaven, Gigster, and ShoutMC."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How far in advance should you book wedding music in South Africa?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "String quartets require 10–14 months minimum for peak season. Live bands need 8–12 months. DJs are more flexible at 6 months. The Winelands adds 2 months to every lead time during peak season (October–April)."
+          }
+        }
+      ]
     }
-  }, { passive: true });
-</script>
+    </script>
 
-</body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
