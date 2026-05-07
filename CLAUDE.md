@@ -14,6 +14,18 @@ Read this file at the start of every session. Do not ask Rus to re-explain anyth
 
 ---
 
+## Critical File Protection — Non-Negotiable
+
+**NEVER modify `index.html` at the project root.** This file is the Vite entry point for the React app. Netlify builds the app by running `npm run build` which reads this file. If `index.html` is overwritten with any other content (including the wedin.ai landing page HTML from the `wedin-landing` folder), Netlify will serve that content instead of building the React app, breaking the entire product.
+
+The landing page lives at `wedin-landing/index.html`. The app entry point lives at the project root `index.html`. These are two separate files. Never conflate them.
+
+If you see a task that involves creating or modifying `index.html`, stop and confirm with Rus before touching it.
+
+**The `wedin-landing` folder** contains the static marketing landing page. Files in this folder are never served by Netlify's build process — they exist for reference only. Do not copy files from `wedin-landing` to the project root.
+
+---
+
 ## What We Are Building
 
 wedin.ai is an AI-powered wedding music planning companion. The tagline is: **Start with the music.**
@@ -144,7 +156,7 @@ Sheet 3 — Hidden Costs
 
 ---
 
-## Current Build Status — May 1, 2026
+## Current Build Status — May 7, 2026
 
 **Phase:** Phase 2 — in progress.
 
@@ -597,6 +609,12 @@ Session 10 additions (May 1 2026):
 
 **generate-brief-b.js** — coordinator's brief, second person to coordinator, verb-led operational instructions, max_tokens 2500, JSON regex fallback active. Accepts coordinator_profile variable (professional / venue / volunteer, default: venue) and calibrates language register, structure, and cue language accordingly. Full specification in wedin-planner-brief-SKILL-v5.md. Three profiles implemented May 1 2026 — Session 8 complete.
 
+**Rules active in generate-brief-b.js (added May 6–7, 2026):**
+- NO INVENTED EVENTS: Do not include father-daughter dances, mother-son dances, parent dances, surprise performances, or any event not explicitly confirmed in the couple's moment answers. If firstdance_additional is 'No' or absent, omit all mention of additional dances entirely.
+- DANCING SECTION CONTAINS WIND-DOWN: Any wind-down instruction belongs inside the Dancing section. Never create a separate **WIND-DOWN** heading.
+- SONG DATA GROUND TRUTH: If the couple has named specific songs for a moment, reference those songs in the coordinator brief instruction for that moment. Never state the couple has named no songs when song data is present.
+- MUSIC PLAN SOURCE OF TRUTH: The Music Plan is the definitive reference for every moment. If the Music Plan recommends a live act, the coordinator brief must instruct a live act. If the Music Plan recommends recorded or PA, the coordinator brief must instruct recorded or PA. Never contradict the Music Plan's act type decision. Applies especially to entrance, pre-drinks, and dinner.
+
 **Timing rule — non-negotiable:** No clock times in any brief output. Ever. Express all timing as duration and sequence only. "Pre-drinks: approximately 60–75 minutes, directly following ceremony recessional" not "Pre-drinks: 15:30–16:45". This applies to generate-brief-a.js, generate-brief-b.js, and all future brief functions.
 
 **generate-artist-brief-[type].js** — Artist Brief, Stage 7, deferred post-launch. Do not build pre-launch.
@@ -769,6 +787,7 @@ Full details in wedin-infrastructure-reference.md (project file). Key facts:
 - Moving Dinner or Your Entrance back to generate-mil-a.js — architectural decision locked May 1 2026
 - Re-adding the redundant ceremony summary screen — CeremonyDeepDive.jsx now matches all other moments. Do not restore the intermediate screen.
 - Re-adding "Back to Moment Map" as a primary button in the BriefScreen ready state — it exists only as a secondary underlined link in the completion card and in the error state
+- Modifying `index.html` at the project root — this is the Vite entry point. See Critical File Protection section above.
 
 ---
 
@@ -778,4 +797,5 @@ Full details in wedin-infrastructure-reference.md (project file). Key facts:
 - Sasha — second tester, March 26 2026, full feedback captured and largely resolved
 - Anonymous couple — self-directed session March 26 evening, strong output quality
 - MIL scenario testing: Scenarios 1–25 tested May 1 2026. All 10 moments present in correct order across all scenarios tested. Scenario 5 (Naledi & David — maximum complexity) cold start occasionally triggers retry — resolves on second attempt.
-- Rus (founder) — April 29 + May 1, 2026. Full flow tested. All generating correctly.
+- QA fix session — May 6–7, 2026. Six original QA scenarios re-run plus four additional scenarios from the 19-scenario library. Ten output fixes confirmed deployed and verified. See wedin-launch-sessions.md Session QA-Fix for full fix log.
+- Rus (founder) — April 29 + May 1 + May 7, 2026. Full flow tested. All generating correctly.

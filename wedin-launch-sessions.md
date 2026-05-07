@@ -41,6 +41,7 @@ Load alongside CLAUDE.md at the start of every Claude Code session. CLAUDE.md is
 | 10 | Claude.ai + Claude Code | MIL architectural restructure + rule additions | 2–3 | ✓ COMPLETE — May 1 |
 | 10b | Claude Code | Budget Tab — generate-budget.js + "What This Costs" tab | 2–3 | ✓ COMPLETE — May 1 |
 | 10c | Claude Code | Completion card + consolidated email + UX fixes | 2–3 | ✓ COMPLETE — May 3 |
+| QA-Fix | Claude.ai + Claude Code | Output QA + 10 prompt/code fixes | 8+ | ✓ COMPLETE — May 6–7 |
 | 11 | Claude Code | PayFast + security hardening | 2–3 | NEXT |
 | 12 | Claude Code | Pre-launch QA | 3+ | Last |
 
@@ -263,6 +264,52 @@ All eight approved copy changes live on wedin.ai — output names updated throug
 
 ---
 
+## QA Fix Session — Claude.ai + Claude Code ✓ COMPLETE
+### Output QA + prompt and code fixes
+*Shipped: May 6–7, 2026*
+
+**Six original QA scenarios re-run plus four additional scenarios from the 19-scenario library.**
+
+**Issues identified and fixed — all confirmed resolved:**
+
+| Fix | File | Description | Status |
+|-----|------|-------------|--------|
+| Last song ground truth | generate-brief-a.js | Field relabelled to enforce named song appears verbatim in Wedding Soundtrack. No hedging, no 'or similar'. | ✓ Fixed |
+| Last song ground truth | generate-mil-b.js | Hard injection of last song name into prompt, matching existing first dance ground truth pattern. | ✓ Fixed |
+| No invented events | generate-brief-b.js | Rule added: no father-daughter dances, parent dances, or surprise performances unless couple confirmed in firstdance_additional field. | ✓ Fixed |
+| Wind-down formatting | generate-brief-b.js | Rule added: wind-down content absorbed into Dancing section. No standalone **WIND-DOWN** heading. | ✓ Fixed |
+| Dinner song data | generate-brief-b.js | Rule added: coordinator brief must reference named dinner songs when present in couple answers. | ✓ Fixed |
+| Music Plan source of truth | generate-brief-b.js | Rule added: coordinator brief act type must match Music Plan recommendation. Covers entrance, pre-drinks, dinner. | ✓ Fixed |
+| Vetting question routing | BriefScreen.jsx | getVettingQuestions() rewritten with act-type routing: traditional/cultural → jazz → classical → acoustic/folk/band → DJ/recorded. New traditional/cultural question block added. Silence suppression for no-music moments. | ✓ Fixed |
+| Vetting routing calibration | BriefScreen.jsx | Keyword additions: ragas, shehnai, dhol, baraat, isicathamiya, maskanda, mbira, percussion ensemble to traditional trigger. jazz quartet, jazz band, quartet, swing to jazz trigger. band, function band, rock band, live band to acoustic trigger. original recording, recorded original, recorded version, PA playback to DJ trigger. | ✓ Fixed |
+| index.html overwrite | Manual recovery | Root index.html was overwritten with landing page HTML during a previous session. Restored to correct 139-line Vite entry point from commit 1f396ec. See Critical File Protection rule in CLAUDE.md. | ✓ Fixed |
+| Coordinator brief contradictions | generate-brief-b.js | Music Plan source of truth rule closes recurring cross-tab contradictions on entrance, pre-drinks, and last song. | ✓ Fixed |
+
+**Scenarios verified post-fix:**
+- Scenario 2 (Emma & Tom) — no invented events, last song behaviour, acoustic vetting questions
+- Scenario 3 (Charlotte & James) — last song ground truth, classical vetting questions, wind-down formatting, dinner song data
+- Scenario 6 (Michael & Sarah) — last song ground truth, confirmed parent dance when couple specifies it
+- Scenario 8 (Ahmed & Fatima) — gender separation, last song, coordinator brief consistency
+- Scenario 9 (Raj & Meera) — traditional/cultural vetting questions, last song, DJ continuity
+- Scenario 13 (Marco & Isabella) — last song ground truth, professional coordinator profile, vetting routing
+- Scenario 17 (Jason & Caitlin) — budget mismatch, last song, volunteer profile (untested — operator error on chip selection)
+- Scenario 5 (Naledi & David) — full production complexity, vetting routing, last song
+
+**Critical incident — index.html overwrite:**
+During commit 0b47f1b, the root `index.html` (Vite entry point) was overwritten with the static landing page HTML. Netlify served the landing page instead of building the React app. Recovery: Claude Code identified the issue, restored `index.html` from commit `1f396ec`, pushed to main. Critical File Protection rule added to CLAUDE.md to prevent recurrence.
+
+**Confirmed not bugs:**
+- Father-daughter dance in Scenario 6 (Michael & Sarah) — couple confirmed in firstdance_additional field
+- Last song feeling description in Emma & Tom — couple answered with a feeling not a song name; correct behaviour
+- Wind-down in Emma & Tom coordinator brief — couple explicitly answered dancing_wind_down question; content is correct, formatting was the issue (now fixed)
+- Clock time in Marco & Isabella coordinator brief — couple specified midnight end time; surfacing it is correct behaviour
+
+**Remaining post-launch items (not blockers):**
+- Volunteer profile for Jason & Caitlin not verified — operator selected wrong chip during testing. Retest in Session 12.
+- Entrance song not named in coordinator brief when couple names it only in song_question field — song_question is not passed to generate-brief-b.js. Low priority.
+
+---
+
 ## Session 11 — Claude Code
 ### PayFast integration + security hardening
 *Estimated: 2–3 hours code*
@@ -336,6 +383,7 @@ Outputs and screens:
 - [ ] "Want to update an answer? Return to your moment map" secondary link present and functional
 - [ ] Error state shows both "Try again" button AND "Back to Moment Map" underlined link
 - [ ] No "Back to Moment Map" primary button visible anywhere in the ready state
+- [ ] Vetting questions in How to Book tab match the recommended act type for each moment — traditional acts show traditional questions, classical shows classical questions, DJ/PA moments show DJ questions, silence moments show no questions
 
 Payment and persistence:
 - [ ] PayFast payment completes and unlocks Moment Map correctly
