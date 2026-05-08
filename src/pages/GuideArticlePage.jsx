@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -262,43 +263,6 @@ const mdComponents = {
 export default function GuideArticlePage({ article }) {
   const data = ARTICLES[article]
 
-  useEffect(() => {
-    if (!data) return
-
-    document.title = data.title
-
-    // Meta description
-    let metaDesc = document.querySelector('meta[name="description"]')
-    if (!metaDesc) {
-      metaDesc = document.createElement('meta')
-      metaDesc.name = 'description'
-      document.head.appendChild(metaDesc)
-    }
-    metaDesc.content = data.description
-
-    // Article schema
-    const articleScript = document.createElement('script')
-    articleScript.type = 'application/ld+json'
-    articleScript.id = 'guide-article-schema'
-    articleScript.text = JSON.stringify(data.articleSchema)
-    document.head.appendChild(articleScript)
-
-    // FAQ schema
-    const faqScript = document.createElement('script')
-    faqScript.type = 'application/ld+json'
-    faqScript.id = 'guide-faq-schema'
-    faqScript.text = JSON.stringify(data.faqSchema)
-    document.head.appendChild(faqScript)
-
-    return () => {
-      document.title = 'wedin.ai — Wedding Music Planning, Start with the Music'
-      const prevDesc = document.querySelector('meta[name="description"]')
-      if (prevDesc) prevDesc.content = 'AI-powered wedding music planning for South African couples. Discover your music portrait, plan every moment, get a complete brief. R699 one-time fee.'
-      document.getElementById('guide-article-schema')?.remove()
-      document.getElementById('guide-faq-schema')?.remove()
-    }
-  }, [article, data])
-
   if (!data) {
     return (
       <div style={styles.page}>
@@ -315,6 +279,12 @@ export default function GuideArticlePage({ article }) {
 
   return (
     <div style={styles.page}>
+      <Helmet>
+        <title>{data.title}</title>
+        <meta name="description" content={data.description} />
+        <script type="application/ld+json">{JSON.stringify(data.articleSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(data.faqSchema)}</script>
+      </Helmet>
       <header style={styles.header}>
         <Link to="/" style={styles.wordmark}>wedin.ai</Link>
         <span style={styles.separator}>·</span>
