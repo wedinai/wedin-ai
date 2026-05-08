@@ -11,4 +11,7 @@ dist
 .netlify
 Weddings/
 .claude/worktrees/
-wedin-landing/
+wedin-landing/*
+!wedin-landing/public
+wedin-landing/public/*
+!wedin-landing/public/googlee942d4d5320cdeb6.html
