@@ -1,6 +1,6 @@
 # The Complete Guide to Wedding Music Planning in South Africa (2026)
 
-Planning wedding music in South Africa involves coordinating between five or six distinct act types, across nine separate musical moments, within a budget that most couples underestimate by 30–40% — and doing it in a country where load-shedding can silence a DJ mid-first-dance if no one planned for it. The music decisions you make don't just set a tone; they determine whether your guests feel something or simply attend. Most couples spend more time choosing a table centrepiece than they spend on any single musical moment. This guide is designed to change that.
+Music is the only element of your wedding that runs from the moment the first guest arrives to the moment the last one leaves. It sets the tone before a single word is spoken. It carries the ceremony. It fills the room during dinner. It determines whether the dance floor holds or empties. And yet most couples spend more time choosing a table centrepiece than they spend planning any single musical moment. This guide maps the nine moments of a wedding day — what each one needs, which acts work best, and what things cost in South Africa in 2026. If you've been putting the music off, this is where to start.
 
 ---
 
@@ -12,13 +12,13 @@ Music is the only element of a wedding that runs continuously — from the momen
 
 There are three reasons for this. The first is that music feels instinctive — couples assume they'll just know what they want. The second is that the industry makes it easy to defer: book the act, share a Spotify link, consider it done. The third is that no one has ever shown couples the full picture — the nine distinct moments that make up a South African wedding day, what each one needs musically, and how the decisions interlock.
 
-When music goes wrong at a wedding, it is almost never because the act was bad. It is because no one gave the act a real brief. And no one gave the act a real brief because no one had mapped the day in enough detail to write one.
+The acts who do their best work at weddings are almost always the ones who received a real brief. Not a Spotify link — a document that tells them who the couple is, what the day is supposed to feel like, and what each moment needs to do. Most couples have never been shown how to write one. This guide is the starting point.
 
 ---
 
 ## The 9 Musical Moments of a South African Wedding Day
 
-A South African wedding day, regardless of size or formality, moves through nine musical moments. Each one has a different emotional register, a different technical requirement, and a different consequence when it goes wrong.
+A wedding day — whether in Cape Town, Johannesburg, London, or New York — moves through nine musical moments. The structure is consistent across cultures and countries. Each moment has a different emotional register, a different technical requirement, and a distinct opportunity when it's planned with intention.
 
 Most couples plan two of them well — the ceremony processional and the first dance. The other seven are left to the act's instinct, which is an unfair burden on the act and an unnecessary risk for the couple.
 
