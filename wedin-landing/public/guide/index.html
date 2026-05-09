@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Music Guides | wedin.ai</title>
+  <meta name="description" content="Planning guides for South African couples. In-depth articles on wedding music moments, pricing, booking, and briefs." />
+  <link rel="canonical" href="https://wedin.ai/guide/" />
+  <meta property="og:title" content="Wedding Music Guides | wedin.ai" />
+  <meta property="og:description" content="Planning guides for South African couples. In-depth articles on wedding music moments, pricing, booking, and briefs." />
+  <meta property="og:url" content="https://wedin.ai/guide/" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FAF7F2;
+      --navy: #1C2B3A;
+      --gold: #C4922A;
+      --grey: #6B6560;
+      --white: #FFFFFF;
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+    a:hover { opacity: 0.8; }
+
+    /* Header */
+    .site-header {
+      border-bottom: 1px solid rgba(28,43,58,0.08);
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wordmark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--navy);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .wordmark:hover { opacity: 0.75; }
+
+    /* Main content */
+    .page-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 56px 24px 96px;
+    }
+
+    .page-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--navy);
+      margin-bottom: 16px;
+    }
+
+    .page-intro {
+      font-size: 18px;
+      color: var(--grey);
+      margin-bottom: 48px;
+    }
+
+    /* Article card */
+    .article-card {
+      background-color: var(--white);
+      border: 1px solid rgba(28,43,58,0.08);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 12px 12px 0;
+      padding: 28px 28px 28px 24px;
+      margin-bottom: 24px;
+      text-decoration: none;
+      display: block;
+      transition: box-shadow 0.15s ease;
+    }
+    .article-card:hover {
+      box-shadow: 0 2px 16px rgba(28,43,58,0.08);
+      opacity: 1;
+    }
+
+    .article-card-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .article-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 400;
+      line-height: 1.3;
+      color: var(--navy);
+      margin-bottom: 10px;
+      text-decoration: none;
+    }
+
+    .article-card-description {
+      font-size: 15px;
+      color: var(--grey);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .article-card-cta {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* CTA block */
+    .cta-block {
+      margin-top: 56px;
+      padding: 32px;
+      background-color: var(--white);
+      border: 1px solid rgba(28,43,58,0.08);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .cta-block h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .cta-block p {
+      font-size: 16px;
+      color: var(--grey);
+      margin-bottom: 20px;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background-color: var(--navy);
+      color: var(--white) !important;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 24px;
+      border-radius: 8px;
+      letter-spacing: 0.01em;
+    }
+    .cta-btn:hover { opacity: 0.85; }
+
+    /* Footer */
+    .site-footer {
+      padding: 32px 24px;
+      border-top: 1px solid rgba(28,43,58,0.08);
+      text-align: center;
+      font-size: 13px;
+      color: var(--grey);
+    }
+    .site-footer a {
+      color: var(--grey);
+      text-decoration: none;
+    }
+    .site-footer a:hover { color: var(--navy); }
+    .footer-sep { margin: 0 8px; opacity: 0.4; }
+
+    @media (max-width: 600px) {
+      .page-wrap { padding: 40px 20px 64px; }
+      .article-card { padding: 22px 20px 22px 18px; }
+      .cta-block { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="https://wedin.ai" class="wordmark">wedin.ai</a>
+  </header>
+
+  <main>
+    <div class="page-wrap">
+
+      <p class="page-label">Guides</p>
+      <h1>Wedding Music Planning</h1>
+      <p class="page-intro">In-depth guides for South African couples. Pricing, booking lead times, moment-by-moment planning, and brief-writing for every act type.</p>
+
+      <a href="./wedding-music-south-africa/" class="article-card">
+        <p class="article-card-label">South Africa · 2026</p>
+        <h2 class="article-card-title">The Complete Guide to Wedding Music Planning in South Africa</h2>
+        <p class="article-card-description">Nine musical moments, full ZAR pricing across every act type, booking lead times by city and season, and the brief-writing framework that most couples never use — but should.</p>
+        <span class="article-card-cta">Read the guide →</span>
+      </a>
+
+      <div class="cta-block">
+        <h2>Ready to plan your music?</h2>
+        <p>The wedin.ai discovery session takes you through all nine moments and generates a complete music brief. 20 minutes. No account needed.</p>
+        <a href="https://wedin-ai-app.netlify.app" class="cta-btn">Start planning →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <a href="https://wedin.ai">wedin.ai</a>
+    <span class="footer-sep">·</span>
+    <a href="https://wedin.ai/terms">Terms</a>
+    <span class="footer-sep">·</span>
+    <a href="https://wedin.ai/privacy">Privacy</a>
+  </footer>
+
+</body>
+</html>
