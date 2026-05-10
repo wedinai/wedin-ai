@@ -16,6 +16,35 @@ These are independent deployments. DNS for both routes through Netlify DNS (NS1 
 
 ---
 
+## ⚠️ Critical Architecture Warning — Two Repos, Two Sites
+
+This project has two completely separate GitHub repos and two separate Netlify sites. This caused significant confusion during the May 10 2026 session. Read this before touching any file related to wedin.ai or app.wedin.ai.
+
+| Site | GitHub Repo | Netlify Site | Serves |
+|------|-------------|--------------|--------|
+| Landing page | wedinai/wedin-landing | chimerical-melomakarona-962b6c | wedin.ai |
+| React app | wedinai/wedin-ai | wedin-ai-app | app.wedin.ai |
+
+**Rules that must never be broken:**
+
+- Any file that needs to be accessible at `wedin.ai/filename` belongs in the **wedinai/wedin-landing** repo — not in wedinai/wedin-ai.
+- Any file that needs to be accessible at `app.wedin.ai/filename` belongs in **wedinai/wedin-ai** in the `public/` folder (Vite copies it to `dist/` on build).
+- The `wedin-landing/` folder inside wedinai/wedin-ai is gitignored and serves nothing. Do not put files there expecting them to appear anywhere.
+- The Netlify CLI is linked to wedinai/wedin-ai (the React app). If you need to deploy the landing page, push to wedinai/wedin-landing on GitHub and Netlify picks it up automatically.
+- Never trigger a local CLI deploy. Always deploy via git push to the correct repo.
+
+**How to diagnose a 404 on wedin.ai:**
+1. Check wedinai/wedin-landing repo — is the file there?
+2. If yes, check Netlify site chimerical-melomakarona-962b6c — did it deploy?
+3. If no, add the file to wedinai/wedin-landing and push to main.
+
+**How to diagnose a 404 on app.wedin.ai:**
+1. Check wedinai/wedin-ai repo — is the file in `public/`?
+2. If yes, check Netlify site wedin-ai-app — did the build complete?
+3. If no, add the file to `public/` in wedinai/wedin-ai and push to main.
+
+---
+
 ## Domain Registration
 
 **Registrar:** GoDaddy
