@@ -42,6 +42,7 @@ Load alongside CLAUDE.md at the start of every Claude Code session. CLAUDE.md is
 | 10b | Claude Code | Budget Tab — generate-budget.js + "What This Costs" tab | 2–3 | ✓ COMPLETE — May 1 |
 | 10c | Claude Code | Completion card + consolidated email + UX fixes | 2–3 | ✓ COMPLETE — May 3 |
 | QA-Fix | Claude.ai + Claude Code | Output QA + 10 prompt/code fixes | 8+ | ✓ COMPLETE — May 6–7 |
+| Tech Debt | Claude.ai + Claude Code | Infrastructure audit + domain activation + URL cleanup | 3 | ✓ COMPLETE — May 10 |
 | 11 | Claude Code | PayFast + security hardening | 2–3 | NEXT |
 | 12 | Claude Code | Pre-launch QA | 3+ | Last |
 
@@ -310,6 +311,32 @@ During commit 0b47f1b, the root `index.html` (Vite entry point) was overwritten 
 
 ---
 
+## Tech Debt Session — Claude.ai + Claude Code ✓ COMPLETE
+### Infrastructure audit, domain activation, URL cleanup
+*Completed: May 10, 2026*
+
+**Assessed and confirmed working — no action needed:**
+- Supabase saving comprehensively across all fields (portrait, all 9 moment answers, MIL, couple_brief, coordinator_profile, Spotify URL)
+- coupleBrief restore logic already correctly wired in App.jsx (line 246) — no regeneration bug
+- Infrastructure architecture sound
+
+**Fixed and deployed:**
+- app.wedin.ai activated in Netlify — confirmed live and loading correctly
+- 6 restore URLs updated to app.wedin.ai across 5 email functions (commit dcfdd72)
+- 6 landing page CTAs updated to app.wedin.ai in wedinai/wedin-landing repo
+- Guide pages moved to repo root — now serving correctly at wedin.ai/guide and wedin.ai/guide/wedding-music-south-africa
+- Google Search Console verification file (googlee942d4d5320cdeb6.html) moved to repo root — verification intact
+- Sitemap confirmed at repo root — submitted to Search Console, status Success, 3 pages discovered
+- .gitignore added to wedin-landing repo — excludes .DS_Store and *.pdf
+- BookingReceipt PDF caught and excluded before accidental commit to public repo
+
+**Key learnings documented:**
+- wedin-landing files must be at repo root, not inside public/ — Netlify serves from root only
+- wedin-landing is a separate repo — always git fetch origin before pushing
+- Never use mv without git add -A to stage renames — git tracks deletions not moves
+
+---
+
 ## Session 11 — Claude Code
 ### PayFast integration + security hardening
 *Estimated: 2–3 hours code*
@@ -419,7 +446,7 @@ Technical cleanup:
 - UK market adaptation
 - Artist directory (Phase 3)
 - Planner dashboard (Phase 3)
-- Custom domain activation — app.wedin.ai. CNAME already configured in Netlify DNS. Activate via Netlify → wedin-ai-app → Domain management → Add custom domain → app.wedin.ai. Update all landing page CTAs from wedin-ai-app.netlify.app to app.wedin.ai after activation. See wedin-infrastructure-reference.md for full instructions.
+- Custom domain activation — app.wedin.ai ✓ COMPLETE May 10, 2026
 
 **Technical:**
 - MIL streaming — collapse mil-a and mil-b into single streaming function. Eliminates cold start timeout risk permanently. Estimated 4-6 hours. Touches generate-mil-a.js, generate-mil-b.js, MILIntakeScreen.jsx, BriefScreen.jsx.

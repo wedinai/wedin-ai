@@ -1,5 +1,5 @@
 # wedin.ai — Infrastructure & Hosting Reference
-## Created April 30, 2026
+## Updated May 10, 2026
 
 Load this document when making any changes to hosting, DNS, email, or domain configuration. All decisions and current state recorded here.
 
@@ -9,8 +9,8 @@ Load this document when making any changes to hosting, DNS, email, or domain con
 
 | Product | URL | Host | Purpose |
 |---------|-----|------|---------|
-| Landing page | wedin.ai | To be confirmed | Marketing, waitlist, CTAs |
-| App | wedin-ai-app.netlify.app | Netlify | The product itself |
+| Landing page | wedin.ai | chimerical-melomakarona-962b6c.netlify.app | Marketing, CTAs, AEO guides |
+| App | app.wedin.ai | wedin-ai-app.netlify.app | The product itself |
 
 These are independent deployments. DNS for both routes through Netlify DNS (NS1 nameservers), even though the domain is registered at GoDaddy.
 
@@ -78,8 +78,7 @@ This project has two completely separate GitHub repos and two separate Netlify s
 
 **Platform:** Netlify
 **Team:** wedinai
-**Current app URL:** https://wedin-ai-app.netlify.app
-**Target app URL:** https://app.wedin.ai (to be activated — see Pre-Launch Checklist below)
+**Current app URL:** https://app.wedin.ai ✓ LIVE
 **Build:** React + Vite, deployed via GitHub
 **Functions:** Netlify serverless functions (netlify/functions/)
 
@@ -118,6 +117,38 @@ This project has two completely separate GitHub repos and two separate Netlify s
 
 ---
 
+## Landing Page Repo — wedinai/wedin-landing
+
+**Repo:** wedinai/wedin-landing (separate from wedinai/wedin-ai)
+**Host:** chimerical-melomakarona-962b6c.netlify.app
+**Serves:** wedin.ai (root domain)
+**Build:** Static HTML — no build step. Netlify serves files directly from repo root.
+
+**Repo structure (as of May 10, 2026):**
+- index.html — main landing page
+- sitemap.xml — submitted to Google Search Console May 10, 2026
+- googlee942d4d5320cdeb6.html — Google Search Console verification file
+- guide/ — AEO guide pages
+  - index.html — guides index
+  - wedding-music-south-africa/index.html — SA wedding music guide
+- .gitignore — excludes .DS_Store and *.pdf
+
+**Important:** Files must be at repo root to be served correctly by Netlify. Do not put content inside a public/ subfolder — Netlify will not serve it at the correct URL path.
+
+**Git note:** wedin-landing is a separate repo from the app. Changes must be committed and pushed to wedinai/wedin-landing, not wedinai/wedin-ai. Always run git fetch origin before pushing to avoid rejected pushes.
+
+---
+
+## Google Search Console
+
+**Status:** Verified ✓ — May 10, 2026
+**Property:** https://wedin.ai/
+**Verification method:** HTML file at wedin.ai/googlee942d4d5320cdeb6.html
+**Sitemap:** https://wedin.ai/sitemap.xml — submitted May 10, 2026, status Success, 3 pages discovered
+**Guide pages indexed:** wedin.ai/guide and wedin.ai/guide/wedding-music-south-africa both live and crawlable
+
+---
+
 ## Environment Variables
 
 All environment variables are set in Netlify → wedin-ai-app → Site configuration → Environment variables.
@@ -135,53 +166,22 @@ All environment variables are set in Netlify → wedin-ai-app → Site configura
 
 ---
 
-## Pre-Launch Checklist — Custom Domain Activation
+## Custom Domain Activation — COMPLETED May 10, 2026
 
-**Do this as one of the last steps before go-live. Do not do earlier.**
+All steps below were completed on May 10, 2026.
 
-The goal is to move the app from `wedin-ai-app.netlify.app` to `app.wedin.ai` and update the landing page CTAs to point to the correct URL.
-
-### Step 1 — Activate app.wedin.ai in Netlify
-
-The CNAME record `app.wedin.ai → wedin-ai-app.netlify.app` already exists in Netlify DNS. You just need to tell the Netlify app to accept traffic on that domain.
-
-1. Go to app.netlify.com → wedin-ai-app project
-2. Site configuration → Domain management
-3. Click **Add custom domain**
-4. Enter `app.wedin.ai`
-5. Netlify will verify the CNAME exists and activate it
-6. SSL certificate will provision automatically — takes 2–5 minutes
-7. Test: open https://app.wedin.ai in browser — app should load
-
-### Step 2 — Update landing page CTAs
-
-Once `app.wedin.ai` is confirmed working, update every CTA on the wedin.ai landing page that links to the app.
-
-Find and replace:
-- **From:** `https://wedin-ai-app.netlify.app` (or any variation)
-- **To:** `https://app.wedin.ai`
-
-CTAs to check:
-- Primary hero CTA button
-- Any secondary CTA buttons
-- Any pricing section CTAs
-- Any email links that deep-link into the app
-- Remarketing email restore links (check send-remarketing.js — the restore URL may be hardcoded)
-
-### Step 3 — Update restore URL in remarketing function
-
-Check `netlify/functions/send-remarketing.js` for any hardcoded app URL used in the restore link. Update to `https://app.wedin.ai` if present.
-
-### Step 4 — Smoke test end to end
-
-1. Click CTA on wedin.ai landing page — confirms it routes to app.wedin.ai correctly
-2. Complete a discovery session — confirms app loads and functions correctly on the custom domain
-3. Send a test email from each email button — confirms Resend still sends correctly (domain change does not affect email — email uses wedin.ai domain, not app.wedin.ai)
-4. Test session restore via remarketing email link — confirms restore URL is correct
-
-### Step 5 — Confirm old Netlify URL still works (optional)
-
-wedin-ai-app.netlify.app will continue to work after app.wedin.ai is activated — Netlify serves both. You can leave it active as a fallback or ignore it. No action required.
+- app.wedin.ai activated in Netlify → wedin-ai-app → Domain management ✓
+- All 6 restore URLs in email functions updated to app.wedin.ai ✓
+  - send-remarketing.js (lines 35 and 76)
+  - save-contact.js (line 45)
+  - send-wedding-soundtrack.js (line 29)
+  - send-complete-plan.js (line 29)
+  - send-music-plan.js (line 29)
+- All 6 landing page CTAs updated to app.wedin.ai in wedinai/wedin-landing repo ✓
+  - index.html (lines 706, 842, 890, 914)
+  - public/guide/index.html (line 227)
+  - public/guide/wedding-music-south-africa/index.html (line 719)
+- Smoke test confirmed: wedin.ai CTAs route to app.wedin.ai correctly ✓
 
 ---
 

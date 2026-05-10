@@ -695,7 +695,7 @@ Trust copy:
 Full details in wedin-infrastructure-reference.md (project file). Key facts:
 
 - Domain: wedin.ai — registered at GoDaddy, DNS managed at Netlify (NS1 nameservers)
-- App: wedin-ai-app.netlify.app — custom domain app.wedin.ai pre-configured (CNAME exists), activation is a pre-launch step
+- App: app.wedin.ai ✓ LIVE — custom domain activated May 10, 2026. wedin-ai-app.netlify.app remains active as fallback.
 - Email sending: Resend, hello@wedin.ai, domain verified April 30 2026
 - DNS records for Resend (DKIM, SPF MX, SPF TXT) added to Netlify DNS April 30 2026
 
