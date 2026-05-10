@@ -42,7 +42,7 @@ export const handler = async (event) => {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY)
       // Email-based restore URL — works on any device, no localStorage dependency
-      const returnUrl = `https://wedin-ai-app.netlify.app?email=${encodeURIComponent(email.trim())}`
+      const returnUrl = `https://app.wedin.ai?email=${encodeURIComponent(email.trim())}`
 
       const html = `<!DOCTYPE html>
 <html>

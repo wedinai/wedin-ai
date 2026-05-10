@@ -26,7 +26,7 @@ export const handler = async (event) => {
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY)
-  const returnUrl = `https://wedin-ai-app.netlify.app?email=${encodeURIComponent(email.trim())}`
+  const returnUrl = `https://app.wedin.ai?email=${encodeURIComponent(email.trim())}`
   const displayName = coupleName && coupleName !== 'Your Wedding' ? coupleName : 'Your wedding'
 
   // Section 1 — Wedding Soundtrack (coupleBrief rendered line by line)

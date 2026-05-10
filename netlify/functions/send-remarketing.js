@@ -32,7 +32,7 @@ export const handler = async () => {
     const narrative = session.state?.portrait || null
     if (!narrative) continue // no portrait yet — skip
 
-    const returnUrl = `https://wedin-ai-app.netlify.app?email=${encodeURIComponent(session.email)}`
+    const returnUrl = `https://app.wedin.ai?email=${encodeURIComponent(session.email)}`
 
     const html = buildTouch1Html(narrative, returnUrl)
 
@@ -73,7 +73,7 @@ export const handler = async () => {
   )
 
   for (const session of touch2Eligible) {
-    const returnUrl = `https://wedin-ai-app.netlify.app?email=${encodeURIComponent(session.email)}`
+    const returnUrl = `https://app.wedin.ai?email=${encodeURIComponent(session.email)}`
 
     const html = buildTouch2Html(returnUrl)
 
