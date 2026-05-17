@@ -646,6 +646,26 @@ export default function App() {
     }
   }
 
+  async function handlePromoRedeem(code) {
+    try {
+      const res = await fetch('/.netlify/functions/redeem-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, session_id: sessionId }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setIsPaid(true)
+        localStorage.setItem('wedin_is_paid', 'true')
+        setView('momentMap')
+        return { success: true }
+      }
+      return { error: data.error || 'Something went wrong' }
+    } catch {
+      return { error: 'Something went wrong' }
+    }
+  }
+
   if (view === 'predrinks') {
     return (
       <PreDrinksDeepDive
@@ -845,6 +865,7 @@ export default function App() {
         confirmedMoments={confirmedMoments}
         inProgressMoments={inProgressMoments}
         onUnlock={handleUnlock}
+        onPromoRedeem={handlePromoRedeem}
         onMomentStart={handleMomentStart}
         onGenerateBrief={handleGenerateBrief}
         onBack={() => setView('portrait')}

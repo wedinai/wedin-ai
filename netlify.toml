@@ -55,6 +55,9 @@
 [functions."create-spotify-playlist"]
   timeout = 26
 
+[functions."redeem-promo"]
+  timeout = 10
+
 [functions."send-remarketing"]
   schedule = "0 8 * * *"
 

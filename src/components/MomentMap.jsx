@@ -646,8 +646,24 @@ function ProgressBar({ completed, total }) {
 }
 
 // ─── Unlock CTA banner ─────────────────────────────────────────────────────
-function UnlockBanner({ onUnlock, completedCount, isUnlocking = false }) {
+function UnlockBanner({ onUnlock, completedCount, isUnlocking = false, onPromoRedeem }) {
   const [hovered, setHovered] = useState(false);
+  const [showPromo, setShowPromo] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoError, setPromoError] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+
+  async function handlePromoSubmit() {
+    if (!promoCode.trim() || promoLoading) return;
+    setPromoLoading(true);
+    setPromoError('');
+    const result = await onPromoRedeem(promoCode.trim().toUpperCase());
+    if (result?.error) {
+      setPromoError(result.error);
+      setPromoLoading(false);
+    }
+  }
+
   return (
     <div
       style={{
@@ -724,6 +740,81 @@ function UnlockBanner({ onUnlock, completedCount, isUnlocking = false }) {
           </svg>
         )}
       </button>
+
+      {/* ── Promo code ── */}
+      {!showPromo ? (
+        <button
+          onClick={() => setShowPromo(true)}
+          style={{
+            all: "unset",
+            display: "block",
+            marginTop: 16,
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 13,
+            color: "#C4922A",
+            cursor: "pointer",
+            textDecoration: "underline",
+          }}
+        >
+          Have an access code?
+        </button>
+      ) : (
+        <div style={{ marginTop: 16 }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handlePromoSubmit()}
+              placeholder="Enter your code"
+              disabled={promoLoading}
+              style={{
+                flex: 1,
+                minHeight: 44,
+                padding: "0 12px",
+                border: "1px solid rgba(28,43,58,0.2)",
+                borderRadius: 8,
+                background: "#FFFFFF",
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 14,
+                color: "#1C2B3A",
+                outline: "none",
+                boxSizing: "border-box",
+              }}
+            />
+            <button
+              onClick={handlePromoSubmit}
+              disabled={promoLoading || !promoCode.trim()}
+              style={{
+                all: "unset",
+                minHeight: 44,
+                padding: "10px 18px",
+                background: promoLoading || !promoCode.trim() ? "#4a6070" : "#1C2B3A",
+                color: "#FAF7F2",
+                borderRadius: 8,
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: 14,
+                fontWeight: 600,
+                cursor: promoLoading || !promoCode.trim() ? "default" : "pointer",
+                whiteSpace: "nowrap",
+                boxSizing: "border-box",
+              }}
+            >
+              {promoLoading ? 'Checking…' : 'Apply'}
+            </button>
+          </div>
+          {promoError && (
+            <p style={{
+              margin: "6px 0 0",
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: 13,
+              color: "#C0392B",
+            }}>
+              {promoError}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -738,6 +829,7 @@ export default function MomentMap({
   isPaid = false, // false = show locked state + unlock CTA
   isUnlocking = false, // true while Stripe redirect is in flight
   onUnlock = () => {}, // called when couple clicks unlock / pay
+  onPromoRedeem = () => {}, // called with code string when promo form is submitted
   onMomentStart = () => {}, // called with moment.id when a paid moment is started
   onGenerateBrief = () => {}, // called when all moments confirmed and couple clicks generate
   educationCards = {}, // education cards keyed by momentId, shown below confirmed moments
@@ -913,7 +1005,7 @@ export default function MomentMap({
                 animation: "fadeSlideIn 500ms ease 560ms both",
               }}
             >
-              <UnlockBanner onUnlock={onUnlock} completedCount={completedCount} isUnlocking={isUnlocking} />
+              <UnlockBanner onUnlock={onUnlock} completedCount={completedCount} isUnlocking={isUnlocking} onPromoRedeem={onPromoRedeem} />
             </div>
           )}
         </div>
