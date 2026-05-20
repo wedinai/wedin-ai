@@ -4,19 +4,21 @@ import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.
 const PAYFAST_SANDBOX_URL = 'https://sandbox.payfast.co.za/eng/process'
 const PAYFAST_LIVE_URL = 'https://www.payfast.co.za/eng/process'
 
-function generateSignature(params, passphrase) {
-  // PayFast hashes plain unencoded values — do NOT percent-encode.
-  // Browser form POST handles encoding of field values automatically.
-  let queryString = Object.entries(params)
-    .map(([key, val]) => `${key}=${String(val).trim()}`)
-    .join('&')
-  if (passphrase) {
-    queryString += `&passphrase=${String(passphrase).trim()}`
+// Official PayFast Node.js signature implementation
+const generateSignature = (data, passPhrase = null) => {
+  let pfOutput = ''
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      if (data[key] !== '') {
+        pfOutput += `${key}=${encodeURIComponent(data[key].trim()).replace(/%20/g, '+')}&`
+      }
+    }
   }
-  const sig = crypto.createHash('md5').update(queryString).digest('hex')
-  console.log('PayFast signature string:', queryString)
-  console.log('PayFast signature:', sig)
-  return sig
+  let getString = pfOutput.slice(0, -1)
+  if (passPhrase !== null) {
+    getString += `&passphrase=${encodeURIComponent(passPhrase.trim()).replace(/%20/g, '+')}`
+  }
+  return crypto.createHash('md5').update(getString).digest('hex')
 }
 
 export const handler = async (event) => {
@@ -30,7 +32,7 @@ export const handler = async (event) => {
 
   const merchantId = process.env.PAYFAST_MERCHANT_ID
   const merchantKey = process.env.PAYFAST_MERCHANT_KEY
-  const passphrase = process.env.PAYFAST_PASSPHRASE
+  const passphrase = process.env.PAYFAST_PASSPHRASE || null
 
   if (!merchantId || !merchantKey) {
     return {
