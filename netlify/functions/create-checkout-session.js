@@ -15,8 +15,10 @@ function pfEncode(str) {
 }
 
 function generateSignature(params, passphrase) {
-  const sortedKeys = Object.keys(params).sort()
-  let queryString = sortedKeys.map(key => `${key}=${pfEncode(params[key])}`).join('&')
+  // Parameters must be in documented PayFast order — do NOT sort alphabetically
+  let queryString = Object.entries(params)
+    .map(([key, val]) => `${key}=${pfEncode(val)}`)
+    .join('&')
   if (passphrase) {
     queryString += `&passphrase=${pfEncode(passphrase)}`
   }
@@ -59,6 +61,7 @@ export const handler = async (event) => {
   const isSandbox = process.env.PAYFAST_SANDBOX === 'true'
   const payfastUrl = isSandbox ? PAYFAST_SANDBOX_URL : PAYFAST_LIVE_URL
 
+  // Parameters in documented PayFast order — order is preserved for signature and form submission
   const params = {
     merchant_id: merchantId,
     merchant_key: merchantKey,
@@ -67,21 +70,16 @@ export const handler = async (event) => {
     notify_url: 'https://app.wedin.ai/.netlify/functions/verify-payment',
     m_payment_id: session_id,
     amount: '699.00',
-    item_name: 'wedin.ai — Wedding Music Plan',
+    item_name: 'wedin.ai - Wedding Music Plan',
   }
 
   const signature = generateSignature(params, passphrase)
-
-  // Fields returned in the same sorted order used to generate the signature.
-  const sortedFields = Object.keys(params)
-    .sort()
-    .reduce((acc, key) => { acc[key] = params[key]; return acc }, {})
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      fields: { ...sortedFields, signature },
+      fields: { ...params, signature },
       url: payfastUrl,
     }),
   }
