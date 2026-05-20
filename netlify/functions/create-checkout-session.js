@@ -4,12 +4,22 @@ import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.
 const PAYFAST_SANDBOX_URL = 'https://sandbox.payfast.co.za/eng/process'
 const PAYFAST_LIVE_URL = 'https://www.payfast.co.za/eng/process'
 
+// Replicates PHP urlencode() exactly:
+//   - spaces → +  (not %20 as encodeURIComponent does)
+//   - !'()*~ → percent-encoded  (encodeURIComponent leaves these unencoded)
+//   - trim() applied — matches PHP SDK's trim() on every value
+function pfEncode(str) {
+  return encodeURIComponent(String(str).trim())
+    .replace(/%20/g, '+')
+    .replace(/[!'()*~]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
+}
+
 function generateSignature(params, passphrase) {
-  const sorted = Object.keys(params)
-    .sort()
-    .reduce((acc, key) => { acc[key] = params[key]; return acc }, {})
-  let queryString = new URLSearchParams(sorted).toString()
-  if (passphrase) queryString += '&passphrase=' + encodeURIComponent(passphrase)
+  const sortedKeys = Object.keys(params).sort()
+  let queryString = sortedKeys.map(key => `${key}=${pfEncode(params[key])}`).join('&')
+  if (passphrase) {
+    queryString += `&passphrase=${pfEncode(passphrase)}`
+  }
   return crypto.createHash('md5').update(queryString).digest('hex')
 }
 
@@ -62,11 +72,18 @@ export const handler = async (event) => {
 
   const signature = generateSignature(params, passphrase)
 
+  // Fields must be returned in the same sorted order used to generate the signature.
+  // PayFast verifies the signature against fields in the order they are received,
+  // so the form must submit them in sorted order to match.
+  const sortedFields = Object.keys(params)
+    .sort()
+    .reduce((acc, key) => { acc[key] = params[key]; return acc }, {})
+
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      fields: { ...params, signature },
+      fields: { ...sortedFields, signature },
       url: payfastUrl,
     }),
   }
