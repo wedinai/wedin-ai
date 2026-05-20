@@ -21,7 +21,7 @@ import MomentSummaryScreen from './components/MomentSummaryScreen.jsx'
 export default function App() {
   const [view, setView] = useState(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('payment') === 'success' && params.get('stripe_session_id')) {
+    if (params.get('payment') === 'success') {
       return 'paymentConfirming'
     }
     return 'discovery'
@@ -31,6 +31,8 @@ export default function App() {
   const [coupleName, setCoupleName] = useState('Your Wedding')
   const [isPaid, setIsPaid] = useState(false)
   const [unlocking, setUnlocking] = useState(false)
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false)
+  const [paymentPollingFailed, setPaymentPollingFailed] = useState(false)
   const [completedMoments, setCompletedMoments] = useState([])
   const [inProgressMoments, setInProgressMoments] = useState([])
   const [momentAnswers, setMomentAnswers] = useState({}) // { guestArrivals: {…}, ceremony: {…}, … }
@@ -149,32 +151,55 @@ export default function App() {
       .catch((e) => console.error('Session save failed:', e))
   }, [sessionAnswers])
 
-  // On mount, check if returning from Stripe Checkout
+  // On mount, clear URL params if returning from PayFast — polling handles the rest
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const paymentStatus = params.get('payment')
-    const stripeSessionId = params.get('stripe_session_id')
-
-    if (paymentStatus === 'success' && stripeSessionId) {
-      // Clear URL params immediately so refresh doesn't re-trigger
+    if (params.get('payment') === 'success') {
       window.history.replaceState({}, '', window.location.pathname)
-
-      fetch('/.netlify/functions/verify-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stripe_session_id: stripeSessionId }),
-      })
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data?.isPaid) {
-            setIsPaid(true)
-            localStorage.setItem('wedin_is_paid', 'true')
-            setView('momentMap')
-          }
-        })
-        .catch((e) => console.error('Payment verification failed:', e))
     }
   }, [])
+
+  // Poll check-payment every 3 seconds while in paymentConfirming view (max 10 attempts)
+  useEffect(() => {
+    if (view !== 'paymentConfirming') return
+    const sid = sessionId || localStorage.getItem('wedin_session_id')
+    if (!sid) {
+      setPaymentPollingFailed(true)
+      return
+    }
+    let attempts = 0
+    let cancelled = false
+
+    const poll = async () => {
+      if (cancelled) return
+      attempts++
+      try {
+        const res = await fetch('/.netlify/functions/check-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sid }),
+        })
+        const data = await res.json()
+        if (data.isPaid) {
+          clearInterval(interval)
+          localStorage.removeItem('wedin_payment_pending')
+          localStorage.setItem('wedin_is_paid', 'true')
+          setIsPaid(true)
+          setPaymentConfirmed(true)
+          setTimeout(() => { if (!cancelled) setView('momentMap') }, 2000)
+          return
+        }
+      } catch { /* silent — will retry */ }
+      if (attempts >= 10) {
+        clearInterval(interval)
+        setPaymentPollingFailed(true)
+      }
+    }
+
+    poll() // fire immediately — don't make the couple wait 3s for the first check
+    const interval = setInterval(poll, 3000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [view])
 
   // Restore session for returning couples — Supabase first (keyed by email), localStorage fallback
   useEffect(() => {
@@ -318,6 +343,7 @@ export default function App() {
     localStorage.removeItem('wedin_ceremony_summary')
     localStorage.removeItem('wedin_email')
     localStorage.removeItem('wedin_education_cards')
+    localStorage.removeItem('wedin_payment_pending')
     setSessionAnswers({})
     setSessionId(null)
     setPortrait(null)
@@ -631,14 +657,28 @@ export default function App() {
       const res = await fetch('/.netlify/functions/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, couple_name: coupleName }),
+        body: JSON.stringify({ session_id: sessionId }),
       })
 
       if (!res.ok) throw new Error('Failed to create checkout session')
 
       const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
+      if (data.fields && data.url) {
+        // Build a hidden form and POST to PayFast — page navigates away
+        const form = document.createElement('form')
+        form.method = 'POST'
+        form.action = data.url
+        form.style.display = 'none'
+        Object.entries(data.fields).forEach(([key, value]) => {
+          const input = document.createElement('input')
+          input.type = 'hidden'
+          input.name = key
+          input.value = value
+          form.appendChild(input)
+        })
+        document.body.appendChild(form)
+        localStorage.setItem('wedin_payment_pending', 'true') // must be before form.submit()
+        form.submit()
       }
     } catch (e) {
       console.error('Unlock failed:', e)
@@ -897,6 +937,8 @@ export default function App() {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '32px',
+        padding: '0 24px',
+        textAlign: 'center',
       }}>
         <span style={{
           fontFamily: 'DM Sans, sans-serif',
@@ -907,15 +949,64 @@ export default function App() {
         }}>
           wedin.ai
         </span>
-        <p style={{
-          fontFamily: 'Cormorant Garamond, serif',
-          fontStyle: 'italic',
-          fontSize: '24px',
-          color: 'var(--navy)',
-          margin: 0,
-        }}>
-          Setting up your music map…
-        </p>
+        {paymentPollingFailed ? (
+          <>
+            <p style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontSize: '24px',
+              color: 'var(--navy)',
+              margin: 0,
+            }}>
+              We're still waiting on payment confirmation.
+            </p>
+            <p style={{
+              fontFamily: 'DM Sans, sans-serif',
+              fontSize: '15px',
+              color: 'var(--grey)',
+              margin: 0,
+              maxWidth: '380px',
+              lineHeight: 1.6,
+            }}>
+              If your payment went through, your Moment Map will be unlocked. Email us at hello@wedin.ai if you need help.
+            </p>
+            <button
+              onClick={() => setView('momentMap')}
+              style={{
+                fontFamily: 'DM Sans, sans-serif',
+                fontSize: '15px',
+                color: 'var(--navy)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: 0,
+              }}
+            >
+              Return to Moment Map
+            </button>
+          </>
+        ) : paymentConfirmed ? (
+          <p style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: '28px',
+            color: 'var(--navy)',
+            margin: 0,
+            maxWidth: '420px',
+            lineHeight: 1.4,
+          }}>
+            You're in. Your nine moments are ready.
+          </p>
+        ) : (
+          <p style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontStyle: 'italic',
+            fontSize: '24px',
+            color: 'var(--navy)',
+            margin: 0,
+          }}>
+            Setting up your music map…
+          </p>
+        )}
       </div>
     )
   }

@@ -38,3 +38,50 @@ create table if not exists contacts (
 );
 
 alter table contacts enable row level security;
+
+-- ── Rate Limits ────────────────────────────────────────────────────────────────
+-- IP-based rate limiting for all Netlify functions (20 req/IP/minute).
+-- Rows older than 5 minutes are cleaned up on each request.
+
+create table if not exists rate_limits (
+  id         uuid        default gen_random_uuid() primary key,
+  ip         text        not null,
+  endpoint   text        not null,
+  created_at timestamptz default now() not null
+);
+
+create index if not exists idx_rate_limits_ip_endpoint_created
+  on rate_limits (ip, endpoint, created_at);
+
+alter table rate_limits enable row level security;
+
+-- ── RLS Policies — deny all anon access ───────────────────────────────────────
+-- All legitimate reads/writes go through Netlify Functions with service role key.
+-- Service role bypasses RLS entirely. These policies block direct anon key access.
+
+create policy "deny anon select on sessions"
+  on sessions for select to anon using (false);
+
+create policy "deny anon insert on sessions"
+  on sessions for insert to anon with check (false);
+
+create policy "deny anon update on sessions"
+  on sessions for update to anon using (false);
+
+create policy "deny anon delete on sessions"
+  on sessions for delete to anon using (false);
+
+create policy "deny anon select on contacts"
+  on contacts for select to anon using (false);
+
+create policy "deny anon insert on contacts"
+  on contacts for insert to anon with check (false);
+
+create policy "deny anon update on contacts"
+  on contacts for update to anon using (false);
+
+create policy "deny anon delete on contacts"
+  on contacts for delete to anon using (false);
+
+create policy "deny anon all on rate_limits"
+  on rate_limits for all to anon using (false);

@@ -1,3 +1,4 @@
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 const SYSTEM_PROMPT = `You are a wedding music specialist for wedin.ai. Your role is to assemble the final music brief from a couple's completed planning sessions.
 
 You produce TWO distinct documents in a single response:
@@ -123,6 +124,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'generate-brief')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {

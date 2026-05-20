@@ -1,3 +1,4 @@
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 // generate-brief-b.js — Coordinator's brief only (operational document)
 
 const BASE_PROMPT = `You are a wedding music specialist for wedin.ai. Generate the coordinator's brief only — the operational document.
@@ -156,6 +157,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'generate-brief-b')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {

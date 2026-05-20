@@ -1,4 +1,5 @@
 import ExcelJS from 'exceljs'
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 
 const DISCLAIMER =
   'These are market reference ranges based on SA wedding pricing as of early 2026. Every act quotes differently based on experience, lineup, travel, and availability. Use these as planning anchors, not booking commitments.'
@@ -153,6 +154,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'generate-budget')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {

@@ -1,9 +1,14 @@
 import { Resend } from 'resend'
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 
 export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'send-wedding-soundtrack')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   let body
   try {

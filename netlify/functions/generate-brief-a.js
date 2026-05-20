@@ -1,3 +1,4 @@
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 // generate-brief-a.js — Couple's brief only (emotional mirror)
 
 const SYSTEM_PROMPT = `You are a wedding music specialist for wedin.ai. Generate the couple's brief only — the emotional mirror document.
@@ -133,6 +134,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'generate-brief-a')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {

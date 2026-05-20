@@ -1,3 +1,4 @@
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 // generate-mil-a.js — Batch 1: Guest Arrivals, Ceremony, Pre-drinks, Your Entrance, Dinner
 
 const SYSTEM_PROMPT_BASE = `You are wedin.ai's Music Intelligence Layer — SA wedding music specialist, 200+ weddings. Every recommendation is tied directly to what this specific couple said — never generic.
@@ -225,6 +226,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'generate-mil-a')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {

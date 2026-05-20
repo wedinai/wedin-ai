@@ -1,3 +1,4 @@
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 const SYSTEM_PROMPT = `You are a wedding music specialist for wedin.ai. You have worked 200+ weddings and you know exactly what each moment needs to succeed.
 
 Write a short moment summary directly to the couple in second person — warm, specific, and grounded in what they just told you. 3–4 sentences only.
@@ -21,6 +22,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'generate-moment-summary')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {

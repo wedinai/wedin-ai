@@ -1,3 +1,4 @@
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 // generate-spotify-tracks.js
 // Claude curates a track list from the couple's moment answers and MIL output.
 // Called after MIL completes. Output feeds into create-spotify-playlist.js.
@@ -20,6 +21,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'generate-spotify-tracks')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   try {
     const body = JSON.parse(event.body || '{}')

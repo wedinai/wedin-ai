@@ -96,13 +96,13 @@ export default function PrivacyPage() {
         <span style={styles.wordmark}>wedin.ai</span>
 
         <h1 style={styles.h1}>Privacy Policy</h1>
-        <p style={styles.meta}>Tones of Note PTY (Ltd) · Last updated April 2026 · POPIA compliant</p>
+        <p style={styles.meta}>Wedin (Pty) Ltd · Last updated May 2026 · POPIA compliant</p>
 
         <hr style={styles.divider} />
 
         <h2 style={styles.h2}>1. Who we are</h2>
         <p style={styles.p}>
-          This Privacy Policy applies to wedin.ai, operated by Tones of Note PTY (Ltd), a company
+          This Privacy Policy applies to wedin.ai, operated by Wedin (Pty) Ltd, a company
           registered in South Africa. For any privacy-related enquiries, contact us at{' '}
           <a href="mailto:hello@wedin.ai" style={{ color: '#1C2B3A' }}>hello@wedin.ai</a>.
         </p>
@@ -151,6 +151,7 @@ export default function PrivacyPage() {
           <li><strong>Anthropic</strong> — your session answers are sent to Anthropic's Claude API to generate your music portrait and brief. Anthropic processes this data to produce the AI output and does not retain it for training without your consent.</li>
           <li><strong>Resend</strong> — your email address and music portrait are sent to Resend to deliver your portrait to your inbox. Resend does not use this data for any other purpose.</li>
           <li><strong>Supabase</strong> — your session data is stored in Supabase. Data is encrypted at rest and in transit.</li>
+          <li><strong>PayFast</strong> — payment processing. When you pay for access to the Moment Map, your payment is handled by PayFast (DPO Group). PayFast receives only the information needed to process the payment and confirm completion. No card details pass through or are stored by wedin.ai.</li>
         </ul>
         <p style={styles.p}>
           We do not sell your data. We do not share your data with wedding planners, musicians,

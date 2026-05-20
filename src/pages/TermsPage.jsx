@@ -88,13 +88,13 @@ export default function TermsPage() {
         <span style={styles.wordmark}>wedin.ai</span>
 
         <h1 style={styles.h1}>Terms and Conditions</h1>
-        <p style={styles.meta}>Tones of Note PTY (Ltd) · Last updated April 2026</p>
+        <p style={styles.meta}>Wedin (Pty) Ltd · Last updated May 2026</p>
 
         <hr style={styles.divider} />
 
         <h2 style={styles.h2}>1. Who we are</h2>
         <p style={styles.p}>
-          wedin.ai is a service operated by Tones of Note PTY (Ltd), a company registered in South Africa.
+          wedin.ai is a service operated by Wedin (Pty) Ltd, a company registered in South Africa.
           You can reach us at <a href="mailto:hello@wedin.ai" style={{ color: '#1C2B3A' }}>hello@wedin.ai</a>.
         </p>
 
@@ -138,7 +138,7 @@ export default function TermsPage() {
         </p>
         <p style={styles.p}>
           You may not reproduce, resell, or commercialise the wedin.ai platform or its outputs
-          without written permission from Tones of Note PTY (Ltd).
+          without written permission from Wedin (Pty) Ltd.
         </p>
 
         <h2 style={styles.h2}>6. Pricing guidance</h2>

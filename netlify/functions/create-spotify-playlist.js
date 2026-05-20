@@ -1,3 +1,4 @@
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 // create-spotify-playlist.js
 // Takes Claude's track list, searches Spotify for each track,
 // creates one playlist for the full wedding, returns the shareable URL.
@@ -6,6 +7,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'create-spotify-playlist')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_REFRESH_TOKEN, SPOTIFY_USER_ID } = process.env
 

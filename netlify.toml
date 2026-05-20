@@ -58,6 +58,12 @@
 [functions."redeem-promo"]
   timeout = 10
 
+[functions."check-payment"]
+  timeout = 10
+
+[functions."delete-session"]
+  timeout = 10
+
 [functions."send-remarketing"]
   schedule = "0 8 * * *"
 

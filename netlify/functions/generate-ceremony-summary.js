@@ -1,4 +1,5 @@
 import { CEREMONY_KNOWLEDGE_BASE } from '../../src/data/ceremonyKnowledge.js'
+import { checkRateLimit, getIP, RATE_LIMITED_RESPONSE } from './utils/rateLimit.js'
 
 const SYSTEM_PROMPT = `${CEREMONY_KNOWLEDGE_BASE}
 
@@ -33,6 +34,10 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
+
+  const ip = getIP(event)
+  const { limited } = await checkRateLimit(ip, 'generate-ceremony-summary')
+  if (limited) return RATE_LIMITED_RESPONSE
 
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {

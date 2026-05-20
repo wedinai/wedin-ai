@@ -334,7 +334,7 @@ Full flow on real mobile. All 9 moments. Real payment. All email flows. All thre
 | Payments | PayFast — replacing Stripe. Stripe test mode currently live. |
 | Music APIs | Spotify — complete and live |
 | Version control | GitHub — wedinai/wedin-ai |
-| Legal entity | Tones of Note PTY (Ltd) |
+| Legal entity | Wedin (Pty) Ltd |
 
 ---
 
@@ -726,7 +726,7 @@ Full details in wedin-infrastructure-reference.md (project file). Key facts:
 
 **Privacy Policy** — live at /privacy. POPIA compliant. Email + session answers in Supabase; payment via PayFast; data not sold; user rights under POPIA.
 
-**Legal entity:** Tones of Note PTY (Ltd) | **Contact:** hello@wedin.ai
+**Legal entity:** Wedin (Pty) Ltd | **Contact:** hello@wedin.ai
 
 **Cookie consent banner** — live ✓
 
