@@ -1,5 +1,5 @@
 # wedin.ai — Infrastructure & Hosting Reference
-## Updated May 10, 2026
+## Updated May 20, 2026
 
 Load this document when making any changes to hosting, DNS, email, or domain configuration. All decisions and current state recorded here.
 
@@ -109,11 +109,69 @@ This project has two completely separate GitHub repos and two separate Netlify s
 
 ---
 
+## Payment — PayFast
+
+**Provider:** PayFast (DPO Group)
+**Status:** Live ✓ — May 20, 2026
+**Account:** Wedin (Pty) Ltd merchant account
+**Dashboard:** merchants.payfast.co.za
+**Amount:** R699.00 one-time fee
+
+**How payments work:**
+1. Frontend calls `/.netlify/functions/create-checkout-session` with the Supabase `session_id`
+2. Function returns signed form fields + PayFast URL
+3. Frontend builds a hidden HTML form and POSTs directly to PayFast
+4. After payment, PayFast redirects couple to `https://app.wedin.ai/payment-success`
+5. App detects `/payment-success` path, enters polling state
+6. PayFast fires ITN (server-to-server) to `/.netlify/functions/verify-payment`
+7. `verify-payment.js` verifies signature, writes `is_paid: true` to Supabase
+8. Frontend polling (`check-payment.js`) detects `isPaid: true`, shows confirmation, unlocks Moment Map
+
+**Netlify functions:**
+
+| Function | Role |
+|----------|------|
+| `create-checkout-session.js` | Generates MD5-signed PayFast form fields server-side |
+| `verify-payment.js` | PayFast ITN handler — server-to-server only, never called by browser |
+| `check-payment.js` | Frontend polling endpoint — returns `{ isPaid: boolean }` |
+
+**Signature implementation — critical, do not change:**
+Uses the exact official PayFast Node.js SDK method:
+```js
+encodeURIComponent(value.trim()).replace(/%20/g, '+')
+```
+Parameters must be in documented order (not alphabetical): `merchant_id`, `merchant_key`, `return_url`, `cancel_url`, `notify_url`, `m_payment_id`, `amount`, `item_name`. Passphrase appended as `&passphrase=encodedValue`. MD5 of full string.
+
+**Return URL:** `https://app.wedin.ai/payment-success` — clean path, no query string. The Netlify catch-all redirect serves `index.html` for this path and App.jsx detects `window.location.pathname === '/payment-success'`.
+
+**Sandbox vs live toggle:** `PAYFAST_SANDBOX=true` in Netlify env → routes to `sandbox.payfast.co.za`. Remove or set `false` for production. Currently set to `false` — live.
+
+**If a payment is not unlocking:**
+1. Check `verify-payment` function logs in Netlify — did the ITN arrive?
+2. If no ITN: PayFast may be having trouble reaching the notify URL. Check PayFast dashboard → Transaction history → ITN log.
+3. If ITN arrived but `is_paid` not updated: check Supabase sessions table for the `m_payment_id` (= `session_id`). Check function logs for Supabase errors.
+4. If `is_paid` is true but Moment Map still locked: couple's `check-payment` polling may have timed out (max 10 attempts). Advise them to reload — the `isPaid` flag will be picked up from Supabase on restore.
+
+---
+
 ## Database
 
 **Provider:** Supabase
-**Used for:** Session persistence, email deduplication, remarketing sequence
-**Environment variable:** SUPABASE_URL and SUPABASE_ANON_KEY set in Netlify environment variables
+**Project ID:** kzqubbioodvlwfobrqdv (this is the live app project — always use this one)
+**Used for:** Session persistence, email deduplication, remarketing sequence, rate limiting
+**Environment variables:** `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (frontend read-only), `SUPABASE_SERVICE_ROLE_KEY` (all Netlify functions — bypasses RLS)
+
+**⚠️ Supabase MCP warning:** The Supabase MCP connects to project `ruomrpiukvrejimrtsqb` which has no tables. Do not use the MCP for any wedin.ai database work. Always use the Supabase dashboard directly at supabase.com → project kzqubbioodvlwfobrqdv.
+
+**Tables:**
+
+| Table | Purpose | RLS |
+|-------|---------|-----|
+| sessions | All session data — answers, state, is_paid, email | Deny all anon ✓ |
+| contacts | Email captures | Deny all anon ✓ |
+| rate_limits | IP-based rate limiting for all Netlify functions | Deny all anon ✓ |
+
+**RLS status (as of May 20, 2026):** Deny-all anon policies active on all three tables. Service role key (used in all Netlify functions) bypasses RLS — no function changes needed.
 
 ---
 
@@ -157,10 +215,18 @@ All environment variables are set in Netlify → wedin-ai-app → Site configura
 |----------|---------|
 | ANTHROPIC_API_KEY | Claude API — all generate functions |
 | RESEND_API_KEY | Resend email sending |
-| SUPABASE_URL | Supabase database connection |
-| SUPABASE_ANON_KEY | Supabase authentication |
-| PAYFAST_MERCHANT_ID | PayFast payments (Session 11) |
-| PAYFAST_MERCHANT_KEY | PayFast payments (Session 11) |
+| VITE_SUPABASE_URL | Supabase URL — frontend + functions |
+| VITE_SUPABASE_ANON_KEY | Supabase anon key — frontend read-only |
+| SUPABASE_SERVICE_ROLE_KEY | Supabase service role — all Netlify functions, bypasses RLS |
+| PAYFAST_MERCHANT_ID | PayFast merchant ID |
+| PAYFAST_MERCHANT_KEY | PayFast merchant key |
+| PAYFAST_PASSPHRASE | PayFast passphrase — must match exactly what is set in PayFast merchant settings |
+| PAYFAST_SANDBOX | `true` = sandbox.payfast.co.za / `false` or absent = live. Currently `false`. |
+| DELETE_SECRET | POPIA erasure secret — gates `delete-session.js`. Keep private. |
+| SPOTIFY_CLIENT_ID | Spotify API |
+| SPOTIFY_CLIENT_SECRET | Spotify API |
+| SPOTIFY_REFRESH_TOKEN | Spotify API — re-issue if scopes change |
+| SPOTIFY_USER_ID | Spotify account user ID for playlist creation |
 
 **If any function stops working:** Check that the relevant environment variable is present and correctly set in Netlify. Environment variables do not carry over automatically between Netlify sites.
 
@@ -197,6 +263,12 @@ All steps below were completed on May 10, 2026.
 1. Check Netlify → wedin-ai-app → Domain management — is app.wedin.ai listed as a custom domain?
 2. Check Netlify DNS — is the CNAME record present?
 3. Wait 5 minutes for SSL to provision if newly activated.
+
+**Payment not unlocking after successful PayFast transaction:**
+See the "If a payment is not unlocking" steps in the PayFast section above.
+
+**PayFast signature mismatch:**
+The signature implementation is critical and must not be changed. If PayFast returns a signature error: (1) confirm `PAYFAST_PASSPHRASE` in Netlify exactly matches the passphrase set in PayFast merchant settings, (2) confirm `PAYFAST_SANDBOX` is set correctly for the environment being tested.
 
 **Function returning errors:**
 1. Check Netlify → Functions → [function name] → invocation logs for error detail.
