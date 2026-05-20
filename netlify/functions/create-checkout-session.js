@@ -20,24 +20,7 @@ function generateSignature(params, passphrase) {
   if (passphrase) {
     queryString += `&passphrase=${pfEncode(passphrase)}`
   }
-
-  // DEBUG — remove before go-live
-  console.log('=== PayFast signature debug ===')
-  console.log('Sorted keys:', sortedKeys)
-  sortedKeys.forEach(key => {
-    console.log(`  ${key} = [${params[key]}] → encoded: [${pfEncode(params[key])}]`)
-  })
-  if (passphrase) {
-    console.log(`  passphrase = [${passphrase}] → encoded: [${pfEncode(passphrase)}]`)
-  } else {
-    console.log('  passphrase: NOT SET')
-  }
-  console.log('Full query string being hashed:')
-  console.log(queryString)
-  const sig = crypto.createHash('md5').update(queryString).digest('hex')
-  console.log('Generated signature:', sig)
-  console.log('===============================')
-  return sig
+  return crypto.createHash('md5').update(queryString).digest('hex')
 }
 
 export const handler = async (event) => {
@@ -89,20 +72,10 @@ export const handler = async (event) => {
 
   const signature = generateSignature(params, passphrase)
 
-  // Fields must be returned in the same sorted order used to generate the signature.
-  // PayFast verifies the signature against fields in the order they are received,
-  // so the form must submit them in sorted order to match.
+  // Fields returned in the same sorted order used to generate the signature.
   const sortedFields = Object.keys(params)
     .sort()
     .reduce((acc, key) => { acc[key] = params[key]; return acc }, {})
-
-  // DEBUG — remove before go-live
-  console.log('=== PayFast form fields (submission order) ===')
-  Object.entries({ ...sortedFields, signature }).forEach(([k, v]) => {
-    console.log(`  ${k}: ${v}`)
-  })
-  console.log('PayFast URL:', payfastUrl)
-  console.log('==============================================')
 
   return {
     statusCode: 200,
