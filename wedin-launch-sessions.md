@@ -43,8 +43,8 @@ Load alongside CLAUDE.md at the start of every Claude Code session. CLAUDE.md is
 | 10c | Claude Code | Completion card + consolidated email + UX fixes | 2–3 | ✓ COMPLETE — May 3 |
 | QA-Fix | Claude.ai + Claude Code | Output QA + 10 prompt/code fixes | 8+ | ✓ COMPLETE — May 6–7 |
 | Tech Debt | Claude.ai + Claude Code | Infrastructure audit + domain activation + URL cleanup | 3 | ✓ COMPLETE — May 10 |
-| 11 | Claude Code | PayFast + security hardening | 2–3 | NEXT |
-| 12 | Claude Code | Pre-launch QA | 3+ | Last |
+| 11 | Claude Code | PayFast + security hardening | 2–3 | ✓ COMPLETE — May 20 |
+| 12 | Claude Code | Pre-launch QA | 3+ | NEXT |
 
 ---
 
@@ -337,26 +337,29 @@ During commit 0b47f1b, the root `index.html` (Vite entry point) was overwritten 
 
 ---
 
-## Session 11 — Claude Code
+## Session 11 — Claude Code ✓ COMPLETE
 ### PayFast integration + security hardening
-*Estimated: 2–3 hours code*
+*Completed May 20, 2026*
 
-**Pre-session requirement:** PayFast merchant account for Tones of Note PTY (Ltd) live with sandbox credentials in hand. Do not open this session without them.
+**Built and deployed:**
+- `create-checkout-session.js` rewritten — MD5-signed PayFast form fields. Official Node.js sig implementation: `encodeURIComponent(value.trim()).replace(/%20/g, '+')`, documented parameter order, passphrase appended. Stripe removed.
+- `verify-payment.js` rewritten — PayFast ITN handler, server-to-server only, signature verification, writes `is_paid: true` to Supabase, always returns 200
+- `check-payment.js` new — frontend polling endpoint, returns `{ isPaid: boolean }`, max 10 attempts at 3s intervals
+- `delete-session.js` new — POPIA erasure, gated by `DELETE_SECRET` env var
+- `netlify/functions/utils/rateLimit.js` new — shared helper, Supabase-backed, 20 req/IP/min, fails open
+- Rate limiting added to all 22 functions (all except `verify-payment` and `send-remarketing`)
+- Supabase RLS deny-all anon policies on sessions, contacts, rate_limits. `rate_limits` table created
+- `App.jsx` — `handleUnlock` POSTs hidden form to PayFast. Return URL: `https://app.wedin.ai/payment-success`. Polling on return, confirmation state, routes to Moment Map
+- Legal entity updated to Wedin (Pty) Ltd — TermsPage.jsx, PrivacyPage.jsx, index.html JSON-LD
+- PayFast added to Privacy Policy data processors
+- Stripe removed from package.json
+- Real R699 payment confirmed end-to-end May 20, 2026
 
-**Load at session start:** CLAUDE.md
+**Key technical note — PayFast signature (do not change):**
+`encodeURIComponent(value.trim()).replace(/%20/g, '+')` for all values. Parameters in documented order. Passphrase appended as `&passphrase=encodedValue`. This is the exact official PayFast Node.js SDK implementation.
 
-**Build tasks — execute in this order:**
-1. Replace `create-checkout-session.js` with PayFast equivalent
-2. Replace `verify-payment.js` with PayFast equivalent
-3. Wire PayFast webhook signature verification
-4. Update T&Cs and Privacy Policy copy to reference PayFast not Stripe
-5. Add post-payment confirmation state — "You're in. Your nine moments are ready." before Moment Map loads
-6. Rate limiting on all Netlify functions
-7. Supabase RLS audit — confirm row-level security active on all tables
-8. Data deletion mechanism — POPIA compliance, couple can request data removal
-9. Test full payment flow end-to-end in PayFast sandbox on the production Netlify build
-
-If merchant account not yet ready when session opens: complete tasks 5, 6, 7, and 8 first — none require PayFast credentials.
+**One cleanup item for Session 12:**
+Remove debug `console.log` statements from `create-checkout-session.js`.
 
 ---
 
@@ -367,6 +370,8 @@ If merchant account not yet ready when session opens: complete tasks 5, 6, 7, an
 **Run on a real mobile device. Not browser dev tools. Not desktop.**
 
 **Load at session start:** CLAUDE.md
+
+**First task:** Remove debug `console.log` statements from `create-checkout-session.js` (carried over from Session 11).
 
 **Full flow test:** Discovery session → portrait → email capture → payment → all 9 moments → "Build my wedding soundtrack →" → WeddingSoundtrackScreen → MILIntakeScreen (all three chip questions) → Music Plan → BriefScreen all four tabs → Budget tab Excel download. Real PayFast payment. All email flows triggered and confirmed arriving.
 

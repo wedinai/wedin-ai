@@ -156,7 +156,7 @@ Sheet 3 — Hidden Costs
 
 ---
 
-## Current Build Status — May 7, 2026
+## Current Build Status — May 20, 2026
 
 **Phase:** Phase 2 — in progress.
 
@@ -200,7 +200,7 @@ Sheet 3 — Hidden Costs
 - Session restore — localStorage + Supabase persistence, restore on return visit confirmed working
 - Email restore link — ?email= query parameter in portrait email, App.jsx triggers restore on load ✓
 - Email — portrait in gold-bordered block, R699 pricing, CTA links to Moment Map, Resend confirmed delivering (domain verified April 30 2026)
-- Stripe test integration — R699 ZAR, unlocks Moment Map
+- ~~Stripe test integration~~ — replaced by PayFast (Session 11)
 - T&Cs and Privacy Policy — live at /terms and /privacy, footer links, cookie consent banner ✓
 - ceremonyKnowledge.js — updated to v3.0, April 4
 - Spotify integration — complete and live. See Spotify section below.
@@ -266,16 +266,27 @@ Sheet 3 — Hidden Costs
   - persistState() converted to async with one retry on failure (2-second delay) — silent to couple, protects session restore
   - Redundant ceremony summary screen removed from CeremonyDeepDive.jsx — ceremony flow now matches all other moments (summary + two CTAs on one screen)
   - Landing page copy updated — all eight approved changes live on wedin.ai (output names, nav CTA, deliverables, pricing list)
+- **Session 11 — PayFast integration + security hardening ✓** (May 20, 2026)
+  - PayFast live. Stripe removed entirely. `create-checkout-session.js` rewritten — MD5-signed form fields using official PayFast Node.js signature implementation (`encodeURIComponent` + `%20→+`, documented parameter order, passphrase appended)
+  - `verify-payment.js` rewritten — PayFast ITN handler, server-to-server only, signature verification, writes `is_paid: true` to Supabase, always returns 200
+  - `check-payment.js` new — frontend polling endpoint, called every 3 seconds post-payment, max 10 attempts
+  - `delete-session.js` new — POPIA erasure, gated by `DELETE_SECRET` env var, deletes from sessions + contacts by email
+  - `netlify/functions/utils/rateLimit.js` new — shared rate limit helper, Supabase-backed, 20 req/IP/min, 5-min TTL cleanup, fails open
+  - Rate limiting added to all 22 functions (all except `verify-payment` and `send-remarketing`)
+  - Supabase RLS deny-all anon policies live on sessions, contacts, rate_limits tables. `rate_limits` table created
+  - `App.jsx` updated — `handleUnlock` POSTs hidden form to PayFast, polls `check-payment` on return, shows confirmation state, routes to Moment Map on success. Return URL: `https://app.wedin.ai/payment-success` (clean path, no query string)
+  - Legal entity updated to Wedin (Pty) Ltd throughout — TermsPage.jsx, PrivacyPage.jsx, index.html JSON-LD, CLAUDE.md
+  - PayFast added to Privacy Policy data processors list
+  - Stripe removed from package.json
+  - Real R699 payment confirmed end-to-end May 20, 2026 — ITN received, Supabase updated, Moment Map unlocked
+  - **PayFast signature note:** `encodeURIComponent(value.trim()).replace(/%20/g, '+')` for all values. Parameters in documented order not alphabetical. Passphrase appended as `&passphrase=encodedValue`. Matches official PayFast Node.js SDK exactly.
 
 ---
 
 ## ✗ NOT YET BUILT — Remaining Before Launch
 
-**Session 11 — PayFast + security:**
-PayFast merchant account must be live before this session. Rate limiting, Supabase RLS audit, data deletion (POPIA), post-payment confirmation state. Stripe test mode currently live.
-
 **Session 12 — Pre-launch QA:**
-Full flow on real mobile. All 9 moments. Real payment. All email flows. All three coordinator profiles tested against live output.
+Full flow on real mobile. All 9 moments. Real payment. All email flows. All three coordinator profiles tested against live output. Minimum 3 hours. Do not shortcut.
 
 ---
 
@@ -308,11 +319,11 @@ Full flow on real mobile. All 9 moments. Real payment. All email flows. All thre
 - `VITE_` prefix only for: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
 - All sensitive keys in `.env.local` (never committed) and Netlify environment variables
 
-**Must build before launch:**
-- Rate limiting on Netlify functions — prevent Claude API abuse
-- Supabase RLS audit — verify row-level security enforced on sessions and contacts tables
-- PayFast webhook signature verification — payment cannot be bypassed by spoofing webhook
-- Data deletion mechanism — must honour POPIA erasure requests without manually querying Supabase
+**Built in Session 11 ✓:**
+- Rate limiting on all 22 Netlify functions — 20 req/IP/min, Supabase-backed, fails open
+- Supabase RLS — deny-all anon policies on sessions, contacts, rate_limits
+- PayFast ITN signature verification — payment cannot be spoofed
+- POPIA data deletion — `delete-session.js` gated by `DELETE_SECRET`
 
 **Always:**
 - Supabase RLS enabled on all tables
@@ -331,7 +342,7 @@ Full flow on real mobile. All 9 moments. Real payment. All email flows. All thre
 | Database | Supabase (PostgreSQL) |
 | Email | Resend — hello@wedin.ai verified (domain re-verified April 30 2026) |
 | Hosting | Netlify |
-| Payments | PayFast — replacing Stripe. Stripe test mode currently live. |
+| Payments | PayFast — live. Stripe removed. |
 | Music APIs | Spotify — complete and live |
 | Version control | GitHub — wedinai/wedin-ai |
 | Legal entity | Wedin (Pty) Ltd |
@@ -423,8 +434,11 @@ wedin.ai/
       generate-portrait.js         — hallucination prevention, session boundary
       save-session.js
       save-contact.js              — Resend confirmed delivering
-      create-checkout-session.js   — Stripe test (PayFast migration pending)
-      verify-payment.js
+      create-checkout-session.js   — PayFast signed form fields. Official Node.js sig impl. ✓ Session 11
+      verify-payment.js            — PayFast ITN handler, server-to-server, sig verification. ✓ Session 11
+      check-payment.js             — Frontend polling endpoint, returns { isPaid }. ✓ Session 11
+      delete-session.js            — POPIA erasure, DELETE_SECRET gated. ✓ Session 11
+      utils/rateLimit.js           — Shared rate limit helper, 20 req/IP/min. ✓ Session 11
       generate-ceremony-summary.js — second person, tone consistency rules deployed
       generate-brief-a.js          — Wedding Soundtrack, 2nd person to couple, emotional mirror
       generate-brief-b.js          — coordinator's brief, 2nd person to coordinator, JSON repair fallback
@@ -734,8 +748,13 @@ Full details in wedin-infrastructure-reference.md (project file). Key facts:
 
 ## Payment Gateway
 
-**Stripe** — test mode currently live. SA merchant limitations.
-**PayFast** — replacement. SA's most used gateway. Supports cards, EFT, SnapScan, Zapper. Merchant account application submitted. Swap create-checkout-session.js and verify-payment.js. Test end-to-end before going live.
+**PayFast** — live. SA's most used gateway. Cards, EFT, SnapScan, Zapper. Real R699 payment confirmed end-to-end May 20, 2026.
+
+**Signature implementation (critical — do not change):** `encodeURIComponent(value.trim()).replace(/%20/g, '+')` for all values. Parameters in documented order (merchant_id, merchant_key, return_url, cancel_url, notify_url, m_payment_id, amount, item_name). Passphrase appended as `&passphrase=encodedValue`. Matches official PayFast Node.js SDK exactly.
+
+**Return URL:** `https://app.wedin.ai/payment-success` — clean path, no query string. App.jsx detects `window.location.pathname === '/payment-success'` and routes to `paymentConfirming` view.
+
+**Stripe** — removed entirely. Stripe dependency removed from package.json.
 
 ---
 
