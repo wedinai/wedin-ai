@@ -73,6 +73,8 @@ export const handler = async (event) => {
     item_name: 'wedin.ai - Wedding Music Plan',
   }
 
+  console.log('PAYFAST_PASSPHRASE env var:', process.env.PAYFAST_PASSPHRASE === undefined ? 'undefined (not set — passphrase omitted from signature)' : `"${process.env.PAYFAST_PASSPHRASE}" (set — will be appended to signature)`)
+
   const signature = generateSignature(params, passphrase)
 
   return {
