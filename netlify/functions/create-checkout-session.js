@@ -65,7 +65,7 @@ export const handler = async (event) => {
   const params = {
     merchant_id: merchantId,
     merchant_key: merchantKey,
-    return_url: 'https://app.wedin.ai?payment=success',
+    return_url: 'https://app.wedin.ai/payment-success',
     cancel_url: 'https://app.wedin.ai',
     notify_url: 'https://app.wedin.ai/.netlify/functions/verify-payment',
     m_payment_id: session_id,
@@ -73,16 +73,18 @@ export const handler = async (event) => {
     item_name: 'wedin.ai - Wedding Music Plan',
   }
 
-  console.log('PAYFAST_PASSPHRASE env var:', process.env.PAYFAST_PASSPHRASE === undefined ? 'undefined (not set — passphrase omitted from signature)' : `"${process.env.PAYFAST_PASSPHRASE}" (set — will be appended to signature)`)
+  console.log('PAYFAST_PASSPHRASE env var:', process.env.PAYFAST_PASSPHRASE === undefined ? 'undefined (omitted from signature)' : 'SET (appended to signature)')
 
   const signature = generateSignature(params, passphrase)
+  const fields = { ...params, signature }
+
+  console.log('=== PayFast fields being sent to browser ===')
+  Object.entries(fields).forEach(([k, v]) => console.log(`  ${k}: ${v}`))
+  console.log('============================================')
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      fields: { ...params, signature },
-      url: payfastUrl,
-    }),
+    body: JSON.stringify({ fields, url: payfastUrl }),
   }
 }

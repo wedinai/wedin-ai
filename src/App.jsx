@@ -21,7 +21,7 @@ import MomentSummaryScreen from './components/MomentSummaryScreen.jsx'
 export default function App() {
   const [view, setView] = useState(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('payment') === 'success') {
+    if (params.get('payment') === 'success' || window.location.pathname === '/payment-success') {
       return 'paymentConfirming'
     }
     return 'discovery'
@@ -151,11 +151,13 @@ export default function App() {
       .catch((e) => console.error('Session save failed:', e))
   }, [sessionAnswers])
 
-  // On mount, clear URL params if returning from PayFast — polling handles the rest
+  // On mount, clear URL if returning from PayFast — polling handles the rest
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get('payment') === 'success') {
-      window.history.replaceState({}, '', window.location.pathname)
+      window.history.replaceState({}, '', '/')
+    } else if (window.location.pathname === '/payment-success') {
+      window.history.replaceState({}, '', '/')
     }
   }, [])
 
@@ -204,7 +206,7 @@ export default function App() {
   // Restore session for returning couples — Supabase first (keyed by email), localStorage fallback
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('payment') === 'success') return
+    if (params.get('payment') === 'success' || window.location.pathname === '/payment-success') return
 
     // Email link restore — ?email= param lands from portrait delivery email
     const urlEmail = params.get('email')
