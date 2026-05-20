@@ -13,7 +13,10 @@ function generateSignature(params, passphrase) {
   if (passphrase) {
     queryString += `&passphrase=${String(passphrase).trim()}`
   }
-  return crypto.createHash('md5').update(queryString).digest('hex')
+  const sig = crypto.createHash('md5').update(queryString).digest('hex')
+  console.log('PayFast signature string:', queryString)
+  console.log('PayFast signature:', sig)
+  return sig
 }
 
 export const handler = async (event) => {
