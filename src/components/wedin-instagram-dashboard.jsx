@@ -1,476 +1,601 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
-// ─── SCHEDULE DATA ────────────────────────────────────────────────────────────
-// Anchored to launch Monday. Change LAUNCH_DATE to shift the whole arc.
+// ─── MASTER STYLE PREFIX ──────────────────────────────────────────────────────
+// Prepend this to every AI image prompt before the slide-specific prompt.
+export const MASTER_PREFIX =
+  "Warm editorial photography aesthetic. Soft directional light, late afternoon warmth. Colour palette: warm cream (#FAF7F2), deep navy (#1C2B3A), single gold accent. Tactile surfaces — linen, white plaster, aged timber, hand-thrown ceramics. Minimal composition with strong negative space. South African winelands setting where relevant. No people unless specified. No sparklers, no confetti, no clichéd wedding tropes. 4:5 aspect ratio for Instagram feed.";
+
+// ─── SCHEDULE ─────────────────────────────────────────────────────────────────
 const LAUNCH_DATE = new Date("2026-05-25"); // Monday Week 1
 
 function getScheduledDate(weekIndex, dayOfWeek) {
-  // dayOfWeek: 1=Mon, 3=Wed, 4=Thu, 5=Fri
+  // dayOfWeek: 1=Mon, 3=Wed
   const d = new Date(LAUNCH_DATE);
   d.setDate(LAUNCH_DATE.getDate() + weekIndex * 7 + (dayOfWeek - 1));
   return d;
 }
 
+// ─── CONTENT DATA ─────────────────────────────────────────────────────────────
+// Each post: { day, type, concept, slides[], caption, hashtags }
+// Each slide: { label, prompt, canva }
+// prompt = slide-specific only; prepend MASTER_PREFIX when copying.
+// Stories run daily from repurposed feed content — see Stories section in each week.
+
 const WEEKS = [
+  // ── WEEK 1 ──────────────────────────────────────────────────────────────────
   {
     week: 1,
     theme: "Plant the Stakes",
-    posts: [
-      {
-        day: 1, // Monday
-        type: "Hero Carousel",
-        concept: "The moment music made your wedding real",
-        slides: [
-          "Slide 1: 'There's a moment at every wedding…'",
-          "Slide 2: '…when the music starts and everyone understands exactly what kind of love this is.'",
-          "Slide 3: 'Not background noise. Not a playlist someone cobbled together.'",
-          "Slide 4: 'A score. Written for you.'",
-          "Slide 5: 'wedin.ai builds it in 15 minutes.'",
-          "Slide 6: CTA — wedin.ai — Start free →",
-        ],
-        caption: `There's a moment at every wedding when the music starts and everyone understands exactly what kind of love this is.
-
-Not background noise. Not a Spotify playlist someone cobbled together at midnight.
-
-A score. Written for your specific story.
-
-wedin.ai builds it in 15 minutes — Entrance. First Dance. Reception arc. Ceremony close. 80 songs, placed precisely.
-
-Link in bio. Start free.
-
-#WeddingSouth Africa #WeddingMusic #WeddingPlanning #WeddingDay #SouthAfricanWedding #BrideAndGroom #WeddingInspiration #WeddingPlaylist #FirstDance #WeddingDJ #WeddingBand #WeddingMoments`,
-        imagePrompt: `Cinematic close-up: a DJ's hands hovering over CDJ decks, soft bokeh of fairy lights behind them. Mood: anticipation, artistry, the second before the first note. Color grade: warm cream-to-amber tones. No text overlay needed — pure atmosphere. Shot could double as a luxury music venue photo.`,
-        canva: `Format: Instagram Carousel (1080x1080px each slide)
-Slide 1–5: Navy (#1C2B3A) background, Cormorant Garamond 48pt in cream (#FAF7F2), centered. Single sentence per slide. No images — pure typography.
-Slide 6: Split: left half navy with wordmark "wedin.ai" in gold (#C4922A), right half cream with "Start free →" in navy. Minimal, editorial.`,
-        hashtags: "#WeddingSouthAfrica #WeddingMusic #WeddingPlanning #WeddingDay #SouthAfricanWedding #BrideAndGroom #WeddingInspiration #WeddingPlaylist #FirstDance #WeddingDJ",
-      },
-      {
-        day: 3, // Wednesday
-        type: "Single Image",
-        concept: "The problem: most couples have no music plan until 6 weeks out",
-        slides: [
-          "Single frame: bold stat — '67% of couples only start planning wedding music 6 weeks before. wedin.ai: 15 minutes, sorted.'",
-        ],
-        caption: `Most couples start planning wedding music 6 weeks before the day.
-
-Their DJ gets a 3-page brief with 40 song requests and no context.
-
-Chaos, politely.
-
-wedin.ai gives your music team a complete brief: 80 curated tracks, scene-by-scene timing, mood logic, and a Spotify playlist — all from one 15-minute session.
-
-You arrive at your first DJ meeting with something actually useful.
-
-Link in bio.
-
-#WeddingPlanning #WeddingMusicSA #SouthAfricanBride #WeddingTips #WeddingDJ #WeddingBand #WeddingChecklist #BridalPrep #WeddingOrganisation`,
-        imagePrompt: `Clean, editorial graphic: large Cormorant Garamond numeral "6" in gold on cream background, with "weeks" in small DM Sans below. Bottom third: "Most couples only start planning wedding music this close to the day." Feels like a magazine pull-quote. High contrast, no clutter.`,
-        canva: `Format: Single 1080x1080px
-Background: Cream (#FAF7F2)
-Large "6" numeral: Cormorant Garamond 200pt, gold (#C4922A), centered upper half
-"weeks" below in DM Sans 24pt, navy (#1C2B3A)
-Divider line in gold, thin
-Bottom copy: "Most couples only start planning wedding music this close to the day." DM Sans 18pt, navy, centered
-Small wedin.ai wordmark bottom right in gold`,
-        hashtags: "#WeddingPlanning #WeddingMusicSA #SouthAfricanBride #WeddingTips #WeddingDJ #WeddingBand #WeddingChecklist #BridalPrep",
-      },
-    ],
-    stories: [
-      "Poll: How far out did you / do you plan to plan your wedding music? (6+ months / 3–6 months / 6 weeks or less / What plan?)",
-      "Question box: 'What's the one song that absolutely has to play at your wedding? Drop it below 👇'",
-    ],
-    storyPoll: "How far out did you start planning wedding music?",
-    thursdayTip: "Thursday Tip: Send your DJ a scene-by-scene brief, not just a song list. Tell them the mood you want at arrival, during dinner, and when the floor opens. Three sentences per scene = better music.",
-  },
-  {
-    week: 2,
-    theme: "The Ceremony Moment",
+    goal: "Make people feel the category before they hear the product name. You are creating the problem, not selling the solution.",
     posts: [
       {
         day: 1,
         type: "Hero Carousel",
-        concept: "The ceremony entrance — the most emotionally loaded 90 seconds of the day",
+        concept: "The 8 moments",
         slides: [
-          "Slide 1: 'The ceremony entrance is 90 seconds.'",
-          "Slide 2: 'Your guests are standing. Your partner is watching. Everyone is holding their breath.'",
-          "Slide 3: 'The wrong song turns it into someone else's wedding.'",
-          "Slide 4: 'The right song turns it into a story that lives forever.'",
-          "Slide 5: 'wedin.ai helps you find that song.'",
-          "Slide 6: CTA — 'Build your music plan at wedin.ai →'",
+          {
+            label: "Slide 1 — Cover",
+            prompt:
+              "An empty ceremony aisle. White chairs in soft rows, morning light falling through tall windows. Single white floral arrangement at the end of the aisle. No people. Quiet anticipation. Overhead perspective or level ground-angle.",
+            canva:
+              "Background: generated image fills the frame. Overlay in Cormorant Garamond Light, large, centred: 'The 8 moments where music decides how your day feels.' White text with navy shadow for legibility. Bottom left: 'wedin.ai' in DM Sans, cream, small. Swipe prompt bottom right in DM Sans Light: 'Swipe to see them all' in warm grey.",
+          },
+          {
+            label: "Slide 2 — Guest Arrival",
+            prompt:
+              "A drinks table set outdoors in dappled shade. Tall glassware, a simple floral stem in a bud vase, linen napkins. Winelands landscape soft-focus in background. No guests. Still, waiting quality.",
+            canva:
+              "Navy overlay at 20% opacity across bottom third. Text in Cormorant Garamond italic, cream: 'Guest arrival.' Below in DM Sans Light, warm grey small: 'Sets the mood before a word is spoken.'",
+          },
+          {
+            label: "Slide 3 — The Ceremony Processional",
+            prompt:
+              "A stone pathway through a vineyard leading toward a ceremony arch of white florals. Morning light. No people. Sense of approach and threshold.",
+            canva:
+              "Text centred in image: 'The processional.' in Cormorant Garamond Light, large, navy. Below: 'The most underestimated 90 seconds of your day.' in DM Sans Regular, warm grey, smaller.",
+          },
+          {
+            label: "Slide 4 — The Ceremony",
+            prompt:
+              "Close-up of two hands intertwined, wedding rings visible on linen surface. Soft depth of field. Warm light from one side. Intimate, still.",
+            canva:
+              "Minimal overlay. Bottom of image: 'The ceremony.' Cormorant Garamond italic, cream. One line below in DM Sans Light, cream at 80% opacity: 'Every guest silent. Every song choice audible.'",
+          },
+          {
+            label: "Slide 5 — Pre-Drinks / Cocktail Hour",
+            prompt:
+              "An outdoor terrace at golden hour. Long shadows across wooden decking, a few empty cocktail glasses catching the light. Wine country hills in soft background. Ambient, golden.",
+            canva:
+              "Overlay text in Cormorant Garamond, navy on cream band at bottom: 'Pre-drinks.' Below in DM Sans: 'The transition. Most couples forget to plan it.'",
+          },
+          {
+            label: "Slide 6 — The First Dance",
+            prompt:
+              "An empty dancefloor. Parquet or pale stone. A single spotlight circle on the floor. Surrounding tables with soft candlelight. Expectant emptiness.",
+            canva:
+              "Large Cormorant Garamond Light centred: 'The first dance.' Below in DM Sans Regular, grey: 'Three minutes everyone watches. Forty percent of couples choose a song and nothing else.'",
+          },
+          {
+            label: "Slide 7 — Dinner",
+            prompt:
+              "A long harvest table set for dinner. Candles lit, glasses filled, small floral arrangements at intervals. No guests. The moment before everyone sits down. Warm candlelight.",
+            canva:
+              "Cormorant Garamond italic at top: 'Dinner.' DM Sans below: 'Music that holds the room without owning it. Harder to find than it sounds.'",
+          },
+          {
+            label: "Slide 8 — The Reception",
+            prompt:
+              "A dancefloor from above, late in the evening. The floor lit warmly, surrounding darkness. Empty but feeling of energy, as if people just stepped away. South African farm venue aesthetic.",
+            canva:
+              "Large text centred: 'The reception.' Cormorant Garamond Light, cream on dark. DM Sans below: 'Where everything either builds to something, or doesn't.'",
+          },
+          {
+            label: "Slide 9 — Closing CTA",
+            prompt:
+              "A simple flat-lay: a blank cream notebook open to an empty page, a fine-line pen resting on it, a single dried floral stem beside it. Top-down view. Minimal, intentional.",
+            canva:
+              "Cream background, no overlay needed. Large Cormorant Garamond, navy: 'Most couples plan one of these moments.' Gold accent on 'one'. Below in DM Sans Regular: 'wedin.ai plans all eight. 20 minutes.' Small link text below: 'app.wedin.ai' in DM Sans, gold.",
+          },
         ],
-        caption: `The ceremony entrance is 90 seconds.
+        caption: `Most couples spend more time choosing table linens than they do planning their music.
 
-Your guests are standing. Your partner is watching the door. Everyone is holding their breath.
+The music is the only thing every single guest experiences together — from the moment you walk in to the moment the last person leaves the floor. And there are eight distinct moments where it determines what people feel.
 
-The wrong song turns it into someone else's wedding.
+Most couples plan one of them.
 
-The right song turns it into a story that lives forever.
+Swipe to see all eight — and ask yourself which ones you've actually thought about.
 
-wedin.ai asks you about your relationship, your taste, and your moment — then builds a complete music plan that includes exactly this: the entrance song, the processional, the signing, the recessional.
-
-All of it, placed correctly. A Spotify playlist included.
-
-Link in bio.
-
-#WeddingCeremony #CeremonyMusic #WeddingEntrance #ProcessionalSong #WeddingMoment #SouthAfricanWedding #WeddingMusic #WeddingPlanning #BridalWalk #HereComesTheBride`,
-        imagePrompt: `Cinematic: looking down a flower-lined aisle from above, guests standing on both sides, sunlight streaming through. The aisle is empty — we're in the moment just before the entrance. Mood: suspended time, anticipation, the held breath. Golden hour, South African bush or estate setting. Editorial, emotional.`,
-        canva: `Format: Instagram Carousel (1080x1080px)
-Slides 1–5: Deep navy (#1C2B3A) background. Cormorant Garamond Italic 44pt, cream (#FAF7F2). One sentence per slide — lines feel like poetry. Small gold (#C4922A) dot as slide indicator bottom center.
-Slide 6: Cream background. "wedin.ai" wordmark in gold, large centered. "Build your music plan →" in navy DM Sans 20pt below. Minimal, premium.`,
-        hashtags: "#WeddingCeremony #CeremonyMusic #WeddingEntrance #ProcessionalSong #WeddingMoment #SouthAfricanWedding #WeddingMusic #WeddingPlanning",
+20 minutes at app.wedin.ai builds a plan for all of them.`,
+        hashtags:
+          "#weddingmusic #weddingplanning #SAwedding #capetownwedding #weddingband #weddingday #weddinginspo",
       },
       {
         day: 3,
         type: "Single Image",
-        concept: "The signing moment — most overlooked scene in ceremony music planning",
+        concept: "The processional provocation",
         slides: [
-          "Single image: 'Nobody plans music for the register signing. It's 4 minutes of acoustic awkwardness. Unless you do this →'",
+          {
+            label: "Image",
+            prompt:
+              "A long straight aisle through a vineyard, late afternoon light. Rows of vines on either side converging in the distance. The feeling of walking toward something significant. No people. Aerial or level perspective.",
+            canva:
+              "Strong text overlay in Cormorant Garamond Light, large, cream: 'Your ceremony music sets the emotional register for your entire day.' Below in DM Sans Regular, cream at 80%: 'Not your first dance. Not the reception. This.' Bottom: 'wedin.ai' small in DM Sans cream.",
+          },
         ],
-        caption: `Nobody plans music for the register signing.
+        caption: `Everyone puts their energy into the first dance song.
 
-It's 4 minutes. Everyone's watching. There's nowhere to hide.
+The ceremony processional is more important. It's the first time every guest experiences your day together — it sets the emotional tone that everything else runs from. Get it wrong, and the day spends two hours recovering.
 
-It usually lands as acoustic awkwardness — a cover version playing too quietly while people look at each other.
+Most couples choose a ceremony song because they like it. The brief approach is different: what do you want every person in that room to feel in the first 90 seconds? Choose backward from there.
 
-wedin.ai includes the signing scene specifically. We ask what the moment should feel like: intimate and quiet, joyful and loose, or something in between. Then we suggest 3 tracks that hold the room without crowding it.
-
-Most couples have never thought about this until we ask.
-
-Link in bio.
-
-#WeddingCeremony #RegisterSigning #WeddingMoment #CeremonyMusic #WeddingTips #SouthAfricanWedding #WeddingPlanning #WeddingMusicSA #BridalInspo`,
-        imagePrompt: `Close-up hands signing a marriage register on a beautifully set table — rings visible, fresh flowers alongside the register. Soft, diffused natural light. Mood: quiet intimacy, significance in the small gesture. No harsh shadows. Film-style color grade — warm, analog feel.`,
-        canva: `Format: Single 1080x1080px
-Background: cream (#FAF7F2)
-Upper two-thirds: black-and-white photography of hands signing register (high-end editorial feel)
-Lower third: cream bar with text in navy Cormorant Garamond Italic 28pt: "Nobody plans music for the register signing."
-Sub-line in DM Sans 16pt grey: "wedin.ai does."
-wedin.ai wordmark small, bottom right, gold`,
-        hashtags: "#WeddingCeremony #RegisterSigning #WeddingMoment #CeremonyMusic #WeddingTips #SouthAfricanWedding #WeddingPlanning",
+This is one of eight moments wedin.ai plans — link in bio.`,
+        hashtags:
+          "#weddingceremony #ceremonymusic #weddingplanning #SAwedding #weddingmusicplanning #bridetobe #engaged",
       },
     ],
     stories: [
-      "Poll: Did you / have you planned specific music for the register signing? (Yes, it's sorted / No, I hadn't thought about it / What's a register signing?)",
-      "Swipe-up teaser: 'The 5 ceremony scenes most couples forget to plan music for — see them all at wedin.ai'",
+      "Mon: Share hero carousel to Stories. Add 'New post — swipe up' in DM Sans, navy, cream background.",
+      "Tue poll: 'Have you started planning your wedding music?' — Yes / Not yet",
+      "Wed: Share mid-week post to Stories.",
+      "Thu tip (text Story): 'The cocktail hour is when your guests form their first impression of your taste. Don't leave it to chance.'",
+      "Fri: Reshare anything with high engagement from the week.",
+      "Special: Repurpose carousel slides as individual Story frames across the week.",
     ],
-    storyPoll: "Did you plan specific music for the register signing?",
-    thursdayTip: "Thursday Tip: Your ceremony has at least 5 distinct music moments — prelude, processional, signing, interlude, recessional. Each has a different emotional job. Don't treat them all the same.",
   },
+
+  // ── WEEK 2 ──────────────────────────────────────────────────────────────────
   {
-    week: 3,
-    theme: "The First Dance",
+    week: 2,
+    theme: "The Ceremony Moment",
+    goal: "The ceremony is the most emotionally significant musical moment — and the most neglected. Make the audience feel the stakes before they've planned a note.",
     posts: [
       {
         day: 1,
         type: "Hero Carousel",
-        concept: "Why the first dance song is the hardest decision in wedding planning",
+        concept: "What actually happens when you walk in to the wrong song",
         slides: [
-          "Slide 1: 'The first dance song is the hardest decision in wedding planning.'",
-          "Slide 2: 'Every song means something to someone else first.'",
-          "Slide 3: 'You need a song that's yours — not your parents', not your friends', not the algorithm's.'",
-          "Slide 4: 'wedin.ai asks the right questions to find it.'",
-          "Slide 5: 'How do you want to feel on that floor? Tell us that. We'll find the song.'",
-          "Slide 6: CTA — wedin.ai — Build your music plan",
+          {
+            label: "Slide 1 — Cover",
+            prompt:
+              "A ceremony aisle from behind the couple's perspective — looking toward the officiant, guests on either side blurred in soft focus. Empty — the moment just before the processional begins. Morning light through high windows.",
+            canva:
+              "Text overlay, Cormorant Garamond Light, large, centred: 'What happens when you walk in to the wrong song.' Cream text on semi-transparent navy bar at bottom. Swipe indicator.",
+          },
+          {
+            label: "Slide 2 — The mismatch",
+            prompt:
+              "Close-up of a guest's face — but rendered as a silhouette or abstract shape rather than a recognisable person. Side-lit, blurred background of ceremony chairs. Emotional presence without identifiable features.",
+            canva:
+              "Text: 'The wrong song creates a 2-second emotional mismatch.' Cormorant Garamond italic, navy on cream. DM Sans below: 'Guests feel it before they can name it. And the room never fully resets.'",
+          },
+          {
+            label: "Slide 3 — First impression",
+            prompt:
+              "A pair of shoes — bridal or elegant — at the top of a stone staircase leading down toward a garden ceremony. View from behind. Anticipation and threshold.",
+            canva:
+              "Text centred: 'You don't get a second first impression.' Cormorant Garamond Light, large. DM Sans below in grey: 'The processional plays once. It's worth planning like it matters.'",
+          },
+          {
+            label: "Slide 4 — Three questions",
+            prompt:
+              "A simple elegant table with a single open notebook and a pen. Morning light. The beginning of a plan being made. Cream and white tones.",
+            canva:
+              "Text: 'Three questions that change your ceremony music completely:' Cormorant Garamond, gold accent on 'three'. List below in DM Sans: '1. What do you want guests to feel as you walk in? 2. What energy do you want during the vows? 3. How do you want to leave?' Small: 'wedin.ai asks all of these — and builds from your answers.'",
+          },
+          {
+            label: "Slide 5 — Closing CTA",
+            prompt:
+              "A single white floral stem laid across a cream linen surface. Simple, intentional, complete.",
+            canva:
+              "Cormorant Garamond Light, large: 'Your ceremony music deserves more than a good song.' Gold accent on 'more'. DM Sans below: 'Plan it properly. app.wedin.ai'",
+          },
         ],
-        caption: `The first dance song is the hardest decision in wedding planning.
+        caption: `The ceremony processional is the most underestimated decision in wedding music.
 
-Every obvious choice means something to someone else first. Ed Sheeran is your aunt's favourite. "At Last" is every wedding you've ever been to. "Can't Help Falling in Love" is beautiful and also absolutely everywhere.
+Most couples pick a song they love. Which is a good start. But 'we love this song' and 'this song creates the emotional moment we want for the people we love most' are two different briefs.
 
-You need a song that's yours.
+When the song starts and you begin to walk, every person in that room is watching. What they feel in the first 90 seconds sets the tone for everything that follows.
 
-wedin.ai asks how you want to feel on that floor — not what song you like. Nervous and sweetly vulnerable? Completely at ease? Joyful and a bit silly? Those feelings point to different songs.
+The questions we ask are different: What do you want them to feel? What energy do you want to carry into your vows? How do you want to leave the aisle?
 
-We find the song from there.
+Work backward from those answers, and the right song finds itself.
 
-Link in bio.
+Link in bio — we plan it all.`,
+        hashtags:
+          "#weddingceremony #weddingprocessional #ceremonymusic #SAwedding #weddingmusicplanning #capetownwedding #engaged #weddingplanning",
+      },
+      {
+        day: 3,
+        type: "Single Image",
+        concept: "The vow silence",
+        slides: [
+          {
+            label: "Image",
+            prompt:
+              "Two empty chairs facing each other in a ceremony setting. Soft natural light. The feeling of an intimate exchange about to happen. Winelands garden in soft focus behind.",
+            canva:
+              "Minimal overlay. Cormorant Garamond italic, large, cream: 'The music stops before the vows.' Below DM Sans: 'Most couples forget this is a decision. What fills that silence says everything.' Bottom: wedin.ai small.",
+          },
+        ],
+        caption: `Here is a decision most couples don't realise they're making:
 
-#FirstDance #FirstDanceSong #WeddingMusic #WeddingPlanning #SouthAfricanWedding #WeddingMoment #WeddingDay #BrideAndGroom #WeddingInspo #FirstDanceIdeas`,
-        imagePrompt: `Couple mid-first dance — slightly out of focus, fairy lights bokeh behind them, shot through other guests. One partner is laughing, the other is looking at them like they're the only person in the room. Candid, not posed. South African reception venue — estate or wine farm. Magic hour light filtering through. This is the actual moment, not a rehearsed pose.`,
-        canva: `Format: Instagram Carousel (1080x1080px)
-Slides 1–5: Alternating — navy slides with cream Cormorant Garamond Italic copy, cream slides with navy copy. Creates visual rhythm.
-Each slide: one punchy line, typographically centered. Gold (#C4922A) thin horizontal rule above and below text.
-Slide 6: "wedin.ai" wordmark large in gold on cream. "Find your first dance song →" DM Sans below in navy.`,
-        hashtags: "#FirstDance #FirstDanceSong #WeddingMusic #WeddingPlanning #SouthAfricanWedding #WeddingMoment #WeddingDay #BrideAndGroom #WeddingInspo",
+What happens to the music when the vows begin?
+
+Some stop it entirely. Some fade it under. Some let it play. None of these is wrong — but all of them are felt differently by every person in the room. The silence (or non-silence) during the most intimate moment of your day is a choice worth making deliberately.
+
+This is one of the things we map out in your ceremony plan. Because silence, done right, is its own kind of music.`,
+        hashtags:
+          "#weddingvows #weddingceremony #weddingmusic #SAwedding #bridetobe #weddingplanning #weddinginspo",
+      },
+    ],
+    stories: [
+      "Mon: Share hero carousel to Stories.",
+      "Tue poll: 'Have you chosen your ceremony songs yet?' — Yes / Still deciding",
+      "Wed: Share mid-week post to Stories.",
+      "Thu tip (text Story): 'A DJ who doesn't get a brief defaults to what worked at the last wedding. Not yours.'",
+      "Fri: Reshare anything with high engagement.",
+    ],
+  },
+
+  // ── WEEK 3 ──────────────────────────────────────────────────────────────────
+  {
+    week: 3,
+    theme: "The First Dance",
+    goal: "Everyone plans the first dance song. Almost no one plans the first dance. The angle is the gap between picking a song and actually creating a moment.",
+    posts: [
+      {
+        day: 1,
+        type: "Hero Carousel",
+        concept: "Your first dance song is not the decision",
+        slides: [
+          {
+            label: "Slide 1 — Cover",
+            prompt:
+              "An empty parquet dancefloor. Warm evening light, soft candles surrounding the space. A single spot of light on the centre of the floor. The expectation before someone steps in.",
+            canva:
+              "Cormorant Garamond Light, large, cream: 'Your first dance song is not the decision.' Gold accent on 'not'. DM Sans below, smaller: 'Swipe — here's what is.'",
+          },
+          {
+            label: "Slide 2 — The song is 20%",
+            prompt:
+              "A close-up of a record sleeve on a cream linen surface. No recognisable artwork — abstract or blank. The tactile quality of vinyl and paper. Warm light.",
+            canva:
+              "Text: 'The song is 20% of the moment.' Cormorant Garamond, large. DM Sans below: 'How you enter the floor, what happens in the first 8 bars, whether you face each other or face the room — these are the other 80%.'",
+          },
+          {
+            label: "Slide 3 — The room's reaction",
+            prompt:
+              "Two champagne glasses touching in a gentle clink, close-up, golden light. Behind them, a soft-focus room of candlelit tables. Celebratory but restrained.",
+            canva:
+              "Text: 'The room holds its breath or reaches for its phone.' Cormorant Garamond italic, cream. DM Sans below: 'What determines which one happens has nothing to do with the song title.'",
+          },
+          {
+            label: "Slide 4 — Four questions",
+            prompt:
+              "A flat-lay of handwritten notes on cream paper. The look of someone planning something carefully. Alongside it, a small floral sprig and a fine-line pen. Top-down.",
+            canva:
+              "Text: 'Four first dance questions worth answering:' DM Sans list: '1. Do you want it intimate (facing each other) or performed (facing guests)? 2. Does your song have a natural moment for other couples to join? 3. Are you comfortable with 3 full minutes of attention? 4. What happens when the song ends?' DM Sans small at bottom: 'wedin.ai covers all of this in your moment plan.'",
+          },
+          {
+            label: "Slide 5 — Closing CTA",
+            prompt:
+              "A single dried flower pressed between the pages of an open book. Cream and warm tones. The feeling of something preserved and intentional.",
+            canva:
+              "Cormorant Garamond Light, large: 'Plan the moment, not just the song.' Gold on 'moment'. DM Sans: 'app.wedin.ai'",
+          },
+        ],
+        caption: `The most common thing couples say when they look back at their first dance:
+
+'I wish we'd thought about it more than just the song.'
+
+The song is the starting point. The moment is everything else: how you walk onto the floor, what you do in the opening bars, whether the rest of the room is watching or joining, how it ends and what follows it directly.
+
+A three-minute first dance with a plan behind it feels completely different from a three-minute first dance where you hoped for the best.
+
+Your music portrait covers all of it. Link in bio.`,
+        hashtags:
+          "#firstdance #weddingdance #weddingmusic #weddingplanning #SAwedding #newlyengaged #bridetobe #weddingband",
       },
       {
         day: 3,
         type: "Product Reveal",
-        concept: "Show the actual wedin.ai output — the music brief",
+        concept: "First look at product output",
         slides: [
-          "Slide 1: 'This is what wedin.ai actually produces.'",
-          "Slide 2: Screenshot/mockup of the wedin.ai music portrait output",
-          "Slide 3: Screenshot/mockup of the scene-by-scene brief",
-          "Slide 4: Screenshot/mockup of the Spotify playlist",
-          "Slide 5: '15 minutes. 80 songs. Every scene, covered.'",
-          "Slide 6: CTA → wedin.ai",
+          {
+            label: "Canva Only — no AI image needed",
+            prompt:
+              "No AI image generation needed for this post. Use a real output from a test session: the First Dance section of a generated music portrait.",
+            canva:
+              "Cream background. Screenshot of First Dance portrait section centred with generous padding. Thin navy border around the screenshot. Header text above in Cormorant Garamond italic, navy: 'What your first dance brief could look like.' Footer in DM Sans Light, warm grey: 'From a real wedin.ai music portrait.' Wordmark bottom right.",
+          },
         ],
-        caption: `This is what wedin.ai actually produces.
+        caption: `This is the first dance section from a wedin.ai music portrait.
 
-Not a generic playlist. Not 10 suggestions and good luck.
+It was generated in about 20 minutes — no spreadsheets, no back-and-forth with a planner. The couple answered questions about how they wanted the moment to feel. The portrait built the brief.
 
-A complete music portrait: your relationship's story translated into sound. Scene-by-scene. Entrance, ceremony, signing, reception arcs, last song.
+It covers the song choice reasoning, the moment structure, and the handover notes for their band — specific enough that an act can prepare properly.
 
-80 curated songs. Placed exactly where they belong. A Spotify playlist you can hand directly to your DJ.
+This is what every moment of your day can look like — mapped, planned, briefed.
 
-You fill in 15 minutes of questions. We build the plan.
-
-Link in bio — try it free.
-
-#WeddingMusic #WeddingPlanning #WeddingMusicPlan #WeddingDJ #WeddingPlaylist #SpotifyPlaylist #SouthAfricanWedding #WeddingBrief #WeddingTech #WeddingInspiration`,
-        imagePrompt: `Clean product mockup: laptop or tablet on a marble surface showing the wedin.ai interface — the music portrait output page. Soft natural light from the side. Fresh flowers in the foreground, slightly out of focus. No clutter. Feels like a premium wedding service brochure. Brand colors visible on screen.`,
-        canva: `Format: Instagram Carousel (1080x1080px)
-Slide 1: Navy background, "This is what wedin.ai actually produces." Cormorant Garamond Italic 38pt cream, centered.
-Slides 2–4: White/cream background, clean product UI screenshots with subtle drop shadow. Minimal framing — let the product speak.
-Slide 5: Cream background, bold stat: "15 minutes." large gold Cormorant. "80 songs. Every scene, covered." navy DM Sans below.
-Slide 6: Standard CTA slide — gold wordmark on cream.`,
-        hashtags: "#WeddingMusic #WeddingPlanning #WeddingMusicPlan #WeddingDJ #WeddingPlaylist #SpotifyPlaylist #SouthAfricanWedding #WeddingBrief #WeddingTech",
+Link in bio.`,
+        hashtags:
+          "#weddingplanning #firstdance #weddingband #weddingmusic #SAwedding #weddingbrief #weddingtech #capetownwedding",
       },
     ],
     stories: [
-      "Interactive: 'Tell us your first dance song' question box — screenshot and share the best answers in Stories",
-      "Poll: 'How are you choosing your first dance song?' (We already know / Still deciding / We're doing something non-traditional / What's a first dance?)",
+      "Mon: Share hero carousel to Stories.",
+      "Tue poll: 'Do you know what you want your first dance to feel like?' — Yes, totally / Still figuring it out",
+      "Wed: Share product reveal to Stories.",
+      "Thu tip (text Story): 'Ask your DJ to fade the first dance at 2:30 — most couples run out of material at 90 seconds and it gets awkward.'",
+      "Fri: Reshare anything with high engagement.",
     ],
-    storyPoll: "How did you choose your first dance song?",
-    thursdayTip: "Thursday Tip: Ask your DJ to fade the first dance song at the 2:30 mark — most couples run out of material at 90 seconds and it gets awkward. A clean 2:30 fade feels intentional and keeps the energy.",
   },
+
+  // ── WEEK 4 ──────────────────────────────────────────────────────────────────
   {
     week: 4,
     theme: "The Reception Arc",
+    goal: "A great reception has a shape. Most don't. This week is for the ICP-2 couple (overwhelmed, needs direction) — education on something they've never been told explicitly.",
     posts: [
       {
         day: 1,
         type: "Hero Carousel",
-        concept: "The reception floor is a 4-hour arc — most couples treat it like a playlist",
+        concept: "How a great band builds a room",
         slides: [
-          "Slide 1: 'Your reception floor is a 4-hour arc.'",
-          "Slide 2: 'Hour 1: guests are eating, finding each other, warming up.'",
-          "Slide 3: 'Hour 2: the floor cracks open. The right song at the right moment does this.'",
-          "Slide 4: 'Hour 3: peak. Everyone who's going to dance is dancing.'",
-          "Slide 5: 'Hour 4: the close. How you end matters more than you think.'",
-          "Slide 6: 'wedin.ai plans all four hours. Not just the obvious ones.'",
+          {
+            label: "Slide 1 — Cover",
+            prompt:
+              "A large barn or farm venue reception in full swing — but rendered as an atmospheric, slightly abstract interior. Warm light, sense of energy and movement, no identifiable faces. Tables, dancefloor, band stage in background soft-focus. South African wine estate aesthetic.",
+            canva:
+              "Cormorant Garamond Light, large, cream: 'How a great band builds a room.' Below DM Sans: 'And why most receptions flatten out by 10pm.' Swipe indicator.",
+          },
+          {
+            label: "Slide 2 — The arc",
+            prompt:
+              "A simple elegant diagram feel — but rendered as a physical object: a clean timeline sketched on cream paper, a pen beside it. Minimal, intelligent-looking.",
+            canva:
+              "Text across the slide maps a reception arc: '7PM: Cocktail energy. Warm, ambient, people arriving and connecting.' '8PM: Dinner settles. Music pulls back, conversation takes over.' '9PM: First turn. Energy starts to build. The first few people approach the floor.' '10PM: The peak. If you've built to it correctly, you don't need to ask people to dance.' '11PM: Sustain or release. Both are valid. Neither happens by accident.' Bottom DM Sans small: 'A great band knows this arc instinctively. Your brief helps them execute it for your specific room.'",
+          },
+          {
+            label: "Slide 3 — What goes wrong",
+            prompt:
+              "An empty dancefloor, clearly mid-reception. Guests visible but seated in background, nobody dancing. The feeling of an opportunity missed. Warm but slightly melancholic light.",
+            canva:
+              "Cormorant Garamond italic, large: 'The floor empties because nobody built to the peak.' DM Sans below: 'It's not the song choice. It's the absence of a plan for how energy moves across four hours.'",
+          },
+          {
+            label: "Slide 4 — The brief solution",
+            prompt:
+              "A beautifully lit band setup — instruments in place, no performers, just the anticipation of sound. Stage lighting warm. Farm venue aesthetic.",
+            canva:
+              "Text: 'Your brief tells your band how your room works.' Cormorant Garamond. List in DM Sans: 'Who are your guests (age mix, energy level)? What does your crowd need to warm up? When do you want the peak? What keeps them on the floor?' DM Sans small: 'wedin.ai extracts this from your portrait and puts it directly in the coordinator brief.'",
+          },
+          {
+            label: "Slide 5 — Closing CTA",
+            prompt:
+              "A full dancefloor from above — abstracted, atmospheric, no faces. Just the energy of a room in full motion. Warm.",
+            canva:
+              "Cormorant Garamond Light, large, cream on dark overlay: 'Four hours. Five chapters. One arc.' Gold accent on 'Five'. DM Sans: 'Plan it like that. app.wedin.ai'",
+          },
         ],
-        caption: `Your reception floor is a 4-hour arc.
+        caption: `A reception doesn't have energy because people are having fun.
 
-Most couples hand their DJ a song list and hope for the best. The DJ does their best. But without knowing your crowd, your family dynamics, your "do not play under any circumstances" songs — it's guesswork.
+People have fun because the energy was built correctly.
 
-wedin.ai helps you map the arc:
-→ The dinner scene: ambient and conversation-friendly
-→ The floor-opener: the exact moment and song that cracks it open
-→ The peak hour: high energy, crowd reads correctly
-→ The last song: something people carry home
+A great band knows how to construct a four-hour arc — warming up the room, reading the crowd, building to the peak at the right moment, then sustaining or releasing depending on your specific group. But they can only do their best work when they know what they're building toward.
 
-Four distinct jobs. Four distinct song sets. Your DJ will know exactly what to do.
+That's what the coordinator brief is for. Not 'please play some good songs' — but here's our crowd, here's our energy, here's when we want the floor full, here's what keeps them there.
 
-Link in bio.
+Your wedin.ai portrait extracts all of this and puts it in a format your band can actually use.
 
-#WeddingReception #ReceptionMusic #WeddingDanceFloor #WeddingDJ #WeddingPlaylist #WeddingMusic #SouthAfricanWedding #WeddingPlanning #WeddingParty #WeddingNight`,
-        imagePrompt: `Wide shot of a full wedding reception dance floor from above — everyone dancing, fairy lights overhead, tables around the edges with guests watching and smiling. Joyful chaos that feels completely intentional. South African venue — possibly a wine farm barn or estate. Warm, golden light. The kind of photo that makes you want to be there.`,
-        canva: `Format: Instagram Carousel (1080x1080px)
-Slides 1–5: Each slide represents one hour. Navy background with large hour numerals in gold (#C4922A) — "1", "2", "3", "4" — Cormorant Garamond 180pt. Caption text in cream DM Sans 16pt below, describing that hour's mood.
-Slide 6: Cream background. "wedin.ai plans all four hours." Cormorant Garamond 36pt navy. Gold CTA bar at bottom.`,
-        hashtags: "#WeddingReception #ReceptionMusic #WeddingDanceFloor #WeddingDJ #WeddingPlaylist #WeddingMusic #SouthAfricanWedding #WeddingPlanning #WeddingParty",
+Link in bio.`,
+        hashtags:
+          "#weddingband #weddingdj #weddingreception #weddingmusic #SAwedding #weddingplanning #capetownwedding #winelands",
       },
       {
         day: 3,
         type: "Single Image",
-        concept: "The 'do not play' list — the most important 5 minutes of DJ prep",
+        concept: "The music at dinner isn't supposed to be noticed",
         slides: [
-          "Single image: 'The most important 5 minutes of DJ prep: your Do Not Play list. Here's how to build one →'",
+          {
+            label: "Image",
+            prompt:
+              "A wedding dinner table at the moment between courses — candles lit, glasses present, soft ambient light, quiet. The exact quality of a dinner held together by the right music underneath it.",
+            canva:
+              "Cormorant Garamond italic overlay: 'The music at dinner isn't supposed to be noticed.' DM Sans below: 'That's not an easy brief to write. But it's worth writing.' Wordmark small bottom right.",
+          },
         ],
-        caption: `The most important 5 minutes of DJ prep.
+        caption: `The hardest music brief in a wedding isn't the first dance.
 
-Not song requests. Not "vibes". Your Do Not Play list.
+It's dinner.
 
-Here's how to build one:
-1. Think of every song that belongs to a complicated chapter
-2. Add the ex's "our song"
-3. Add the song from the funeral last year
-4. Add the song that will cause your uncle to do The Move
-5. Add anything your parents requested that you don't want
+You need something present enough to feel intentional, but invisible enough that a table of eight can have a real conversation without raising their voices. Too quiet and it feels empty. Too much personality and it competes.
 
-This list protects the room.
+This is a musical direction decision that most couples never make explicitly — which means their band or DJ makes it for them.
 
-wedin.ai includes a Do Not Play section in every brief. Your DJ gets it before you meet.
-
-Link in bio.
-
-#WeddingDJ #WeddingPlanning #WeddingTips #ReceptionMusic #WeddingMusic #DoNotPlayList #WeddingMoments #SouthAfricanWedding #WeddingHacks #BridalTips`,
-        imagePrompt: `Flat lay: a handwritten list on cream paper with "DO NOT PLAY" at the top in confident handwriting, next to a pen and a small sprig of dried florals. Marble surface. Clean, editorial. Warm light from side. Feels actionable and slightly witty — not precious.`,
-        canva: `Format: Single 1080x1080px
-Background: cream (#FAF7F2)
-Centered: large "DO NOT PLAY" in Cormorant Garamond Bold 72pt, navy (#1C2B3A)
-Below: thin gold line separator
-Five short numbered items in DM Sans 16pt, navy — brief, direct, slightly funny
-Bottom: "wedin.ai includes this in every brief." gold italic text
-Small wordmark bottom right`,
-        hashtags: "#WeddingDJ #WeddingPlanning #WeddingTips #ReceptionMusic #WeddingMusic #DoNotPlayList #WeddingMoments #SouthAfricanWedding #WeddingHacks",
+The dinner section of your wedin.ai plan covers it. Because 'something nice in the background' is not a brief.`,
+        hashtags:
+          "#weddingdinner #weddingmusic #weddingplanning #SAwedding #weddingband #weddingdj #weddinginspo",
       },
     ],
     stories: [
-      "Question box: 'What's on your Do Not Play list? (We won't tell anyone 🤫)'",
-      "Countdown sticker: '3 weeks until launch — something big is coming for couples planning their wedding music'",
+      "Mon: Share hero carousel to Stories.",
+      "Tue poll: 'Have you briefed your band or DJ?' — Yes, properly / Not yet",
+      "Wed: Share mid-week post to Stories.",
+      "Thu tip (text Story): 'Tell your DJ the names of 3 guests who will definitely dance and 2 who need a specific decade. A crowd read before the event beats 10 track suggestions.'",
+      "Fri: Reshare anything with high engagement.",
     ],
-    storyPoll: "Do you have a 'Do Not Play' list for your wedding?",
-    thursdayTip: "Thursday Tip: Give your DJ the names and descriptions of your key guests — the ones who will definitely dance, the ones who are shy, the ones who need a specific decade. A crowd read before the event is worth 10 track suggestions.",
   },
+
+  // ── WEEK 5 ──────────────────────────────────────────────────────────────────
   {
     week: 5,
     theme: "Music as Identity",
+    goal: "Your music choices are a statement about who you are, not a service you book. This is the ICP-1 week — the Intentional Couple who has opinions and wants to be understood.",
     posts: [
       {
         day: 1,
         type: "Hero Carousel",
-        concept: "Your wedding music is the most public statement about who you are as a couple",
+        concept: "What your music choices say about you",
         slides: [
-          "Slide 1: 'Your wedding music is the most public statement about who you are as a couple.'",
-          "Slide 2: 'Your guests will judge it. Not harshly. But they'll notice.'",
-          "Slide 3: 'Generic = forgettable. Specific = unforgettable.'",
-          "Slide 4: 'The couple who played Khruangbin during dinner. The couple who opened the floor with Toto. The couple whose last song was something nobody expected.'",
-          "Slide 5: 'Those couples are remembered differently.'",
-          "Slide 6: 'wedin.ai makes your music specific to you.'",
+          {
+            label: "Slide 1 — Cover",
+            prompt:
+              "A collection of objects arranged as a personal portrait: a vinyl record, a dog-eared paperback, a cinema ticket stub, a dried flower from somewhere, a single photograph face-down. Top-down flat-lay. Cream surface, warm light.",
+            canva:
+              "Cormorant Garamond Light, large: 'What your wedding music says about you.' Gold accent on 'you'. DM Sans: 'A field guide to musical personalities.' Swipe indicator.",
+          },
+          {
+            label: "Slide 2 — The Understated Couple",
+            prompt:
+              "A small intimate table set for two in a corner. A single candle, one book, two glasses. Quiet and deliberate. Nothing excessive.",
+            canva:
+              "Cormorant Garamond italic: 'The Understated Couple.' DM Sans body: 'You don't want a DJ with a microphone. You want music that feels like it belongs to the day rather than performing for it. Your brief includes three words: present, considered, warm.' Small: 'Does this sound like you?'",
+          },
+          {
+            label: "Slide 3 — The Full Floor Couple",
+            prompt:
+              "A wide expansive dancefloor, empty but lit for a crowd, energy implicit in the space. Stage lights warm. A room that exists to be filled.",
+            canva:
+              "Cormorant Garamond italic: 'The Full Floor Couple.' DM Sans: 'The reception is the event. You want the floor full at 9pm and to sustain it until midnight. Your brief includes: \"If in doubt, build harder.\"' Small: 'Does this sound like you?'",
+          },
+          {
+            label: "Slide 4 — The Music-Led Couple",
+            prompt:
+              "A music lover's space — a record player on a wooden shelf, albums in a row beside it, a single reading lamp. Personal, considered, specific.",
+            canva:
+              "Cormorant Garamond italic: 'The Music-Led Couple.' DM Sans: 'Music is how you experience the world. Your wedding playlist is curated with the same rigour as your record collection. The wrong song is a personal affront. Your brief is the longest one we generate.' Small: 'Does this sound like you?'",
+          },
+          {
+            label: "Slide 5 — Closing CTA",
+            prompt:
+              "A blank cream notebook open to a fresh page. A single line has been written in fine pencil: 'Start with the music.' The rest is empty, waiting.",
+            canva:
+              "Cormorant Garamond Light, large: 'There is no such thing as a neutral wedding playlist.' Gold on 'neutral'. DM Sans: 'Every choice is a statement. wedin.ai helps you make it deliberately.' CTA: 'app.wedin.ai'",
+          },
         ],
-        caption: `Your wedding music is the most public statement about who you are as a couple.
+        caption: `There are three types of couples when it comes to wedding music.
 
-Your guests will judge it. Not harshly — they love you. But they'll notice.
+The Understated Couple: you want music that belongs to the day, not music that performs for it. Present, considered, warm — and you'd rather clear the floor early than play a song that doesn't fit.
 
-Generic music produces a generic memory. The wedding with the DJ who played "September" three times. The couple whose first dance felt borrowed from another love story.
+The Full Floor Couple: the reception is the event. You want bodies on that floor by 9pm and you want to sustain it. The brief says: if in doubt, build.
 
-Specific music produces a specific memory.
+The Music-Led Couple: music is how you experience the world, and your wedding playlist is getting the same rigour as your record collection. You have opinions. The wrong song is a personal affront.
 
-The couple who played something unusual during dinner that made people say "who IS this?" and then Shazam it. The couple whose last song cleared the room weeping.
+Most couples are somewhere between all three. The point is: knowing which one you are changes every music decision you make.
 
-That's what wedin.ai builds. Not a generic wedding playlist. Your wedding playlist.
+Your wedin.ai portrait figures this out in the first five questions — and builds from there.
 
-Link in bio.
-
-#WeddingMusic #WeddingIdentity #WeddingPersonality #SouthAfricanWedding #WeddingPlanning #WeddingMoment #FirstDance #WeddingVibes #WeddingInspo #UniqueWedding`,
-        imagePrompt: `Stylish couple at their reception, not dancing — they're leaning against a wall, laughing at something, looking completely at ease and themselves. Not trying to be wedding-perfect. Behind them: their guests on the dance floor having the best time. The couple look like they're exactly where they should be. Candid, editorial, real.`,
-        canva: `Format: Instagram Carousel (1080x1080px)
-All slides: black (#0D0D0D) background — different from usual navy, creates impact.
-Cormorant Garamond Italic, cream text, 42pt. Short punchy lines. Gold ellipsis (…) as slide connector.
-Slide 6: back to navy, cream text. "wedin.ai makes your music specific to you." Large and confident. Gold CTA below.`,
-        hashtags: "#WeddingMusic #WeddingIdentity #WeddingPersonality #SouthAfricanWedding #WeddingPlanning #WeddingMoment #FirstDance #WeddingVibes #WeddingInspo #UniqueWedding",
+Link in bio.`,
+        hashtags:
+          "#weddingmusic #weddingpersonality #weddingplanning #SAwedding #weddingband #newlyengaged #bridetobe",
       },
       {
         day: 3,
         type: "Provocation",
-        concept: "Controversial take: the DJ isn't the problem. The brief is.",
+        concept: "There is no such thing as a neutral wedding playlist",
         slides: [
-          "Single image: 'The DJ isn't the problem. The brief is.'",
+          {
+            label: "Image",
+            prompt:
+              "A vinyl record on a cream linen surface, partially pulled from its sleeve. The label visible but not recognisable — abstract. Warm light. The sensation of choosing carefully.",
+            canva:
+              "Strong headline in Cormorant Garamond Light, large, navy: 'There is no such thing as a neutral wedding playlist.' Below in DM Sans Regular: 'Every choice lands. Make them deliberately.' Wordmark bottom right.",
+          },
         ],
-        caption: `Controversial opinion: the DJ isn't the problem at most weddings.
+        caption: `The couples who regret their wedding music are rarely the ones who made a bad choice.
 
-The brief is.
+They're the ones who didn't make a choice at all — who deferred, said 'the band knows what they're doing,' and hoped for the best.
 
-Most couples hand over a half-page of bullet points, 20 song names with no context, and a vague request to "read the room."
+The band does know what they're doing. But 'what they're doing' defaults to what works for most rooms, most crowds, most couples — not your room, your crowd, your relationship.
 
-DJs are good. Most of them are very good. But they cannot read your mind. They cannot know that your dad hates hip-hop, that three people on the floor are going through breakups, that the chorus of that one song is deeply weird for reasons you can't explain in person.
+The brief is how you tell them who you actually are.
 
-A good brief solves this. Scene by scene. Mood by mood. With context.
-
-wedin.ai produces that brief. Your DJ reads it before you meet. The first conversation is already 10x better.
-
-Link in bio.
-
-#WeddingDJ #WeddingPlanning #WeddingTips #WeddingMusic #WeddingBrief #SouthAfricanWedding #WeddingProfessionals #WeddingVendors #BridalPlanning #WeddingHacks`,
-        imagePrompt: `DJ behind their setup, focused — but the visual emphasis is on the printed brief on the table in front of them, covered in notes and highlights. The brief is clearly detailed and well-prepared. Mood: professional, prepared, confident. The DJ looks like they know exactly what they're doing because they've been properly briefed.`,
-        canva: `Format: Single 1080x1080px
-Bold typographic split composition.
-Left half: navy (#1C2B3A). "THE DJ" in Cormorant Garamond 80pt cream. "isn't the problem." DM Sans 22pt cream below.
-Right half: gold (#C4922A). "THE BRIEF" in Cormorant Garamond 80pt navy. "is." DM Sans 22pt navy below.
-Thin white dividing line center.
-Bottom strip: cream, "wedin.ai builds the brief." DM Sans 18pt navy, centered.`,
-        hashtags: "#WeddingDJ #WeddingPlanning #WeddingTips #WeddingMusic #WeddingBrief #SouthAfricanWedding #WeddingProfessionals #WeddingVendors #BridalPlanning",
+Yours is 20 minutes away. Link in bio.`,
+        hashtags:
+          "#weddingmusic #weddingband #weddingplanning #SAwedding #capetownwedding #weddinginspo #engaged",
       },
     ],
     stories: [
-      "Engagement: 'Drop your most specific music request below — the more unusual the better 👇'",
-      "Poll: 'What matters more at a wedding?' (Music / Food / Décor / Open bar)",
+      "Mon: Share hero carousel to Stories.",
+      "Tue poll: 'Do you have strong opinions about your wedding music?' — Very strong / Some / Not really",
+      "Wed: Share provocation post to Stories.",
+      "Thu tip (text Story): 'Tell your DJ your absolute favourite song and ask them to place it at 10:30pm — when the floor is fullest. That's the peak. That's where it lands best.'",
+      "Fri: Reshare anything with high engagement.",
     ],
-    storyPoll: "What matters most at a wedding? Music / Food / Décor / Open bar",
-    thursdayTip: "Thursday Tip: Tell your DJ your absolute favourite song — the one you'd be devastated not to hear. Then tell them when you want it. It should probably be around 10:30pm when the floor is fullest. That's the peak. That's where your song lands best.",
   },
+
+  // ── WEEK 6 ──────────────────────────────────────────────────────────────────
   {
     week: 6,
     theme: "Proof and Invitation",
+    goal: "Five weeks of credibility built. Week 6 is when the product earns the spotlight. Social proof carries the weight — your job is to frame it and invite action. Every post this week ends with a clear path to app.wedin.ai.",
     posts: [
       {
         day: 1,
         type: "Social Proof",
-        concept: "Real couple, real result — the wedin.ai story",
+        concept: "Real portrait output, styled for sharing",
         slides: [
-          "Slide 1: 'We built wedin.ai because this kept happening to us.'",
-          "Slide 2: 'Couple after couple, arriving at their first DJ meeting with nothing but a list of songs they liked.'",
-          "Slide 3: 'The DJ would smile, take the list, and do their absolute best.'",
-          "Slide 4: 'But the best DJs we know all said the same thing: give me context, not just tracks.'",
-          "Slide 5: 'Context is what wedin.ai builds. For every couple. In 15 minutes.'",
-          "Slide 6: CTA — 'Try it free at wedin.ai →'",
+          {
+            label: "Canva Only — no AI image needed",
+            prompt:
+              "No AI image generation needed. In Canva: take a screenshot of the full music portrait output. Use your best test portrait — ideally with a strong music identity section and at least two moment plans. Blur or remove any identifying details.",
+            canva:
+              "Place screenshot on cream background with 48px padding. Navy 1px border around screenshot. Slight drop shadow (navy, 10% opacity). Above screenshot in Cormorant Garamond italic, navy: 'A wedin.ai music portrait.' Below in DM Sans Light, warm grey: 'Generated in 20 minutes from a discovery session. Names and details changed.' Wordmark bottom right. If portrait is long, show only the most compelling section — the music identity section or the ceremony moment plan. Legibility matters — the goal is for someone to read it and want one for themselves.",
+          },
         ],
-        caption: `We built wedin.ai because this kept happening.
+        caption: `This is a wedin.ai music portrait.
 
-Couple after couple, arriving at their first DJ meeting with nothing but a list of songs they liked. The DJ would smile, take the list, and do their absolute best.
+It was built in 20 minutes. A couple answered questions about their musical taste, their wedding moments, and how they wanted their day to feel. This is what came out the other end.
 
-But the best DJs we know all said the same thing: give me context, not just tracks.
+A music identity that describes them. A plan for eight moments. A coordinator brief ready to send.
 
-Tell me about the moment you want. Tell me who's in the room. Tell me the song that absolutely cannot play. Tell me what you want your guests to feel at 10:30pm.
+We launched at R699 because we wanted every couple who cares about their music to be able to access it — not just the ones with large planning budgets.
 
-That context is what makes a DJ great. And most couples never give it to them — not because they don't care, but because nobody ever asked them the right questions.
-
-wedin.ai asks the right questions. For every couple. In 15 minutes.
-
-Try it free — link in bio.
-
-#WeddingMusic #WeddingDJ #WeddingPlanning #SouthAfricanWedding #WeddingTech #WeddingInspiration #WeddingMoment #BrideAndGroom #WeddingDay #WeddingStory`,
-        imagePrompt: `Two phones side by side on a marble surface: left phone shows a couple's photo (backs to camera, overlooking a South African landscape — could be Winelands or bush), right phone shows the wedin.ai interface with their music portrait on screen. Warm natural light. The pairing tells a story: real couple, real plan. Editorial product photography feel.`,
-        canva: `Format: Instagram Carousel (1080x1080px)
-Slide 1: Warm cream background. "We built wedin.ai because this kept happening." Cormorant Garamond Italic 36pt navy. Feels personal, like an open letter.
-Slides 2–5: Alternating cream/navy backgrounds. DM Sans body text 18pt. Conversational, like someone talking directly to you.
-Slide 6: Navy background. "wedin.ai" wordmark large in gold. "Try it free →" cream DM Sans below. Clean CTA.`,
-        hashtags: "#WeddingMusic #WeddingDJ #WeddingPlanning #SouthAfricanWedding #WeddingTech #WeddingInspiration #WeddingMoment #BrideAndGroom #WeddingDay #WeddingStory",
+If you want yours: app.wedin.ai in the bio. 20 minutes.`,
+        hashtags:
+          "#weddingplanning #weddingmusic #SAwedding #weddingband #weddingdj #capetownwedding #weddingbrief #newlyengaged",
       },
       {
         day: 3,
         type: "Founder Story",
-        concept: "Why we built this — the personal story behind wedin.ai",
+        concept: "Behind the Build — why Rus built this",
         slides: [
-          "Single image — founder story moment",
+          {
+            label: "Image",
+            prompt:
+              "A notebook open on a wooden desk, afternoon light, a coffee beside it. The beginning of something being figured out. Personal and considered, not polished or staged.",
+            canva:
+              "Minimal text overlay — just the wedin.ai wordmark in the bottom right, cream on the image. Let the caption carry this post. The image is context, not hero.",
+          },
         ],
-        caption: `Six weeks before our wedding, someone asked us: 'What do you want your guests to feel when they walk into the venue?'
+        caption: `I built wedin.ai because of a conversation I couldn't stop thinking about.
 
-We had no idea how to answer that.
+[INSERT YOUR SPECIFIC STORY HERE — the actual moment, the specific conversation, the real thing you witnessed or experienced that made this obvious. The more specific, the better. Generic founder stories don't land. Yours does.]
 
-Not because we didn't have feelings about it — we had every feeling about it. We just hadn't been asked to translate them into music yet.
+Every couple I spoke to said the same thing: they knew what they wanted their day to feel like. They just didn't have the words.
 
-That question changed how we thought about the whole day.
+That's the gap wedin.ai fills. Not a music directory. Not another planning checklist. A 20-minute conversation that turns what you feel into a brief your planner and acts can actually use.
 
-wedin.ai is built around questions like that. Not 'what songs do you like?' but 'what do you want this moment to feel like?'
+We're live at app.wedin.ai. R699 for your complete music plan. If you're planning your wedding and music is the thing you keep deferring — this is for you.
 
-From feeling to song. That's the job.
-
-If you're planning your wedding music and you'd like a plan that's actually yours — try wedin.ai. It's free to start. Link in bio.
-
-#WeddingMusic #WeddingPlanning #WeddingStory #SouthAfricanWedding #WeddingInspiration #WeddingMoment #WeddingDay #BridalInspo #WeddingVibes #WedinAI`,
-        imagePrompt: `Intimate and warm: a single candle lit on a table next to an open notebook with a few lines of handwritten notes about a wedding — song names, feelings, question marks. The scene feels like someone figuring something out. Late evening light. Personal, reflective, slightly romantic. Not staged — the kind of photo that feels like a real moment of planning.`,
-        canva: `Format: Single 1080x1080px
-Full bleed: warm, moody photography of a candlelit table with planning notes
-Overlay: semi-transparent navy bar across the lower third
-Text over bar: "Six weeks before our wedding, someone asked us the right question." — Cormorant Garamond Italic 26pt cream
-Below: "wedin.ai is built around that question." DM Sans 16pt cream
-Bottom right: wedin.ai wordmark in gold`,
-        hashtags: "#WeddingMusic #WeddingPlanning #WeddingStory #SouthAfricanWedding #WeddingInspiration #WeddingMoment #WeddingDay #BridalInspo #WeddingVibes #WedinAI",
+[Insert your personal CTA — something you'd actually say]`,
+        hashtags:
+          "#wedinai #weddingmusic #weddingplanning #SAwedding #founderlife #startuplife #weddingtech #capetownstartup",
       },
     ],
     stories: [
-      "Final push: 'The 6-week arc is complete — wedin.ai is live. Try it free at the link in bio.'",
-      "Testimonial: share first real couple result (screenshot of their portrait, anonymised)",
+      "Mon: Share social proof post to Stories.",
+      "Tue poll: 'Have you looked at wedin.ai yet?' — Yes / Not yet",
+      "Wed: Share founder story to Stories.",
+      "Thu tip (text Story): 'The last song of the night is as important as the first dance. Choose something that sends people home right — full, resolved, memorable. Not a fade-out. A finale.'",
+      "Fri: Reshare anything with high engagement. Push the social proof post again if it's getting saves.",
     ],
-    storyPoll: "Have you sorted your wedding music plan yet?",
-    thursdayTip: "Thursday Tip: The last song of the night is as important as the first dance. Choose something that sends people home right. It should feel like an ending — full, resolved, memorable. Not a fade-out. A finale.",
   },
 ];
 
 // ─── SCHEDULE BUILDER ─────────────────────────────────────────────────────────
+// Feed posts only: Mon (day 1) + Wed (day 3). Thursday is a Stories-only text post.
 
 function buildSchedule() {
   const schedule = [];
@@ -482,23 +607,7 @@ function buildSchedule() {
         week: wi + 1,
         weekTheme: week.theme,
         ...post,
-        isStoryTip: false,
       });
-    });
-    // Thursday Story Tip (day 4 = Thursday)
-    schedule.push({
-      id: `w${wi + 1}-thu`,
-      date: getScheduledDate(wi, 4),
-      week: wi + 1,
-      weekTheme: week.theme,
-      type: "Thursday Tip",
-      concept: week.thursdayTip,
-      caption: week.thursdayTip,
-      slides: [week.thursdayTip],
-      imagePrompt: "",
-      canva: "",
-      hashtags: "#WeddingTips #WeddingMusic #WeddingPlanning #SouthAfricanWedding",
-      isStoryTip: true,
     });
   });
   return schedule.sort((a, b) => a.date - b.date);
@@ -526,69 +635,26 @@ function formatDate(d) {
 
 function getWeekLabel(wi) {
   const start = getScheduledDate(wi, 1);
-  const end = getScheduledDate(wi, 7);
-  return `${start.toLocaleDateString("en-ZA", { day: "numeric", month: "short" })} – ${end.toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}`;
+  const end = getScheduledDate(wi, 3);
+  return `${start.toLocaleDateString("en-ZA", { day: "numeric", month: "short" })} & ${end.toLocaleDateString("en-ZA", { day: "numeric", month: "short" })}`;
 }
 
 // ─── TYPE META ────────────────────────────────────────────────────────────────
 
 const TYPE_META = {
-  "Hero Carousel": {
-    icon: "◈",
-    bg: "bg-[#1C2B3A]",
-    text: "text-[#FAF7F2]",
-    border: "border-[#1C2B3A]",
-  },
-  "Single Image": {
-    icon: "◉",
-    bg: "bg-[#C4922A]",
-    text: "text-[#FAF7F2]",
-    border: "border-[#C4922A]",
-  },
-  "Product Reveal": {
-    icon: "◎",
-    bg: "bg-emerald-700",
-    text: "text-white",
-    border: "border-emerald-700",
-  },
-  Provocation: {
-    icon: "◈",
-    bg: "bg-rose-700",
-    text: "text-white",
-    border: "border-rose-700",
-  },
-  "Social Proof": {
-    icon: "◉",
-    bg: "bg-violet-700",
-    text: "text-white",
-    border: "border-violet-700",
-  },
-  "Founder Story": {
-    icon: "◎",
-    bg: "bg-[#6B6560]",
-    text: "text-[#FAF7F2]",
-    border: "border-[#6B6560]",
-  },
-  "Thursday Tip": {
-    icon: "✦",
-    bg: "bg-amber-600",
-    text: "text-white",
-    border: "border-amber-600",
-  },
+  "Hero Carousel": { icon: "◈", bg: "bg-[#1C2B3A]", text: "text-[#FAF7F2]" },
+  "Single Image": { icon: "◉", bg: "bg-[#C4922A]", text: "text-[#FAF7F2]" },
+  "Product Reveal": { icon: "◎", bg: "bg-emerald-700", text: "text-white" },
+  Provocation: { icon: "◈", bg: "bg-rose-700", text: "text-white" },
+  "Social Proof": { icon: "◉", bg: "bg-violet-700", text: "text-white" },
+  "Founder Story": { icon: "◎", bg: "bg-[#6B6560]", text: "text-[#FAF7F2]" },
 };
 
 function getTypeMeta(type) {
-  return (
-    TYPE_META[type] || {
-      icon: "○",
-      bg: "bg-gray-400",
-      text: "text-white",
-      border: "border-gray-400",
-    }
-  );
+  return TYPE_META[type] || { icon: "○", bg: "bg-gray-400", text: "text-white" };
 }
 
-// ─── STATUS UTILS ─────────────────────────────────────────────────────────────
+// ─── STATUS ───────────────────────────────────────────────────────────────────
 
 const STATUS_CYCLE = ["draft", "in progress", "ready", "posted"];
 const STATUS_STYLES = {
@@ -620,8 +686,8 @@ function CopyButton({ text, label = "Copy" }) {
   }, [text]);
   return (
     <button
-      onClick={handleCopy}
-      className="text-xs px-2 py-1 rounded border border-[#C4922A] text-[#C4922A] hover:bg-[#C4922A] hover:text-white transition-colors"
+      onClick={(e) => { e.stopPropagation(); handleCopy(); }}
+      className="text-xs px-2 py-0.5 rounded border border-[#C4922A] text-[#C4922A] hover:bg-[#C4922A] hover:text-white transition-colors flex-shrink-0"
     >
       {copied ? "✓ Copied" : label}
     </button>
@@ -631,9 +697,9 @@ function CopyButton({ text, label = "Copy" }) {
 function StatusPill({ id }) {
   const [statuses, setStatuses] = useState(loadStatuses);
   const status = statuses[id] || "draft";
-  const cycle = () => {
-    const next =
-      STATUS_CYCLE[(STATUS_CYCLE.indexOf(status) + 1) % STATUS_CYCLE.length];
+  const cycle = (e) => {
+    e.stopPropagation();
+    const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(status) + 1) % STATUS_CYCLE.length];
     const updated = { ...statuses, [id]: next };
     setStatuses(updated);
     localStorage.setItem(LS_KEY, JSON.stringify(updated));
@@ -648,44 +714,67 @@ function StatusPill({ id }) {
   );
 }
 
-function Section({ title, content, defaultOpen = false }) {
-  const [open, setOpen] = useState(defaultOpen);
-  if (!content) return null;
+function SlideCard({ slide, index, isCarousel }) {
+  const [open, setOpen] = useState(false);
+  const fullPrompt = `${MASTER_PREFIX}\n\n${slide.prompt}`;
+
   return (
-    <div className="border-t border-gray-100 pt-3 mt-3">
+    <div className="border border-gray-100 rounded-lg overflow-hidden">
       <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center justify-between w-full text-left text-sm font-semibold text-[#1C2B3A] hover:text-[#C4922A] transition-colors"
+        onClick={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
+        className="w-full text-left px-3 py-2 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
       >
-        <span>{title}</span>
-        <span className="text-gray-400 ml-2">{open ? "▲" : "▼"}</span>
+        <span className="text-xs font-semibold text-[#1C2B3A]">
+          {isCarousel ? `${index + 1}. ${slide.label}` : slide.label}
+        </span>
+        <span className="text-gray-400 text-xs ml-2">{open ? "▲" : "▼"}</span>
       </button>
       {open && (
-        <div className="mt-2 text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
-          {content}
+        <div className="px-3 pb-3 pt-2 space-y-3 bg-white">
+          {/* AI Prompt */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                AI Image Prompt
+              </p>
+              <CopyButton text={fullPrompt} label="Copy full prompt" />
+            </div>
+            <p className="text-xs text-gray-400 italic mb-1">
+              ↑ Copies master prefix + slide prompt together. Paste directly into Ideogram or DALL-E.
+            </p>
+            <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-wrap">
+              {slide.prompt}
+            </p>
+          </div>
+          {/* Canva Brief */}
+          <div className="border-t border-gray-100 pt-2">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Canva Brief
+              </p>
+              <CopyButton text={slide.canva} label="Copy brief" />
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-wrap">
+              {slide.canva}
+            </p>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-function TaskCard({ task, isSelected, onClick }) {
+function TaskCard({ task }) {
   const [expanded, setExpanded] = useState(false);
   const meta = getTypeMeta(task.type);
+  const isCarousel = task.type === "Hero Carousel";
 
   return (
     <div
-      className={`rounded-xl border transition-all cursor-pointer ${
-        isSelected
-          ? "border-[#C4922A] shadow-md"
-          : "border-gray-200 hover:border-gray-300"
-      } bg-white`}
-      onClick={() => {
-        onClick?.(task);
-        setExpanded((e) => !e);
-      }}
+      className="rounded-xl border border-gray-200 hover:border-gray-300 bg-white transition-all cursor-pointer"
+      onClick={() => setExpanded((e) => !e)}
     >
-      {/* Card header */}
+      {/* Header */}
       <div className="p-4 flex items-start gap-3">
         <div
           className={`text-base w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${meta.bg} ${meta.text}`}
@@ -693,103 +782,78 @@ function TaskCard({ task, isSelected, onClick }) {
           {meta.icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span
-              className={`text-xs px-2 py-0.5 rounded-full font-medium ${meta.bg} ${meta.text}`}
-            >
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${meta.bg} ${meta.text}`}>
               {task.type}
             </span>
             <span className="text-xs text-gray-400">{formatDate(task.date)}</span>
+            {isCarousel && (
+              <span className="text-xs text-gray-400">· {task.slides.length} slides</span>
+            )}
           </div>
-          <p className="mt-1 text-sm font-semibold text-[#1C2B3A] leading-snug">
-            {task.concept}
-          </p>
+          <p className="text-sm font-semibold text-[#1C2B3A] leading-snug">{task.concept}</p>
         </div>
         <StatusPill id={task.id} />
       </div>
 
-      {/* Expanded content */}
-      {expanded && !task.isStoryTip && (
-        <div className="px-4 pb-4 border-t border-gray-50 pt-3">
-          {/* Slides */}
-          {task.slides && task.slides.length > 0 && (
-            <div className="mb-3">
-              <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">
-                Slides / Frame
-              </p>
-              <ul className="space-y-1">
-                {task.slides.map((s, i) => (
-                  <li key={i} className="text-xs text-gray-600 flex gap-2">
-                    <span className="text-[#C4922A] flex-shrink-0">{i + 1}.</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+      {/* Expanded */}
+      {expanded && (
+        <div className="border-t border-gray-100 px-4 pb-4 pt-3 space-y-4" onClick={(e) => e.stopPropagation()}>
 
           {/* Caption */}
-          <div className="border-t border-gray-100 pt-3 mt-3">
+          <div>
             <div className="flex items-center justify-between mb-1.5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Caption
-              </p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Caption</p>
               <CopyButton text={task.caption} label="Copy caption" />
             </div>
-            <p className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed line-clamp-6">
+            <p className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed">
               {task.caption}
             </p>
           </div>
 
-          {/* AI Image Prompt */}
-          {task.imagePrompt && (
-            <div className="border-t border-gray-100 pt-3 mt-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  AI Image Prompt
-                </p>
-                <CopyButton text={task.imagePrompt} label="Copy prompt" />
-              </div>
-              <p className="text-xs text-gray-600 leading-relaxed line-clamp-4">
-                {task.imagePrompt}
-              </p>
-            </div>
-          )}
-
-          {/* Canva Brief */}
-          {task.canva && (
-            <Section title="Canva Brief" content={task.canva} />
-          )}
-
           {/* Hashtags */}
-          {task.hashtags && (
-            <div className="border-t border-gray-100 pt-3 mt-3">
-              <div className="flex items-center justify-between mb-1.5">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  Hashtags
-                </p>
-                <CopyButton text={task.hashtags} label="Copy hashtags" />
-              </div>
-              <p className="text-xs text-[#1C2B3A] leading-relaxed">
-                {task.hashtags}
-              </p>
+          <div className="border-t border-gray-100 pt-3">
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Hashtags</p>
+              <CopyButton text={task.hashtags} label="Copy hashtags" />
             </div>
-          )}
-        </div>
-      )}
-
-      {/* Thursday Tip expanded */}
-      {expanded && task.isStoryTip && (
-        <div className="px-4 pb-4 border-t border-gray-50 pt-3">
-          <div className="flex items-center justify-between mb-1.5">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-              Story Tip Text
-            </p>
-            <CopyButton text={task.caption} label="Copy tip" />
+            <p className="text-xs text-[#1C2B3A]">{task.hashtags}</p>
           </div>
-          <p className="text-sm text-gray-700 leading-relaxed">{task.caption}</p>
+
+          {/* Slides / Image */}
+          <div className="border-t border-gray-100 pt-3">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              {isCarousel ? `Slides (${task.slides.length}) — AI Prompts & Canva Briefs` : "Image & Canva"}
+            </p>
+            <div className="space-y-1.5">
+              {task.slides.map((slide, i) => (
+                <SlideCard key={i} slide={slide} index={i} isCarousel={isCarousel} />
+              ))}
+            </div>
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── MASTER PREFIX CARD ───────────────────────────────────────────────────────
+
+function MasterPrefixCard() {
+  return (
+    <div className="bg-[#1C2B3A] rounded-xl p-4 text-white">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1">
+          <p className="text-xs font-semibold text-[#C4922A] uppercase tracking-wide mb-1">
+            Master Style Prefix — add to start of every AI prompt
+          </p>
+          <p className="text-xs text-blue-200 leading-relaxed">{MASTER_PREFIX}</p>
+          <p className="text-xs text-blue-300 mt-1.5">
+            Tool: Ideogram (first choice for text-in-image) · DALL-E 3 via ChatGPT (backup for atmospheric) · Midjourney (editorial, more iteration)
+          </p>
+        </div>
+        <CopyButton text={MASTER_PREFIX} label="Copy prefix" />
+      </div>
     </div>
   );
 }
@@ -798,11 +862,10 @@ function TaskCard({ task, isSelected, onClick }) {
 
 function MiniCalendar({ selectedDate, onSelect }) {
   const today = new Date();
-  // Show 6 weeks starting from LAUNCH_DATE week
-  const calStart = new Date(LAUNCH_DATE);
-  calStart.setDate(calStart.getDate() - calStart.getDay() + 1); // Monday of launch week
-
   const scheduledDates = SCHEDULE.map((t) => t.date);
+
+  const calStart = new Date(LAUNCH_DATE);
+  calStart.setDate(calStart.getDate() - calStart.getDay() + 1);
 
   const weeks = [];
   let cur = new Date(calStart);
@@ -815,23 +878,22 @@ function MiniCalendar({ selectedDate, onSelect }) {
     weeks.push(week);
   }
 
+  const arcEnd = getScheduledDate(5, 3);
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-        Launch Arc — May 25 to Jul 5
+        May 25 – Jul 5 · Mon + Wed posts
       </p>
       <div className="grid grid-cols-7 gap-0.5 text-center">
         {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
-          <div key={i} className="text-xs text-gray-400 font-medium py-1">
-            {d}
-          </div>
+          <div key={i} className="text-xs text-gray-400 font-medium py-1">{d}</div>
         ))}
         {weeks.flat().map((day, i) => {
           const isScheduled = scheduledDates.some((sd) => isSameDay(sd, day));
           const isToday = isSameDay(day, today);
           const isSelected = selectedDate && isSameDay(day, selectedDate);
-          const inArc =
-            day >= LAUNCH_DATE && day <= getScheduledDate(5, 7);
+          const inArc = day >= LAUNCH_DATE && day <= arcEnd;
 
           return (
             <button
@@ -847,7 +909,7 @@ function MiniCalendar({ selectedDate, onSelect }) {
                   : inArc
                   ? "text-gray-700 hover:bg-gray-100"
                   : ""
-              }`}
+              } ${isScheduled && !isSelected ? "cursor-pointer" : "cursor-default"}`}
             >
               {day.getDate()}
               {isScheduled && !isSelected && (
@@ -863,11 +925,10 @@ function MiniCalendar({ selectedDate, onSelect }) {
 
 // ─── WEEK CARD ────────────────────────────────────────────────────────────────
 
-function WeekCard({ week, tasks, onDayClick }) {
+function WeekCard({ weekData, tasks, onDayClick }) {
+  const [storiesOpen, setStoriesOpen] = useState(false);
   const statuses = loadStatuses();
-  const posted = tasks.filter(
-    (t) => (statuses[t.id] || "draft") === "posted"
-  ).length;
+  const posted = tasks.filter((t) => (statuses[t.id] || "draft") === "posted").length;
   const pct = tasks.length ? Math.round((posted / tasks.length) * 100) : 0;
 
   return (
@@ -875,12 +936,10 @@ function WeekCard({ week, tasks, onDayClick }) {
       <div className="flex items-start justify-between mb-3">
         <div>
           <p className="text-xs text-[#C4922A] font-semibold uppercase tracking-wide">
-            Week {week.week}
+            Week {weekData.week}
           </p>
-          <h3 className="text-base font-bold text-[#1C2B3A] mt-0.5">
-            {week.theme}
-          </h3>
-          <p className="text-xs text-gray-400 mt-0.5">{getWeekLabel(week.week - 1)}</p>
+          <h3 className="text-base font-bold text-[#1C2B3A] mt-0.5">{weekData.theme}</h3>
+          <p className="text-xs text-gray-400 mt-0.5">{getWeekLabel(weekData.week - 1)}</p>
         </div>
         <div className="text-right">
           <p className="text-xl font-bold text-[#1C2B3A]">{pct}%</p>
@@ -888,7 +947,6 @@ function WeekCard({ week, tasks, onDayClick }) {
         </div>
       </div>
 
-      {/* Progress bar */}
       <div className="h-1.5 bg-gray-100 rounded-full mb-4">
         <div
           className="h-1.5 bg-[#C4922A] rounded-full transition-all"
@@ -896,8 +954,11 @@ function WeekCard({ week, tasks, onDayClick }) {
         />
       </div>
 
+      {/* Goal */}
+      <p className="text-xs text-gray-500 italic mb-3 leading-relaxed">{weekData.goal}</p>
+
       {/* Task pills */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mb-3">
         {tasks.map((task) => {
           const meta = getTypeMeta(task.type);
           const status = statuses[task.id] || "draft";
@@ -908,32 +969,37 @@ function WeekCard({ week, tasks, onDayClick }) {
               className={`text-xs px-2.5 py-1 rounded-full flex items-center gap-1 transition-all border ${
                 status === "posted"
                   ? "bg-[#1C2B3A] text-[#FAF7F2] border-[#1C2B3A]"
-                  : `border-gray-200 text-gray-600 hover:border-[#C4922A] hover:text-[#C4922A]`
+                  : "border-gray-200 text-gray-600 hover:border-[#C4922A] hover:text-[#C4922A]"
               }`}
             >
               <span>{meta.icon}</span>
               <span>{formatDate(task.date)}</span>
+              <span className="opacity-60">— {task.concept}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Stories reminder */}
-      {week.stories && (
-        <div className="mt-4 pt-3 border-t border-gray-100">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-            Stories this week
-          </p>
-          <ul className="space-y-1">
-            {week.stories.map((s, i) => (
+      {/* Stories */}
+      <div className="border-t border-gray-100 pt-3">
+        <button
+          onClick={() => setStoriesOpen((o) => !o)}
+          className="flex items-center justify-between w-full text-left text-xs font-semibold text-[#C4922A] hover:text-[#1C2B3A] transition-colors"
+        >
+          <span>📱 Stories rhythm this week</span>
+          <span className="text-gray-400">{storiesOpen ? "▲" : "▼"}</span>
+        </button>
+        {storiesOpen && (
+          <ul className="mt-2 space-y-1">
+            {weekData.stories.map((s, i) => (
               <li key={i} className="text-xs text-gray-600 flex gap-2">
-                <span className="text-[#C4922A]">·</span>
+                <span className="text-[#C4922A] flex-shrink-0">·</span>
                 <span>{s}</span>
               </li>
             ))}
           </ul>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -941,31 +1007,29 @@ function WeekCard({ week, tasks, onDayClick }) {
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 
 export default function WedinDashboard() {
-  const [view, setView] = useState("today"); // today | week | arc
+  const [view, setView] = useState("today");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const today = new Date();
 
-  // Progress
   const statuses = loadStatuses();
-  const postedCount = SCHEDULE.filter(
-    (t) => (statuses[t.id] || "draft") === "posted"
-  ).length;
+  const postedCount = SCHEDULE.filter((t) => (statuses[t.id] || "draft") === "posted").length;
   const totalCount = SCHEDULE.length;
   const progressPct = Math.round((postedCount / totalCount) * 100);
 
-  // Tasks for selected day
   const dayTasks = SCHEDULE.filter((t) => isSameDay(t.date, selectedDate));
-
-  // Today's tasks
   const todayTasks = SCHEDULE.filter((t) => isSameDay(t.date, today));
-
-  // Next upcoming
-  const upcoming = SCHEDULE.find((t) => t.date >= today);
+  const upcoming = SCHEDULE.find((t) => t.date >= today && !isSameDay(t.date, today));
 
   const handleDayClick = useCallback((date) => {
     setSelectedDate(date);
     setView("today");
   }, []);
+
+  // Find week data for selected date
+  const selectedTask = SCHEDULE.find((t) => isSameDay(t.date, selectedDate));
+  const selectedWeekData = selectedTask
+    ? WEEKS[selectedTask.week - 1]
+    : null;
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] font-sans">
@@ -974,11 +1038,14 @@ export default function WedinDashboard() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-xl font-bold tracking-tight" style={{ fontFamily: "Cormorant Garamond, serif" }}>
+              <h1
+                className="text-xl font-bold tracking-tight"
+                style={{ fontFamily: "Cormorant Garamond, serif" }}
+              >
                 wedin.ai Content Arc
               </h1>
               <p className="text-sm text-blue-200 mt-0.5">
-                6-week Instagram launch — May 25 to Jul 5, 2026
+                6-week Instagram launch · May 25 – Jul 5, 2026 · 12 feed posts
               </p>
             </div>
             <div className="text-right">
@@ -986,16 +1053,12 @@ export default function WedinDashboard() {
               <p className="text-xs text-blue-200">{postedCount}/{totalCount} posted</p>
             </div>
           </div>
-
-          {/* Progress bar */}
           <div className="mt-4 h-1.5 bg-white/10 rounded-full">
             <div
               className="h-1.5 bg-[#C4922A] rounded-full transition-all duration-500"
               style={{ width: `${progressPct}%` }}
             />
           </div>
-
-          {/* Nav */}
           <div className="flex gap-1 mt-5">
             {[
               { key: "today", label: "Today" },
@@ -1006,9 +1069,7 @@ export default function WedinDashboard() {
                 key={key}
                 onClick={() => setView(key)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  view === key
-                    ? "bg-[#C4922A] text-white"
-                    : "text-blue-200 hover:text-white"
+                  view === key ? "bg-[#C4922A] text-white" : "text-blue-200 hover:text-white"
                 }`}
               >
                 {label}
@@ -1019,90 +1080,74 @@ export default function WedinDashboard() {
       </div>
 
       {/* Body */}
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-6 space-y-4">
 
-        {/* ── TODAY VIEW ── */}
+        {/* Master prefix — always visible */}
+        <MasterPrefixCard />
+
+        {/* ── TODAY ── */}
         {view === "today" && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Mini calendar */}
-              <div className="md:col-span-1">
-                <MiniCalendar
-                  selectedDate={selectedDate}
-                  onSelect={(d) => setSelectedDate(d)}
-                />
-                {/* Next up banner */}
-                {upcoming && !isSameDay(upcoming.date, today) && (
-                  <div className="mt-3 bg-white rounded-xl border border-gray-200 p-4">
-                    <p className="text-xs font-semibold text-[#C4922A] uppercase tracking-wide mb-1">
-                      Next post
-                    </p>
-                    <p className="text-sm font-bold text-[#1C2B3A]">
-                      {formatDate(upcoming.date)}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-0.5">{upcoming.concept}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Day tasks */}
-              <div className="md:col-span-2 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-bold text-[#1C2B3A]">
-                    {isSameDay(selectedDate, today)
-                      ? "Today"
-                      : formatDate(selectedDate)}
-                  </h2>
-                  {dayTasks.length === 0 && (
-                    <p className="text-xs text-gray-400">No posts scheduled</p>
-                  )}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-1 space-y-3">
+              <MiniCalendar selectedDate={selectedDate} onSelect={(d) => setSelectedDate(d)} />
+              {upcoming && (
+                <div className="bg-white rounded-xl border border-gray-200 p-4">
+                  <p className="text-xs font-semibold text-[#C4922A] uppercase tracking-wide mb-1">Next post</p>
+                  <p className="text-sm font-bold text-[#1C2B3A]">{formatDate(upcoming.date)}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{upcoming.concept}</p>
                 </div>
+              )}
+              {/* Stories for selected day's week */}
+              {selectedWeekData && (
+                <div className="bg-white rounded-xl border border-gray-200 p-4">
+                  <p className="text-xs font-semibold text-[#C4922A] uppercase tracking-wide mb-2">
+                    📱 Week {selectedWeekData.week} Stories
+                  </p>
+                  <ul className="space-y-1.5">
+                    {selectedWeekData.stories.map((s, i) => (
+                      <li key={i} className="text-xs text-gray-600 flex gap-1.5">
+                        <span className="text-[#C4922A] flex-shrink-0">·</span>
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
 
-                {dayTasks.length > 0 ? (
-                  dayTasks.map((task) => (
-                    <TaskCard
-                      key={task.id}
-                      task={task}
-                      isSelected={false}
-                    />
-                  ))
-                ) : (
-                  <div className="bg-white rounded-xl border border-dashed border-gray-200 p-8 text-center">
-                    <p className="text-3xl mb-2">📅</p>
-                    <p className="text-sm text-gray-500">
-                      No posts scheduled for this day.
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Gold dots on the calendar mark posting days.
-                    </p>
-                  </div>
-                )}
-
-                {/* Today's stories reminder */}
-                {isSameDay(selectedDate, today) && todayTasks.length > 0 && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                    <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">
-                      Stories reminder
-                    </p>
-                    <p className="text-sm text-amber-800">
-                      Don't forget to post your Story today — poll or question box to drive engagement on this post.
-                    </p>
-                  </div>
+            <div className="md:col-span-2 space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-bold text-[#1C2B3A]">
+                  {isSameDay(selectedDate, today) ? "Today" : formatDate(selectedDate)}
+                </h2>
+                {isSameDay(selectedDate, today) && todayTasks.length === 0 && (
+                  <p className="text-xs text-gray-400">No feed post today</p>
                 )}
               </div>
+              {dayTasks.length > 0 ? (
+                dayTasks.map((task) => <TaskCard key={task.id} task={task} />)
+              ) : (
+                <div className="bg-white rounded-xl border border-dashed border-gray-200 p-8 text-center">
+                  <p className="text-3xl mb-2">📅</p>
+                  <p className="text-sm text-gray-500">No feed post scheduled.</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Gold dots mark Mon + Wed posting days. Check Stories panel for daily rhythm.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* ── WEEK VIEW ── */}
+        {/* ── WEEK ── */}
         {view === "week" && (
           <div className="space-y-4">
-            {WEEKS.map((week, wi) => {
+            {WEEKS.map((weekData, wi) => {
               const weekTasks = SCHEDULE.filter((t) => t.week === wi + 1);
               return (
                 <WeekCard
                   key={wi}
-                  week={week}
+                  weekData={weekData}
                   tasks={weekTasks}
                   onDayClick={handleDayClick}
                 />
@@ -1111,18 +1156,11 @@ export default function WedinDashboard() {
           </div>
         )}
 
-        {/* ── ARC VIEW ── */}
+        {/* ── ARC ── */}
         {view === "arc" && (
           <div className="space-y-3">
             {SCHEDULE.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                isSelected={selectedDate && isSameDay(task.date, selectedDate)}
-                onClick={(t) => {
-                  setSelectedDate(t.date);
-                }}
-              />
+              <TaskCard key={task.id} task={task} />
             ))}
           </div>
         )}
