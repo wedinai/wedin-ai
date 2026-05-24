@@ -9,7 +9,6 @@ const SEED_ACTIONS = [
   { id: 'a1', text: 'Review and send first 2 planner outreach emails', owner: 'Unassigned', type: 'Outreach', urgent: true, done: false },
   { id: 'a2', text: 'Add 10 target planners to the pipeline', owner: 'Unassigned', type: 'Pipeline', urgent: true, done: false },
   { id: 'a3', text: "Write this week's SEO content piece", owner: 'Unassigned', type: 'SEO', urgent: false, done: false },
-  { id: 'a4', text: 'Schedule this week\'s 4 Instagram posts in Buffer', owner: 'Unassigned', type: 'Content', urgent: false, done: false },
   { id: 'a5', text: 'Check Instagram DMs and reply to any enquiries', owner: 'Unassigned', type: 'Engagement', urgent: false, done: false },
 ]
 
@@ -606,6 +605,16 @@ export default function GTMDashboard() {
 
   const today = new Date().toLocaleDateString('en-ZA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
 
+  // Change 3: Auto-count Instagram posts from content_calendar
+  const igAutoCount = (data.content_calendar || []).filter(e => e.type && e.type.toLowerCase() === 'instagram').length
+  const igCount = igAutoCount > 0 ? igAutoCount : (Number(w.ig_posts) || 0)
+
+  // Change 1: Today's content status
+  const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+  const todayDayShort = DAY_NAMES[new Date().getDay()]
+  const todayContent = (data.content_calendar || []).find(e => e.day === todayDayShort)
+  const hasTodayContent = !!(todayContent && todayContent.type && todayContent.title)
+
   return (
     <div style={S.root}>
       {/* Font injection */}
@@ -667,7 +676,7 @@ export default function GTMDashboard() {
               <div style={S.card}>
                 <div style={S.cardTitle}>Three non-negotiables</div>
                 <ProgressBar label="Planner outreach" current={Number(w.outreach_sent) || 0} target={10} />
-                <ProgressBar label="Instagram posts" current={Number(w.ig_posts) || 0} target={4} />
+                <ProgressBar label="Instagram posts" current={igCount} target={4} />
                 <ProgressBar label="SEO content" current={!!w.seo_done} target={1} isBoolean />
               </div>
               <div style={S.cardGold}>
@@ -680,6 +689,54 @@ export default function GTMDashboard() {
                 }
               </div>
             </div>
+
+            {/* Today's content status card */}
+            {hasTodayContent ? (
+              <div style={{
+                background: '#FFFFFF',
+                border: '1px solid rgba(28,43,58,0.08)',
+                borderLeft: '3px solid #2d7a4f',
+                borderRadius: 12,
+                padding: '16px 20px',
+                marginBottom: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 10,
+              }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#2d7a4f', marginBottom: 4 }}>Today's content</div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: '#1C2B3A' }}>{todayContent.type} — {todayContent.title}</div>
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#2d7a4f' }}>Scheduled ✓</div>
+              </div>
+            ) : (
+              <div style={{
+                background: '#FFFFFF',
+                border: '1px solid rgba(28,43,58,0.08)',
+                borderLeft: '3px solid #C4922A',
+                borderRadius: 12,
+                padding: '16px 20px',
+                marginBottom: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 10,
+              }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#C4922A', marginBottom: 4 }}>Content</div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: '#1C2B3A' }}>No content scheduled for today</div>
+                </div>
+                <button
+                  onClick={() => setTab('content')}
+                  style={{ fontSize: 13, fontWeight: 600, color: '#C4922A', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                >
+                  Go to Content →
+                </button>
+              </div>
+            )}
 
             {/* Action queue */}
             <div style={S.card}>
@@ -795,7 +852,37 @@ export default function GTMDashboard() {
         )}
 
         {/* ═══════════════ CONTENT ═══════════════ */}
-        {tab === 'content' && <WedinDashboard />}
+        {tab === 'content' && (
+          <div>
+            {/* Mini metrics bar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 16 }}>
+              <span style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6B6560', marginRight: 4 }}>
+                This week at a glance
+              </span>
+              <span style={{
+                fontSize: 12,
+                fontWeight: 600,
+                padding: '3px 10px',
+                borderRadius: 6,
+                background: igCount >= 4 ? 'rgba(196,146,42,0.15)' : 'rgba(28,43,58,0.07)',
+                color: igCount >= 4 ? '#8a600d' : '#6B6560',
+              }}>
+                Instagram: {igCount} / 4 this week
+              </span>
+              <span style={{
+                fontSize: 12,
+                fontWeight: 600,
+                padding: '3px 10px',
+                borderRadius: 6,
+                background: w.seo_done ? '#1C2B3A' : 'rgba(28,43,58,0.07)',
+                color: w.seo_done ? '#FFFFFF' : '#6B6560',
+              }}>
+                SEO: {w.seo_done ? 'Done ✓' : 'Not done'}
+              </span>
+            </div>
+            <WedinDashboard />
+          </div>
+        )}
 
         {/* ═══════════════ METRICS ═══════════════ */}
         {tab === 'metrics' && (
