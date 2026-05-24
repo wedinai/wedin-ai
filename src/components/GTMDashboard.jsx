@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import WedinDashboard from './wedin-instagram-dashboard'
 
 // ── Google Fonts ────────────────────────────────────────────────────────────
 const FONT_LINK = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap'
@@ -794,35 +795,7 @@ export default function GTMDashboard() {
         )}
 
         {/* ═══════════════ CONTENT ═══════════════ */}
-        {tab === 'content' && (
-          <div style={S.card}>
-            <div style={S.cardTitle}>Content calendar — this week</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 10 }}>
-              {(data.content_calendar || SEED_CALENDAR).map(day => {
-                const has = day.type || day.title
-                return (
-                  <div key={day.day} style={{
-                    background: has ? '#FFFFFF' : 'transparent',
-                    border: has ? '1px solid rgba(28,43,58,0.08)' : '2px dashed rgba(196,146,42,0.3)',
-                    borderRadius: 12,
-                    padding: '14px 12px',
-                    minHeight: 100,
-                  }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: '#6B6560', marginBottom: 8 }}>{day.day}</div>
-                    {has ? (
-                      <>
-                        {day.type && <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#C4922A', marginBottom: 4 }}>{day.type}</div>}
-                        {day.title && <div style={{ fontSize: 14, color: '#1C2B3A', lineHeight: 1.35 }}>{day.title}</div>}
-                      </>
-                    ) : (
-                      <div style={{ fontSize: 13, color: 'rgba(196,146,42,0.6)', fontStyle: 'italic' }}>Empty</div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
+        {tab === 'content' && <WedinDashboard />}
 
         {/* ═══════════════ METRICS ═══════════════ */}
         {tab === 'metrics' && (
