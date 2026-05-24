@@ -350,9 +350,74 @@ function Toast({ msg, visible }) {
   )
 }
 
+const GTM_PASSWORD = 'music2026'
+const GTM_LS_KEY = 'gtm_auth'
+
+function PasswordGate({ onAuth }) {
+  const [pw, setPw] = useState('')
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    if (!document.querySelector(`link[href*="Cormorant+Garamond"]`)) {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = FONT_LINK
+      document.head.appendChild(link)
+    }
+  }, [])
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (pw === GTM_PASSWORD) {
+      localStorage.setItem(GTM_LS_KEY, GTM_PASSWORD)
+      onAuth()
+    } else {
+      setError(true)
+      setPw('')
+    }
+  }
+
+  return (
+    <div style={{ fontFamily: "'DM Sans', sans-serif", background: '#FAF7F2', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <style>{`@import url('${FONT_LINK}');`}</style>
+      <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 500, color: '#1C2B3A', letterSpacing: '-0.02em', marginBottom: 40 }}>
+        wedin<span style={{ color: '#C4922A' }}>.</span>ai
+      </div>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, width: '100%', maxWidth: 320 }}>
+        <input
+          type="password"
+          placeholder="Enter password"
+          value={pw}
+          onChange={e => { setPw(e.target.value); setError(false) }}
+          autoFocus
+          style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 15,
+            color: '#1C2B3A',
+            background: '#FFFFFF',
+            border: error ? '1px solid #C4922A' : '1px solid rgba(28,43,58,0.18)',
+            borderRadius: 8,
+            padding: '12px 16px',
+            width: '100%',
+            minHeight: 44,
+            outline: 'none',
+            textAlign: 'center',
+            boxSizing: 'border-box',
+          }}
+        />
+        {error && <p style={{ fontSize: 14, color: '#C4922A', margin: 0 }}>That's not right — try again.</p>}
+        <button type="submit" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, color: '#FAF7F2', background: '#1C2B3A', border: 'none', borderRadius: 10, padding: '12px 40px', minHeight: 44, cursor: 'pointer', width: '100%' }}>
+          Enter
+        </button>
+      </form>
+    </div>
+  )
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function GTMDashboard() {
+  const [authed, setAuthed] = useState(() => localStorage.getItem(GTM_LS_KEY) === GTM_PASSWORD)
   const [tab, setTab] = useState('today')
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -370,6 +435,11 @@ export default function GTMDashboard() {
 
   // Add action form
   const [newAction, setNewAction] = useState({ text: '', owner: 'Unassigned', type: 'Outreach', urgent: false })
+
+  const handleLock = () => {
+    localStorage.removeItem(GTM_LS_KEY)
+    setAuthed(false)
+  }
 
   // Load Google Fonts
   useEffect(() => {
@@ -518,6 +588,8 @@ export default function GTMDashboard() {
     save(patch, 'Dashboard updated')
   }
 
+  if (!authed) return <PasswordGate onAuth={() => setAuthed(true)} />
+
   if (loading) {
     return (
       <div style={{ ...S.root, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
@@ -541,9 +613,14 @@ export default function GTMDashboard() {
       {/* Header */}
       <header style={S.header}>
         <div style={S.wordmark}>wedin<span style={S.wordmarkDot}>.</span>ai</div>
-        <div style={S.headerRight}>
-          <strong style={S.headerRightStrong}>GTM Command Centre</strong>
-          <span>{today}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <button onClick={handleLock} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#6B6560', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+            Lock dashboard
+          </button>
+          <div style={S.headerRight}>
+            <strong style={S.headerRightStrong}>GTM Command Centre</strong>
+            <span>{today}</span>
+          </div>
         </div>
       </header>
 
