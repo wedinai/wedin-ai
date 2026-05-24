@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App.jsx'
+import GTMDashboard from './components/GTMDashboard.jsx'
 import TestRoute from './pages/TestRoute.jsx'
 import TermsPage from './pages/TermsPage.jsx'
 import PrivacyPage from './pages/PrivacyPage.jsx'
@@ -16,6 +17,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <HelmetProvider>
     <BrowserRouter>
       <Routes>
+        <Route path="/gtm" element={<GTMDashboard />} />
         <Route path="/test" element={<TestRoute />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
