@@ -161,7 +161,7 @@ Parameters must be in documented order (not alphabetical): `merchant_id`, `merch
 **Used for:** Session persistence, email deduplication, remarketing sequence, rate limiting
 **Environment variables:** `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (frontend read-only), `SUPABASE_SERVICE_ROLE_KEY` (all Netlify functions — bypasses RLS)
 
-**⚠️ Supabase MCP warning:** The Supabase MCP connects to project `ruomrpiukvrejimrtsqb` which has no tables. Do not use the MCP for any wedin.ai database work. Always use the Supabase dashboard directly at supabase.com → project kzqubbioodvlwfobrqdv.
+**⚠️ Supabase MCP warning:** The Supabase MCP was reconnected to project `kzqubbioodvlwfobrqdv` (the live app project) on May 24, 2026. Always verify the MCP is pointed at kzqubbioodvlwfobrqdv before running any SQL.
 
 **Tables:**
 
@@ -170,8 +170,36 @@ Parameters must be in documented order (not alphabetical): `merchant_id`, `merch
 | sessions | All session data — answers, state, is_paid, email | Deny all anon ✓ |
 | contacts | Email captures | Deny all anon ✓ |
 | rate_limits | IP-based rate limiting for all Netlify functions | Deny all anon ✓ |
+| gtm_data | GTM Command Centre state — singleton row pattern, id='singleton' | Deny all anon ✓ |
 
-**RLS status (as of May 20, 2026):** Deny-all anon policies active on all three tables. Service role key (used in all Netlify functions) bypasses RLS — no function changes needed.
+**RLS status (as of May 24, 2026):** Deny-all anon policies active on all four tables. Service role key (used in all Netlify functions) bypasses RLS — no function changes needed.
+
+---
+
+## GTM Dashboard
+
+**URL:** app.wedin.ai/gtm
+**Password:** music2026 (localStorage gate — key: `gtm_auth`)
+**Component:** `src/components/GTMDashboard.jsx`
+**Function:** `netlify/functions/gtm-data.js`
+**Data store:** Supabase table `gtm_data` — singleton row pattern, id='singleton'
+**Access:** Rus + Amanda (shared, same credentials)
+**Purpose:** Daily GTM operations — metrics, planner pipeline, content calendar, action queue, weekly summaries
+**Cowork:** Writes morning metrics to gtm_data via Supabase MCP each morning
+
+**How it works:**
+- On load, the React component fetches `/.netlify/functions/gtm-data` (GET) which reads the singleton row using the service role key
+- All saves POST to the same function with a JSON body — the function merges the payload into the singleton row via Supabase update
+- Pipeline and action changes auto-save on every change event
+- Update tab saves in bulk on button press
+- Toast notification confirms each save
+
+**Password gate:**
+- On mount, checks `localStorage.getItem('gtm_auth')`
+- If value equals `music2026`, renders dashboard immediately (returning users skip the prompt)
+- If not, shows full-screen cream password screen with wedin.ai wordmark
+- Correct entry writes to localStorage; wrong entry shows inline error, clears input
+- "Lock dashboard" link in header clears localStorage and returns to gate
 
 ---
 
@@ -204,6 +232,21 @@ Parameters must be in documented order (not alphabetical): `merchant_id`, `merch
 **Verification method:** HTML file at wedin.ai/googlee942d4d5320cdeb6.html
 **Sitemap:** https://wedin.ai/sitemap.xml — submitted May 10, 2026, status Success, 3 pages discovered
 **Guide pages indexed:** wedin.ai/guide and wedin.ai/guide/wedding-music-south-africa both live and crawlable
+
+---
+
+## Google Analytics 4
+
+**Status:** Live ✓ — May 24, 2026
+**Tracking ID:** G-4Q3Y1WQEM5
+**Property name:** Wedin
+**Property ID:** 538622529
+**Account:** rnerwich@gmail.com — separate Google Analytics account, fully isolated from The Ear Academy
+**Installed on:** wedin-landing/index.html (the wedin.ai marketing landing page)
+**Dashboard:** analytics.google.com → property Wedin (538622529)
+**Tracks:** Landing page traffic, source attribution, realtime visitor data, goal completions
+
+**Note:** GA4 is on the landing page only. App behaviour is tracked via Supabase (sessions and contacts tables). Do not add GA4 to the app — session data is more valuable and already captured.
 
 ---
 

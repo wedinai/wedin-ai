@@ -156,7 +156,7 @@ Sheet 3 — Hidden Costs
 
 ---
 
-## Current Build Status — May 20, 2026
+## Current Build Status — May 24, 2026
 
 **Phase:** Phase 2 — in progress.
 
@@ -280,12 +280,23 @@ Sheet 3 — Hidden Costs
   - Stripe removed from package.json
   - Real R699 payment confirmed end-to-end May 20, 2026 — ITN received, Supabase updated, Moment Map unlocked
   - **PayFast signature note:** `encodeURIComponent(value.trim()).replace(/%20/g, '+')` for all values. Parameters in documented order not alphabetical. Passphrase appended as `&passphrase=encodedValue`. Matches official PayFast Node.js SDK exactly.
+- **Session 12 — GTM Dashboard + Analytics Setup ✓** (May 24, 2026)
+  - `netlify/functions/gtm-data.js` — GET/POST Netlify function, reads and writes to Supabase `gtm_data` table using service role key, CORS headers included
+  - `src/components/GTMDashboard.jsx` — full GTM Command Centre dashboard, five tabs (Today / Pipeline / Content / Metrics / Update), reads from Supabase via gtm-data function, password gated via localStorage
+  - `/gtm` route added to `main.jsx` — renders GTMDashboard at app.wedin.ai/gtm
+  - Password gate: localStorage key `gtm_auth` = `music2026`, includes Lock dashboard link in header
+  - Google Analytics 4 installed on wedin-landing — tracking ID `G-4Q3Y1WQEM5`, property `Wedin` (538622529) under separate Google Analytics account (rnerwich@gmail.com), fully separated from The Ear Academy account
+  - GA4 added to `wedin-landing/index.html` and pushed to wedinai/wedin-landing repo
+  - New Supabase table `gtm_data` created in project `kzqubbioodvlwfobrqdv` — singleton row pattern, single row with id='singleton' holds all GTM state as JSONB columns
+  - `wedin-gtm-data.json` created at project root as local Cowork data file (legacy — Supabase is now the live store)
+  - Cowork morning workflow spec'd to query Supabase sessions and contacts tables and write results to gtm_data
+  - Supabase MCP reconnected to correct project kzqubbioodvlwfobrqdv
 
 ---
 
 ## ✗ NOT YET BUILT — Remaining Before Launch
 
-**Session 12 — Pre-launch QA:**
+**Session 13 — Pre-launch QA:**
 Full flow on real mobile. All 9 moments. Real payment. All email flows. All three coordinator profiles tested against live output. Minimum 3 hours. Do not shortcut.
 
 ---
@@ -324,6 +335,10 @@ Full flow on real mobile. All 9 moments. Real payment. All email flows. All thre
 - Supabase RLS — deny-all anon policies on sessions, contacts, rate_limits
 - PayFast ITN signature verification — payment cannot be spoofed
 - POPIA data deletion — `delete-session.js` gated by `DELETE_SECRET`
+
+**Built in Session 12 ✓:**
+- `gtm_data` Supabase table — RLS deny-all anon, accessed only via `gtm-data.js` Netlify function using service role key
+- GTM dashboard password gate — localStorage only, no server-side auth required
 
 **Always:**
 - Supabase RLS enabled on all tables
@@ -424,6 +439,8 @@ wedin.ai/
                                     CTA. Markdown headings rendered as gold DM Sans uppercase labels.
       PostBriefScreen.jsx      — safe fallback only, not in forward path
       MILIntakeScreen.jsx      — three chip inputs: budget / bookings / coordinator_profile
+      GTMDashboard.jsx         — ✓ BUILT Session 12. GTM Command Centre, five tabs, localStorage
+                                  password gate (music2026), reads/writes via gtm-data Netlify function
     data/
       questions.js             — 24 questions, Other on chip questions
       ceremonyKnowledge.js     — ceremony knowledge base v3.0 (April 4)
@@ -458,6 +475,8 @@ wedin.ai/
       send-wedding-soundtrack.js   — ✓ BUILT. Wedding Soundtrack email to couple, Resend SDK,
                                      gold-bordered content block, restore link CTA
       generate-spotify-tracks.js   — Claude Haiku, fence stripping, boundary search fallback
+      gtm-data.js                  — ✓ BUILT Session 12. GET/POST singleton row from gtm_data table,
+                                     service role key, CORS headers
   netlify.toml
 ```
 
