@@ -4,13 +4,48 @@ import WedinDashboard from './wedin-instagram-dashboard'
 // ── Google Fonts ────────────────────────────────────────────────────────────
 const FONT_LINK = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap'
 
-// ── Seed data ────────────────────────────────────────────────────────────────
-const SEED_ACTIONS = [
-  { id: 'a1', text: 'Review and send first 2 planner outreach emails', owner: 'Unassigned', type: 'Outreach', urgent: true, done: false },
-  { id: 'a2', text: 'Add 10 target planners to the pipeline', owner: 'Unassigned', type: 'Pipeline', urgent: true, done: false },
-  { id: 'a3', text: "Write this week's SEO content piece", owner: 'Unassigned', type: 'SEO', urgent: false, done: false },
-  { id: 'a5', text: 'Check Instagram DMs and reply to any enquiries', owner: 'Unassigned', type: 'Engagement', urgent: false, done: false },
-]
+// ── Day-aware task generator ──────────────────────────────────────────────────
+function getTodaysTasks() {
+  const day = new Date().toLocaleDateString('en-ZA', { weekday: 'long' })
+  const daily = [
+    { id: 'daily-1', text: 'Check Instagram DMs and reply to any enquiries', owner: 'Unassigned', type: 'Engagement', urgent: false, done: false },
+  ]
+  const dayTasks = {
+    Monday: [
+      { id: 'mon-1', text: "Plan this week's content — pick theme and two formats", owner: 'Unassigned', type: 'Content', urgent: false, done: false },
+      { id: 'mon-2', text: 'Send 2 planner outreach emails', owner: 'Unassigned', type: 'Outreach', urgent: true, done: false },
+      { id: 'mon-3', text: 'Check weekly metrics — sessions, captures, payments, search impressions', owner: 'Unassigned', type: 'Admin', urgent: false, done: false },
+    ],
+    Tuesday: [
+      { id: 'tue-1', text: "Write this week's SEO content piece", owner: 'Unassigned', type: 'SEO', urgent: true, done: false },
+      { id: 'tue-2', text: 'Post Instagram content #1 — education or insight', owner: 'Unassigned', type: 'Content', urgent: false, done: false },
+    ],
+    Wednesday: [
+      { id: 'wed-1', text: 'Send 2 planner outreach emails', owner: 'Unassigned', type: 'Outreach', urgent: true, done: false },
+      { id: 'wed-2', text: 'Follow up on any outstanding planner replies', owner: 'Unassigned', type: 'Pipeline', urgent: false, done: false },
+      { id: 'wed-3', text: "Post Instagram content #2 — moment or social proof", owner: 'Unassigned', type: 'Content', urgent: false, done: false },
+      { id: 'wed-4', text: "Respond to all comments and DMs from Monday's post", owner: 'Unassigned', type: 'Engagement', urgent: false, done: false },
+    ],
+    Thursday: [
+      { id: 'thu-1', text: 'Send 2 planner outreach emails', owner: 'Unassigned', type: 'Outreach', urgent: true, done: false },
+      { id: 'thu-2', text: "Batch create next week's content images — 4 images in one session", owner: 'Unassigned', type: 'Content', urgent: false, done: false },
+    ],
+    Friday: [
+      { id: 'fri-1', text: 'Post Instagram content #3 — Behind the Build or The Prompt', owner: 'Unassigned', type: 'Content', urgent: false, done: false },
+      { id: 'fri-2', text: 'Update planner CRM — outreach status, activations, referrals', owner: 'Unassigned', type: 'Pipeline', urgent: false, done: false },
+      { id: 'fri-3', text: "Weekly metrics review — what moved, what didn't, what to change", owner: 'Unassigned', type: 'Admin', urgent: false, done: false },
+      { id: 'fri-4', text: 'Log one insight from the week — customer, channel, or product learning', owner: 'Unassigned', type: 'Admin', urgent: false, done: false },
+    ],
+    Saturday: [
+      { id: 'sat-1', text: 'Post one Instagram Story — low effort, keeps algorithm active', owner: 'Unassigned', type: 'Content', urgent: false, done: false },
+    ],
+    Sunday: [
+      { id: 'sun-1', text: 'Post one Instagram Story — low effort, keeps algorithm active', owner: 'Unassigned', type: 'Content', urgent: false, done: false },
+      { id: 'sun-2', text: 'Reply to any DMs that came in over the weekend', owner: 'Unassigned', type: 'Engagement', urgent: false, done: false },
+    ],
+  }
+  return [...daily, ...(dayTasks[day] || [])]
+}
 
 const SEED_PIPELINE = [
   { id: 'p1', name: 'Add your first planner', business: '', date: '', status: 'not-contacted', owner: 'Amanda', notes: 'Start here — add planners from your research list' },
@@ -32,7 +67,7 @@ function mergeWithSeeds(raw) {
   const d = raw || {}
   return {
     ...d,
-    actions: (d.actions && d.actions.length) ? d.actions : SEED_ACTIONS,
+    actions: (d.actions && d.actions.length) ? d.actions : getTodaysTasks(),
     pipeline: (d.pipeline && d.pipeline.length) ? d.pipeline : SEED_PIPELINE,
     content_calendar: (d.content_calendar && d.content_calendar.length) ? d.content_calendar : SEED_CALENDAR,
     daily: d.daily || {},
@@ -750,6 +785,27 @@ export default function GTMDashboard() {
                     <ActionItem key={action.id} action={action} onChange={handleActionChange} onToggle={handleToggleDone} />
                   ))
                 }
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
+                <button
+                  onClick={() => save({ actions: getTodaysTasks() }, "Today's tasks loaded")}
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: '#1C2B3A',
+                    background: '#FAF7F2',
+                    border: '1px solid #1C2B3A',
+                    borderRadius: 10,
+                    padding: '8px 18px',
+                    minHeight: 36,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  ↺ Refresh for today
+                </button>
               </div>
 
               <div style={S.divider} />
