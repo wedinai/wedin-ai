@@ -378,6 +378,7 @@ Full flow on real mobile. All 9 moments. Real payment. All email flows. All thre
 - DM Sans — body, UI labels, buttons
 
 **CSS Variables:**
+
 ```css
 --cream: #FAF7F2;
 --navy: #1C2B3A;
