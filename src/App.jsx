@@ -475,7 +475,11 @@ export default function App() {
       })
       if (!res.ok) throw new Error('API error')
       const data = await res.json()
-      setMomentSummary(data.summary || null)
+      let summaryText = data.summary || null
+      if (summaryText && summaryText.trim().startsWith('{')) {
+        try { summaryText = JSON.parse(summaryText).summary ?? summaryText } catch {}
+      }
+      setMomentSummary(summaryText)
     } catch (e) {
       console.error('Moment summary update failed:', e)
       setMomentSummary(null)
@@ -618,7 +622,11 @@ export default function App() {
       })
       if (!res.ok) throw new Error('API error')
       const data = await res.json()
-      setMomentSummary(data.summary || null)
+      let summaryText = data.summary || null
+      if (summaryText && summaryText.trim().startsWith('{')) {
+        try { summaryText = JSON.parse(summaryText).summary ?? summaryText } catch {}
+      }
+      setMomentSummary(summaryText)
     } catch (e) {
       console.error('Moment summary generation failed:', e)
       setMomentSummary(null)

@@ -99,8 +99,14 @@ Respond ONLY with valid JSON: {"summary": "3–4 sentence summary"}`
       const parsed = JSON.parse(text)
       summary = parsed.summary ?? null
     } catch (parseErr) {
-      console.error('Moment summary JSON parse failed, using raw text:', parseErr)
-      summary = text || null
+      console.error('Moment summary JSON parse failed, attempting regex extraction:', parseErr)
+      // Try regex extraction before falling back to raw text
+      const match = text.match(/"summary"\s*:\s*"((?:[^"\\]|\\.)*)"/s)
+      if (match) {
+        summary = match[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\'/g, "'") || null
+      } else {
+        summary = text || null
+      }
     }
 
     return {
