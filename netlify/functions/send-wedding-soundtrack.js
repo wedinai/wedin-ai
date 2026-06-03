@@ -36,7 +36,7 @@ export const handler = async (event) => {
   const contentHtml = coupleBrief
     .split('\n')
     .map(line => {
-      const trimmed = line.trim()
+      const trimmed = line.trim().replace(/\*\*/g, '')
       if (!trimmed) return '<br>'
       if (trimmed === trimmed.toUpperCase() && trimmed.length > 2) {
         return `<p style="margin:24px 0 6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:#C4922A;letter-spacing:0.1em;text-transform:uppercase;">${trimmed}</p>`
