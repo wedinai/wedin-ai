@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import DiscoverySession from './components/DiscoverySession.jsx'
 import MusicPortrait from './components/MusicPortrait.jsx'
 import MomentMap from './components/MomentMap.jsx'
@@ -54,7 +54,15 @@ export default function App() {
   )
   const [spotifyLoading, setSpotifyLoading] = useState(false)
   const [coupleBrief, setCoupleBrief] = useState('')
+  const coupleBriefRef = useRef('')
   const [budgetData, setBudgetData] = useState(null)
+
+  // Always-current coupleBrief wrapper — keeps the ref in sync so persistState
+  // reads the latest value regardless of which render's closure calls it.
+  function updateCoupleBrief(val) {
+    coupleBriefRef.current = val
+    setCoupleBrief(val)
+  }
 
   // ── Supabase state persistence ────────────────────────────────────────────
   // Called after each deep-dive confirmation and after MIL completion.
@@ -71,7 +79,7 @@ export default function App() {
       completed_moments: completedMoments,
       moment_confirmed: momentConfirmed,
       mil_recommendations: milRecommendations,
-      couple_brief: coupleBrief,
+      couple_brief: coupleBriefRef.current,
       mil_budget: milBudget,
       coordinator_profile: coordinatorProfile,
       ...overrides,
@@ -270,7 +278,7 @@ export default function App() {
             if (s.completed_moments) setCompletedMoments(s.completed_moments)
             if (s.moment_confirmed) setMomentConfirmed(s.moment_confirmed)
             if (s.mil_recommendations) setMilRecommendations(s.mil_recommendations)
-            if (s.couple_brief) setCoupleBrief(s.couple_brief)
+            if (s.couple_brief) updateCoupleBrief(s.couple_brief)
             if (s.mil_budget) setMilBudget(s.mil_budget)
             if (s.coordinator_profile) setCoordinatorProfile(s.coordinator_profile)
             const storedIsPaid = localStorage.getItem('wedin_is_paid')
@@ -826,7 +834,7 @@ export default function App() {
         userEmail={email}
         onConfirm={() => setView('mil')}
         onSetCoupleBrief={(brief) => {
-          setCoupleBrief(brief)
+          updateCoupleBrief(brief)
           persistState({ couple_brief: brief })
         }}
       />

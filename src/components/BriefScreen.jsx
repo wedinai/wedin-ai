@@ -395,8 +395,43 @@ export default function BriefScreen({
       setStatus('ready')
     } catch (e) {
       if (e.name === 'AbortError') return
-      console.error('Brief generation failed:', e)
-      setStatus('error')
+      console.warn('generateBrief: first attempt failed, retrying in 2s…', e.message)
+      // One silent auto-retry — recovers from cold start timeouts on restore path
+      await new Promise(r => setTimeout(r, 2000))
+      try {
+        const retryController = new AbortController()
+        abortRef.current = retryController
+        const [rr1, rr2] = await Promise.all([
+          coupleBriefProp
+            ? Promise.resolve(null)
+            : fetch('/.netlify/functions/generate-brief-a', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers }),
+                signal: retryController.signal,
+              }),
+          fetch('/.netlify/functions/generate-brief-b', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ momentAnswers, portrait, coupleName, sessionAnswers, coordinatorProfile }),
+            signal: retryController.signal,
+          }),
+        ])
+        if (rr1 && !rr1.ok) throw new Error('Brief generation failed on retry')
+        if (!rr2.ok) throw new Error('Brief generation failed on retry')
+        const [rd1, rd2] = await Promise.all([
+          rr1 ? rr1.json() : Promise.resolve(null),
+          rr2.json(),
+        ])
+        if (retryController.signal.aborted) return
+        if (rd1) setCoupleBrief(rd1.coupleBrief || '')
+        setCoordinatorBrief(rd2.coordinatorBrief || '')
+        setStatus('ready')
+      } catch (retryErr) {
+        if (retryErr.name === 'AbortError') return
+        console.error('generateBrief: retry also failed', retryErr.message)
+        setStatus('error')
+      }
     }
   }
 
