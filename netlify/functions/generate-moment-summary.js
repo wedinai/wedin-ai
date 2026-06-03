@@ -76,7 +76,7 @@ Respond ONLY with valid JSON: {"summary": "3–4 sentence summary"}`
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 600,
+        max_tokens: 800,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: prompt }],
       }),
