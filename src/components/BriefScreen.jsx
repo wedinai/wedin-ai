@@ -238,21 +238,21 @@ function HowToBook({ milRecommendations }) {
             )
           })()}
 
-          <p
-            style={{
-              margin: 0,
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: '13px',
-              color: '#6B6560',
-              lineHeight: 1.6,
-              fontStyle: 'italic',
-            }}
-          >
-            {BOOKING_LEAD_TIME}
-          </p>
         </div>
       ))}
 
+      <p
+        style={{
+          margin: '8px 0 0',
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: '13px',
+          color: '#6B6560',
+          lineHeight: 1.6,
+          fontStyle: 'italic',
+        }}
+      >
+        {BOOKING_LEAD_TIME}
+      </p>
     </div>
   )
 }
