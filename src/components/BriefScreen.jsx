@@ -1027,7 +1027,7 @@ export default function BriefScreen({
                           marginTop: '12px',
                         }}>
                           <span style={{ fontWeight: 500, color: '#1C2B3A', fontSize: '13px' }}>Brief instruction: </span>
-                          <span style={{ color: '#1C2B3A', fontSize: '13px', fontStyle: 'italic' }}>{moment.instruction}</span>
+                          <span style={{ color: '#1C2B3A', fontSize: '13px', fontStyle: 'italic' }}>{moment.instruction.replace(/\*\*/g, '')}</span>
                         </div>
                       )}
                     </div>

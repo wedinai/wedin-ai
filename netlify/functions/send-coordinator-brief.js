@@ -41,7 +41,8 @@ export const handler = async (event) => {
       if (headingMatch) {
         return `<p style="margin:28px 0 6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:#C4922A;letter-spacing:0.1em;text-transform:uppercase;">${headingMatch[1]}</p>`
       }
-      return `<p style="margin:0 0 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1C2B3A;line-height:1.75;">${trimmed}</p>`
+      const clean = trimmed.replace(/\*\*/g, '').replace(/\*/g, '')
+      return `<p style="margin:0 0 16px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1C2B3A;line-height:1.75;">${clean}</p>`
     })
     .join('')
 
