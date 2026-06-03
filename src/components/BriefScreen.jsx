@@ -135,8 +135,12 @@ function getVettingQuestions(momentName, recommendation, cost) {
   // Jazz — uses acoustic questions
   if (r.includes('jazz trio') || r.includes('jazz duo') || r.includes('jazz band') || r.includes('jazz quartet') || r.includes('quartet') || r.includes('swing')) return VETTING_QUESTIONS_BY_TYPE.acoustic
 
-  // Classical
-  if (r.includes('string quartet') || r.includes('strings') || r.includes('classical')) return VETTING_QUESTIONS_BY_TYPE.strings
+  // Classical / solo strings
+  if (
+    r.includes('string quartet') || r.includes('strings') || r.includes('classical') ||
+    r.includes('cellist') || r.includes('violinist') || r.includes('viola') ||
+    r.includes('harpist') || r.includes('harp') || r.includes('flautist') || r.includes('flute')
+  ) return VETTING_QUESTIONS_BY_TYPE.strings
 
   // Acoustic / folk / band
   if (r.includes('acoustic duo') || r.includes('acoustic trio') || r.includes('acoustic guitarist') || r.includes('folk') || r.includes('band') || r.includes('function band') || r.includes('rock band') || r.includes('live band') || r.includes('cover band')) return VETTING_QUESTIONS_BY_TYPE.acoustic
