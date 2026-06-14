@@ -8,7 +8,7 @@ const GREY  = "#6B6560";
 const LIGHT = "#F0EBE3";
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
-const LAUNCH_DATE = new Date("2026-06-09T00:00:00");
+const LAUNCH_DATE = new Date("2026-06-15T00:00:00");
 
 // Coordinators — 60 confirmed, pre-marked with correct statuses
 const COORDINATORS = [
