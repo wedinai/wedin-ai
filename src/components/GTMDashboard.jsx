@@ -233,12 +233,11 @@ const S = {
 const C_STATUS = {
   to_email:    { label:"To Email",    color:GREY },
   followed:    { label:"Followed",    color:"#5B8DB8" },
-  emailed:     { label:"Emailed",     color:"#B8935B" },
   coupon_sent: { label:"Coupon Sent", color:GOLD },
   replied:     { label:"Replied",     color:"#5BB87A" },
   activated:   { label:"Activated",   color:"#2D7D46" },
 };
-const STATUS_CYCLE = ["to_email","followed","emailed","coupon_sent","replied","activated"];
+const STATUS_CYCLE = ["to_email","followed","coupon_sent","replied","activated"];
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
