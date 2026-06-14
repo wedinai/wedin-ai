@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 // ─── BRAND ───────────────────────────────────────────────────────────────────
 const CREAM = "#FAF7F2";
@@ -117,17 +117,34 @@ const CONTENT_CALENDAR = [
   ]},
 ];
 const STORAGE_KEY = "wedin_gtm_v3";
+const GTM_API    = "/.netlify/functions/gtm-data";
 
 // ─── STORAGE HELPERS ──────────────────────────────────────────────────────────
-function loadState() {
+function loadLocalState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
 }
 
-function saveState(s) {
+function saveLocalState(s) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {}
+}
+
+async function fetchRemoteState() {
+  const res = await fetch(GTM_API);
+  if (!res.ok) throw new Error(`gtm-data GET ${res.status}`);
+  const data = await res.json();
+  return data.state || {};
+}
+
+async function pushRemoteState(s) {
+  const res = await fetch(GTM_API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ state: s }),
+  });
+  if (!res.ok) throw new Error(`gtm-data POST ${res.status}`);
 }
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
@@ -223,13 +240,39 @@ const STATUS_CYCLE = ["to_email","followed","emailed","coupon_sent","replied","a
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [tab, setTab]   = useState("today");
-  const [state, setState] = useState(loadState);
+  const [tab, setTab]     = useState("today");
+  const [state, setState] = useState({});
+  const [syncStatus, setSyncStatus] = useState("loading"); // loading | synced | saving | error
+  const debounceRef = useRef(null);
+
+  // On mount: load from Supabase, fall back to localStorage
+  useEffect(() => {
+    fetchRemoteState()
+      .then(remote => {
+        const merged = Object.keys(remote).length > 0 ? remote : (loadLocalState() || {});
+        setState(merged);
+        saveLocalState(merged);
+        setSyncStatus("synced");
+      })
+      .catch(() => {
+        const local = loadLocalState() || {};
+        setState(local);
+        setSyncStatus("error");
+      });
+  }, []);
 
   const set = useCallback((key, val) => {
     setState(prev => {
       const next = { ...prev, [key]: val };
-      saveState(next);
+      saveLocalState(next);
+      // Debounce the Supabase write — fires 1.5s after last change
+      setSyncStatus("saving");
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        pushRemoteState(next)
+          .then(() => setSyncStatus("synced"))
+          .catch(() => setSyncStatus("error"));
+      }, 1500);
       return next;
     });
   }, []);
@@ -239,19 +282,30 @@ export default function App() {
   }, [state]);
 
   // Derived metrics
-  const venueSent     = VENUES.filter(v => get(`v_sent_${v.id}`) === true).length;
-  const coordEmailed  = COORDINATORS.filter(c => ["emailed","coupon_sent","replied","activated"].includes(get(`c_status_${c.id}`, c.status))).length;
+  const venueSent      = VENUES.filter(v => get(`v_sent_${v.id}`) === true).length;
+  const coordEmailed   = COORDINATORS.filter(c => ["emailed","coupon_sent","replied","activated"].includes(get(`c_status_${c.id}`, c.status))).length;
   const coordActivated = COORDINATORS.filter(c => get(`c_status_${c.id}`, c.status) === "activated").length;
-  const postsDone     = CONTENT_CALENDAR.flatMap(w=>w.posts).filter(p => get(`post_done_${p.id}`, p.done) === true).length;
-  const todayStr      = today();
+  const postsDone      = CONTENT_CALENDAR.flatMap(w=>w.posts).filter(p => get(`post_done_${p.id}`, p.done) === true).length;
+  const todayStr       = today();
+
+  const syncLabel = { loading:"Loading…", saving:"Saving…", synced:"Synced ✓", error:"Offline — local only" };
+  const syncColor = { loading:GREY, saving:GOLD, synced:"#5BB87A", error:"#E05A5A" };
 
   const tabs = [
-    { id:"today",     label:"Today"      },
+    { id:"today",     label:"Today"        },
     { id:"pipeline",  label:"Coordinators" },
-    { id:"venues",    label:"Venues"     },
-    { id:"content",   label:"Content"    },
-    { id:"metrics",   label:"Metrics"    },
+    { id:"venues",    label:"Venues"       },
+    { id:"content",   label:"Content"      },
+    { id:"metrics",   label:"Metrics"      },
   ];
+
+  if (syncStatus === "loading") {
+    return (
+      <div style={{...S.app, display:"flex", alignItems:"center", justifyContent:"center", minHeight:"100vh"}}>
+        <div style={{color:GREY, fontSize:13, letterSpacing:"0.06em"}}>Loading dashboard…</div>
+      </div>
+    );
+  }
 
   return (
     <div style={S.app}>
@@ -259,6 +313,9 @@ export default function App() {
         <div>
           <div style={S.logo}>wedin.ai</div>
           <div style={S.subtitle}>GTM Command Centre · {new Date().toLocaleDateString("en-ZA",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</div>
+        </div>
+        <div style={{fontSize:11, color:syncColor[syncStatus], letterSpacing:"0.06em", textAlign:"right"}}>
+          {syncLabel[syncStatus]}
         </div>
       </div>
       <nav style={S.nav}>
