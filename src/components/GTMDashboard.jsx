@@ -174,7 +174,7 @@ const S = {
 const C_STATUS = {
   to_email:    { label:"To Email",    color:GREY },
   followed:    { label:"Followed",    color:"#5B8DB8" },
-  emailed:     { label:"Emailed",     color:"#B8935B" },
+  emailed:     { label:"Emailed Only", color:"#B8935B" },
   coupon_sent: { label:"Coupon Sent", color:GOLD },
   replied:     { label:"Replied",     color:"#5BB87A" },
   activated:   { label:"Activated",   color:"#2D7D46" },
@@ -342,9 +342,12 @@ function Pipeline({ get, set, coordEmailed, coordActivated }) {
   const [search, setSearch] = useState("");
   const counts = {};
   STATUS_CYCLE.forEach(s => { counts[s]=COORDINATORS.filter(c=>get(`c_status_${c.id}`,c.status)===s).length; });
+  counts.contacted = (counts.emailed||0) + (counts.coupon_sent||0) + (counts.replied||0) + (counts.activated||0);
+  const CONTACTED_STATUSES = ["emailed","coupon_sent","replied","activated"];
   const filtered = COORDINATORS.filter(c => {
     const s=get(`c_status_${c.id}`,c.status);
-    return (filter==="all"||s===filter) && (!search||c.biz.toLowerCase().includes(search.toLowerCase())||c.name.toLowerCase().includes(search.toLowerCase())||c.handle.toLowerCase().includes(search.toLowerCase()));
+    const matchesFilter = filter==="all" || (filter==="contacted" ? CONTACTED_STATUSES.includes(s) : s===filter);
+    return matchesFilter && (!search||c.biz.toLowerCase().includes(search.toLowerCase())||c.name.toLowerCase().includes(search.toLowerCase())||c.handle.toLowerCase().includes(search.toLowerCase()));
   });
   const pct = Math.round(coordEmailed/COORDINATORS.length*100);
   return (
@@ -357,8 +360,10 @@ function Pipeline({ get, set, coordEmailed, coordActivated }) {
           <div style={S.statBox}><div style={S.statNum}>{coordActivated}</div><div style={S.statLabel}>Activated</div></div>
         </div>
         <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:12}}>
-          {[["all","All"],...STATUS_CYCLE.map(s=>[s,C_STATUS[s].label])].map(([val,label])=>(
-            <button key={val} style={S.btn(filter===val)} onClick={()=>setFilter(val)}>{label}{val!=="all"?` (${counts[val]||0})`:` (${COORDINATORS.length})`}</button>
+          {[["all","All"],["contacted","Contacted"],...STATUS_CYCLE.map(s=>[s,C_STATUS[s].label])].map(([val,label])=>(
+            <button key={val} style={S.btn(filter===val)} onClick={()=>setFilter(val)}>
+              {label}{val==="all"?` (${COORDINATORS.length})`:` (${counts[val]||0})`}
+            </button>
           ))}
         </div>
         <input style={{...S.input,marginBottom:16}} placeholder="Search coordinators..." value={search} onChange={e=>setSearch(e.target.value)} />
