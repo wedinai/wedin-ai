@@ -64,6 +64,9 @@
 [functions."delete-session"]
   timeout = 10
 
+[functions."coordinator-outreach"]
+  timeout = 10
+
 [functions."send-remarketing"]
   schedule = "0 8 * * *"
 

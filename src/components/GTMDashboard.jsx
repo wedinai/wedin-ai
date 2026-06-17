@@ -520,50 +520,210 @@ function CoordinatorCard({ c, get, set, compact=false }) {
   );
 }
 
+// ─── OUTREACH CARD ───────────────────────────────────────────────────────────
+const STATUS_CFG = {
+  not_contacted:  { label:"Not contacted",   color: GREY },
+  followed:       { label:"Followed",        color: "#5B8DB8" },
+  email_1_sent:   { label:"Email sent",      color: "#B8935B" },
+  email_2_sent:   { label:"Follow-up sent",  color: "#E07820" },
+  replied:        { label:"Replied",         color: "#5BB87A" },
+  activated:      { label:"Activated",       color: GOLD },
+  not_interested: { label:"Not interested",  color: "#C0BAB5" },
+};
+const NEXT_ACTIONS = {
+  not_contacted:  [{ label:"Mark followed",       next:"followed" }],
+  followed:       [{ label:"Email sent →",        next:"email_1_sent" }],
+  email_1_sent:   [{ label:"Follow-up sent →",    next:"email_2_sent" }, { label:"Replied ✓", next:"replied" }],
+  email_2_sent:   [{ label:"Replied ✓",           next:"replied" }, { label:"Not interested", next:"not_interested" }],
+  replied:        [{ label:"Activated ✓",         next:"activated" }],
+  activated:      [],
+  not_interested: [],
+};
+function fmtTs(iso) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("en-ZA", { day:"numeric", month:"short" });
+}
+function OutreachCard({ c, onAdvance, highlight }) {
+  const [open, setOpen] = useState(false);
+  const [advancing, setAdvancing] = useState(false);
+  const cfg = STATUS_CFG[c.status] || STATUS_CFG.not_contacted;
+  const actions = NEXT_ACTIONS[c.status] || [];
+  const borderColor = highlight === "overdue" ? "#E05A5A" : highlight === "today" ? GOLD : cfg.color;
+  const lastAction = [c.email_1_sent_at, c.email_2_sent_at, c.replied_at, c.activated_at]
+    .filter(Boolean).sort().pop();
+  const nextDue = c.follow_up_2_due_at || c.follow_up_1_due_at;
+  const nextDueLabel = c.follow_up_2_due_at ? "Follow-up 2 due" : "Follow-up due";
+  const isOverdue = nextDue && new Date(nextDue) < new Date();
+
+  async function handleAdvance(nextStatus) {
+    setAdvancing(true);
+    await onAdvance(c.id, nextStatus);
+    setAdvancing(false);
+  }
+
+  return (
+    <div style={{...S.card, borderLeft:`3px solid ${borderColor}`, marginBottom:10}}>
+      <div style={S.row}>
+        <div style={{flex:1, cursor:"pointer", minWidth:0}} onClick={()=>setOpen(o=>!o)}>
+          <div style={{display:"flex", alignItems:"center", gap:8, flexWrap:"wrap", marginBottom:2}}>
+            <span style={{fontWeight:600, fontSize:13}}>{c.biz}</span>
+            {c.name && <span style={{fontSize:11, color:GREY}}>{c.name}</span>}
+            <span style={{
+              display:"inline-block", padding:"2px 7px", borderRadius:10,
+              fontSize:10, fontWeight:600, letterSpacing:"0.04em",
+              background:`${cfg.color}22`, color:cfg.color,
+            }}>{cfg.label}</span>
+          </div>
+          <div style={S.meta}>
+            {[c.region, c.handle].filter(Boolean).join(" · ")}
+            {lastAction && <span> · Last: {fmtTs(lastAction)}</span>}
+            {nextDue && (
+              <span style={{color: isOverdue ? "#E05A5A" : GOLD}}>
+                {" "}· {nextDueLabel}: {fmtTs(nextDue)}{isOverdue ? " ⚠" : ""}
+              </span>
+            )}
+          </div>
+          {c.notes && (
+            <div style={{fontSize:11, color:GREY, marginTop:3, fontStyle:"italic"}}>
+              {open ? c.notes : (c.notes.length > 80 ? c.notes.slice(0, 80) + "…" : c.notes)}
+            </div>
+          )}
+        </div>
+        <div style={{display:"flex", flexDirection:"column", gap:6, flexShrink:0, marginLeft:10}}>
+          {actions.length > 0 ? actions.map(a => (
+            <button
+              key={a.next}
+              disabled={advancing}
+              onClick={() => handleAdvance(a.next)}
+              style={{
+                ...S.btn(a.next !== "not_interested"),
+                fontSize:11, padding:"4px 10px",
+                opacity: advancing ? 0.6 : 1,
+                background: a.next === "not_interested" ? "transparent" : GOLD,
+                color: a.next === "not_interested" ? GREY : "#fff",
+                border: a.next === "not_interested" ? "1px solid #ddd" : `1px solid ${GOLD}`,
+              }}
+            >{a.label}</button>
+          )) : (
+            <span style={{fontSize:16, color:GOLD}}>✓</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── PIPELINE ────────────────────────────────────────────────────────────────
 function Pipeline({ get, set, coordEmailed, coordActivated }) {
+  const [coords, setCoords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
-  const counts = {};
-  STATUS_CYCLE.forEach(s => {
-    counts[s] = COORDINATORS.filter(c => get(`c_status_${c.id}`, c.status) === s).length;
-  });
+  async function load() {
+    setLoading(true); setError(null);
+    try {
+      const res = await fetch("/.netlify/functions/coordinator-outreach");
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+      const data = await res.json();
+      setCoords(data.coordinators || []);
+    } catch(e) { setError(e.message); }
+    finally { setLoading(false); }
+  }
+  useEffect(() => { load(); }, []);
 
-  const filtered = COORDINATORS.filter(c => {
-    const s = get(`c_status_${c.id}`, c.status);
-    const matchFilter = filter==="all" || s===filter;
-    const matchSearch = !search || c.biz.toLowerCase().includes(search.toLowerCase()) || c.name.toLowerCase().includes(search.toLowerCase()) || c.handle.toLowerCase().includes(search.toLowerCase());
+  async function advance(id, newStatus) {
+    setCoords(prev => prev.map(c => c.id === id ? {...c, status: newStatus} : c));
+    try {
+      const res = await fetch("/.netlify/functions/coordinator-outreach", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ action: "update_status", id, status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.coordinator) {
+        setCoords(prev => prev.map(c => c.id === id ? data.coordinator : c));
+      }
+    } catch(e) { load(); }
+  }
+
+  const now = new Date();
+  const todayStr2 = now.toDateString();
+  const overdue = coords.filter(c =>
+    (c.status === "email_1_sent" && c.follow_up_1_due_at && new Date(c.follow_up_1_due_at) < now) ||
+    (c.status === "email_2_sent" && c.follow_up_2_due_at && new Date(c.follow_up_2_due_at) < now)
+  );
+  const overdueIds = new Set(overdue.map(c => c.id));
+  const dueToday = coords.filter(c =>
+    !overdueIds.has(c.id) && (
+      (c.follow_up_1_due_at && new Date(c.follow_up_1_due_at).toDateString() === todayStr2) ||
+      (c.follow_up_2_due_at && new Date(c.follow_up_2_due_at).toDateString() === todayStr2)
+    )
+  );
+
+  const activatedCount   = coords.filter(c => c.status === "activated").length;
+  const inProgressCount  = coords.filter(c => ["followed","email_1_sent","email_2_sent","replied"].includes(c.status)).length;
+  const notContactedCount= coords.filter(c => c.status === "not_contacted").length;
+  const notInterestedCount = coords.filter(c => c.status === "not_interested").length;
+
+  const filterFns = {
+    all:           () => true,
+    action:        c => overdueIds.has(c.id) || !!dueToday.find(d => d.id === c.id),
+    not_contacted: c => c.status === "not_contacted",
+    in_progress:   c => ["followed","email_1_sent","email_2_sent","replied"].includes(c.status),
+    activated:     c => c.status === "activated",
+    not_interested:c => c.status === "not_interested",
+  };
+  const filtered = coords.filter(c => {
+    const matchFilter = filterFns[filter]?.(c) ?? true;
+    const matchSearch = !search ||
+      (c.biz||"").toLowerCase().includes(search.toLowerCase()) ||
+      (c.name||"").toLowerCase().includes(search.toLowerCase()) ||
+      (c.handle||"").toLowerCase().includes(search.toLowerCase());
     return matchFilter && matchSearch;
   });
 
-  const pct = Math.round(coordEmailed / COORDINATORS.length * 100);
+  if (loading) return <div style={{padding:"40px 0", textAlign:"center", color:GREY, fontSize:13}}>Loading coordinators…</div>;
+  if (error) return (
+    <div style={{padding:"40px 0", textAlign:"center"}}>
+      <div style={{color:"#E05A5A", fontSize:13, marginBottom:12}}>Failed to load: {error}</div>
+      <button style={S.btn(true)} onClick={load}>Retry</button>
+    </div>
+  );
 
   return (
     <div>
       <div style={S.section}>
-        <div style={S.h2}>Coordinator Pipeline</div>
-        <div style={{display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12, marginBottom:20}}>
-          <div style={S.statBox}>
-            <div style={S.statNum}>{coordEmailed}</div>
-            <div style={S.statLabel}>Contacted</div>
-            <div style={{...S.progressBar(), marginTop:8}}><div style={S.progressFill(pct)} /></div>
-          </div>
-          <div style={S.statBox}>
-            <div style={S.statNum}>{COORDINATORS.length - coordEmailed}</div>
-            <div style={S.statLabel}>Remaining</div>
-          </div>
-          <div style={S.statBox}>
-            <div style={S.statNum}>{coordActivated}</div>
-            <div style={S.statLabel}>Activated</div>
-          </div>
-        </div>
+        <div style={S.h2}>Action Required</div>
+        {overdue.length === 0 && dueToday.length === 0 ? (
+          <div style={{...S.card, color:"#2D7D46", fontSize:13}}>All up to date ✓</div>
+        ) : (
+          <>
+            {overdue.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} highlight="overdue" />)}
+            {dueToday.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} highlight="today" />)}
+          </>
+        )}
+      </div>
 
+      <div style={S.section}>
+        <div style={S.h2}>Coordinator Pipeline</div>
+        <div style={{display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:20}}>
+          <div style={S.statBox}><div style={S.statNum}>{coords.length}</div><div style={S.statLabel}>Total</div></div>
+          <div style={S.statBox}><div style={S.statNum}>{activatedCount}</div><div style={S.statLabel}>Activated</div></div>
+          <div style={S.statBox}><div style={S.statNum}>{inProgressCount}</div><div style={S.statLabel}>In Progress</div></div>
+          <div style={S.statBox}><div style={S.statNum}>{notContactedCount}</div><div style={S.statLabel}>Not Contacted</div></div>
+        </div>
         <div style={{display:"flex", gap:6, flexWrap:"wrap", marginBottom:12}}>
-          {[["all","All"], ...STATUS_CYCLE.map(s=>[s, C_STATUS[s].label])].map(([val,label]) => (
-            <button key={val} style={S.btn(filter===val)} onClick={()=>setFilter(val)}>
-              {label}{val!=="all" ? ` (${counts[val]||0})` : ` (${COORDINATORS.length})`}
-            </button>
+          {[
+            ["all",           `All (${coords.length})`],
+            ["action",        `Action Required (${overdue.length + dueToday.length})`],
+            ["not_contacted", `Not Contacted (${notContactedCount})`],
+            ["in_progress",   `In Progress (${inProgressCount})`],
+            ["activated",     `Activated (${activatedCount})`],
+            ["not_interested",`Not Interested (${notInterestedCount})`],
+          ].map(([val, label]) => (
+            <button key={val} style={S.btn(filter===val)} onClick={()=>setFilter(val)}>{label}</button>
           ))}
         </div>
         <input
@@ -574,9 +734,7 @@ function Pipeline({ get, set, coordEmailed, coordActivated }) {
         />
       </div>
 
-      {filtered.map(c => (
-        <CoordinatorCard key={c.id} c={c} get={get} set={set} />
-      ))}
+      {filtered.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} />)}
       {filtered.length===0 && <div style={{...S.card, color:GREY, fontSize:13}}>No matches.</div>}
     </div>
   );
