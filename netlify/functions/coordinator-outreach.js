@@ -40,7 +40,7 @@ export const handler = async (event) => {
   }
 
   const ip = getIP(event)
-  const limited = await checkRateLimit(ip, 'coordinator-outreach')
+  const { limited } = await checkRateLimit(ip, 'coordinator-outreach')
   if (limited) return { ...RATE_LIMITED_RESPONSE, headers: { ...RATE_LIMITED_RESPONSE.headers, ...CORS } }
 
   const supabase = getSupabase()
