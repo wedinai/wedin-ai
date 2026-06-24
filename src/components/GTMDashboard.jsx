@@ -83,6 +83,8 @@ const COORDINATORS = [
   { id:"c60", name:"",            biz:"The Winelands Bride",       handle:"@thewinelandsbride",            region:"Winelands",     status:"to_email",    notes:"⚠ Verify handle — planning hub, Franschhoek & Stellenbosch" },
   { id:"c61", name:"Jolene, Amy Jess", biz:"So Happy",             handle:"",                              region:"South Africa",  status:"coupon_sent", notes:"Coupon sent to Jolene, Amy Jess. Code: WEDIN-SOHAPPYL-A2B3DX" },
 ];
+// Add phone and email to every coordinator entry — populate manually over time
+COORDINATORS.forEach(c => { c.email = ""; c.phone = ""; });
 
 // ─── COORDINATOR CONTACTS ─────────────────────────────────────────────────────
 // Phone and email — populate manually as details become available
@@ -642,12 +644,15 @@ function OutreachCard({ c, onAdvance, highlight }) {
 }
 
 // ─── PIPELINE ────────────────────────────────────────────────────────────────
+const IN_PROGRESS_STATUSES = ["followed","email_1_sent","email_2_sent","replied"];
+
 function Pipeline({ get, set, coordEmailed, coordActivated }) {
-  const [coords, setCoords] = useState([]);
+  const [coords, setCoords]   = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
+  const [error, setError]     = useState(null);
+  const [viewMode, setViewMode] = useState("cards");   // "cards" | "table"
+  const [filter, setFilter]   = useState("active");    // "active" | "all" | "not_contacted" | "in_progress" | "activated"
+  const [search, setSearch]   = useState("");
 
   async function load() {
     setLoading(true); setError(null);
@@ -670,38 +675,34 @@ function Pipeline({ get, set, coordEmailed, coordActivated }) {
         body: JSON.stringify({ action: "update_status", id, status: newStatus }),
       });
       const data = await res.json();
-      if (data.coordinator) {
-        setCoords(prev => prev.map(c => c.id === id ? data.coordinator : c));
-      }
-    } catch(e) { load(); }
+      if (data.coordinator) setCoords(prev => prev.map(c => c.id === id ? data.coordinator : c));
+    } catch { load(); }
   }
 
-  const now = new Date();
+  const now       = new Date();
   const todayStr2 = now.toDateString();
-  const overdue = coords.filter(c =>
+  const overdue   = coords.filter(c =>
     (c.status === "email_1_sent" && c.follow_up_1_due_at && new Date(c.follow_up_1_due_at) < now) ||
     (c.status === "email_2_sent" && c.follow_up_2_due_at && new Date(c.follow_up_2_due_at) < now)
   );
   const overdueIds = new Set(overdue.map(c => c.id));
-  const dueToday = coords.filter(c =>
+  const dueToday   = coords.filter(c =>
     !overdueIds.has(c.id) && (
       (c.follow_up_1_due_at && new Date(c.follow_up_1_due_at).toDateString() === todayStr2) ||
       (c.follow_up_2_due_at && new Date(c.follow_up_2_due_at).toDateString() === todayStr2)
     )
   );
 
-  const activatedCount   = coords.filter(c => c.status === "activated").length;
-  const inProgressCount  = coords.filter(c => ["followed","email_1_sent","email_2_sent","replied"].includes(c.status)).length;
-  const notContactedCount= coords.filter(c => c.status === "not_contacted").length;
-  const notInterestedCount = coords.filter(c => c.status === "not_interested").length;
+  const activatedCount    = coords.filter(c => c.status === "activated").length;
+  const inProgressCount   = coords.filter(c => IN_PROGRESS_STATUSES.includes(c.status)).length;
+  const notContactedCount = coords.filter(c => c.status === "not_contacted").length;
 
   const filterFns = {
+    active:        c => c.status === "not_contacted" || IN_PROGRESS_STATUSES.includes(c.status),
     all:           () => true,
-    action:        c => overdueIds.has(c.id) || !!dueToday.find(d => d.id === c.id),
     not_contacted: c => c.status === "not_contacted",
-    in_progress:   c => ["followed","email_1_sent","email_2_sent","replied"].includes(c.status),
+    in_progress:   c => IN_PROGRESS_STATUSES.includes(c.status),
     activated:     c => c.status === "activated",
-    not_interested:c => c.status === "not_interested",
   };
   const filtered = coords.filter(c => {
     const matchFilter = filterFns[filter]?.(c) ?? true;
@@ -720,50 +721,141 @@ function Pipeline({ get, set, coordEmailed, coordActivated }) {
     </div>
   );
 
+  const toggleBtnStyle = (active) => ({
+    padding:"5px 14px", fontSize:12, cursor:"pointer", border:"none",
+    fontFamily:"'DM Sans',sans-serif", fontWeight: active ? 600 : 400,
+    background: active ? NAVY : "#fff",
+    color: active ? "#fff" : GREY,
+  });
+
+  const thStyle = {
+    textAlign:"left", padding:"8px 12px",
+    fontFamily:"'DM Sans',sans-serif", fontWeight:600,
+    fontSize:10, color:GREY, letterSpacing:"0.06em",
+    textTransform:"uppercase", whiteSpace:"nowrap",
+  };
+
   return (
     <div>
+      {/* Action Required */}
       <div style={S.section}>
         <div style={S.h2}>Action Required</div>
         {overdue.length === 0 && dueToday.length === 0 ? (
           <div style={{...S.card, color:"#2D7D46", fontSize:13}}>All up to date ✓</div>
         ) : (
           <>
-            {overdue.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} highlight="overdue" />)}
-            {dueToday.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} highlight="today" />)}
+            {overdue.map(c  => <OutreachCard key={c.id} c={c} onAdvance={advance} highlight="overdue" />)}
+            {dueToday.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} highlight="today"  />)}
           </>
         )}
       </div>
 
+      {/* Pipeline header + controls */}
       <div style={S.section}>
-        <div style={S.h2}>Coordinator Pipeline</div>
+        <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:12, marginBottom:16}}>
+          <div style={S.h2}>Coordinator Pipeline</div>
+          {/* View toggle */}
+          <div style={{display:"flex", borderRadius:8, overflow:"hidden", border:`1px solid ${LIGHT}`}}>
+            <button style={toggleBtnStyle(viewMode==="cards")} onClick={()=>setViewMode("cards")}>Cards</button>
+            <button style={{...toggleBtnStyle(viewMode==="table"), borderLeft:`1px solid ${LIGHT}`}} onClick={()=>setViewMode("table")}>Call Sheet</button>
+          </div>
+        </div>
+
+        {/* Stats */}
         <div style={{display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:20}}>
           <div style={S.statBox}><div style={S.statNum}>{coords.length}</div><div style={S.statLabel}>Total</div></div>
           <div style={S.statBox}><div style={S.statNum}>{activatedCount}</div><div style={S.statLabel}>Activated</div></div>
           <div style={S.statBox}><div style={S.statNum}>{inProgressCount}</div><div style={S.statLabel}>In Progress</div></div>
           <div style={S.statBox}><div style={S.statNum}>{notContactedCount}</div><div style={S.statLabel}>Not Contacted</div></div>
         </div>
-        <div style={{display:"flex", gap:6, flexWrap:"wrap", marginBottom:12}}>
+
+        {/* Status filters */}
+        <div style={{display:"flex", gap:6, flexWrap:"wrap", marginBottom:8}}>
           {[
             ["all",           `All (${coords.length})`],
-            ["action",        `Action Required (${overdue.length + dueToday.length})`],
             ["not_contacted", `Not Contacted (${notContactedCount})`],
             ["in_progress",   `In Progress (${inProgressCount})`],
             ["activated",     `Activated (${activatedCount})`],
-            ["not_interested",`Not Interested (${notInterestedCount})`],
           ].map(([val, label]) => (
-            <button key={val} style={S.btn(filter===val)} onClick={()=>setFilter(val)}>{label}</button>
+            <button key={val} style={S.btn(filter===val)} onClick={()=>setFilter(f => f===val ? "active" : val)}>{label}</button>
           ))}
         </div>
+        {filter === "active" && (
+          <div style={{fontSize:11, color:GREY, marginBottom:12}}>Showing: Not Contacted + In Progress · click a filter to narrow</div>
+        )}
+
         <input
           style={{...S.input, marginBottom:16}}
           placeholder="Search coordinators..."
           value={search}
-          onChange={e=>setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
         />
       </div>
 
-      {filtered.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} />)}
-      {filtered.length===0 && <div style={{...S.card, color:GREY, fontSize:13}}>No matches.</div>}
+      {/* Card view */}
+      {viewMode === "cards" && (
+        <>
+          {filtered.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} />)}
+          {filtered.length === 0 && <div style={{...S.card, color:GREY, fontSize:13}}>No matches.</div>}
+        </>
+      )}
+
+      {/* Call Sheet table view */}
+      {viewMode === "table" && (
+        <div style={S.section}>
+          <div style={{overflowX:"auto", borderRadius:8, border:`1px solid ${LIGHT}`}}>
+            <table style={{width:"100%", borderCollapse:"collapse", fontSize:12, minWidth:560}}>
+              <thead>
+                <tr style={{background:LIGHT}}>
+                  {["Name","Instagram","Email","Phone","Status"].map(h => (
+                    <th key={h} style={thStyle}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((c, i) => {
+                  const meta   = COORD_CONTACT[c.id] || { email:"", phone:"" };
+                  const cfg    = STATUS_CFG[c.status] || STATUS_CFG.not_contacted;
+                  const handle = (c.handle||"").replace(/^@/,"");
+                  return (
+                    <tr key={c.id} style={{background: i%2===0 ? "#fff" : CREAM, borderBottom:`1px solid ${LIGHT}`}}>
+                      <td style={{padding:"10px 12px"}}>
+                        <div style={{fontFamily:"'Cormorant Garamond',Georgia,serif", fontSize:14, fontWeight:600, color:NAVY, whiteSpace:"nowrap"}}>{c.biz}</div>
+                        {c.name && <div style={{fontSize:11, color:GREY}}>{c.name}</div>}
+                      </td>
+                      <td style={{padding:"10px 12px", whiteSpace:"nowrap"}}>
+                        {handle
+                          ? <a href={`https://instagram.com/${handle}`} target="_blank" rel="noreferrer" style={{color:GOLD, textDecoration:"none"}}>@{handle}</a>
+                          : <span style={{color:"#ccc"}}>—</span>}
+                      </td>
+                      <td style={{padding:"10px 12px"}}>
+                        {meta.email
+                          ? <a href={`mailto:${meta.email}`} style={{color:GOLD, textDecoration:"none"}}>{meta.email}</a>
+                          : <span style={{color:"#ccc"}}>—</span>}
+                      </td>
+                      <td style={{padding:"10px 12px", whiteSpace:"nowrap"}}>
+                        {meta.phone
+                          ? <a href={`tel:${meta.phone}`} style={{color:NAVY, textDecoration:"none"}}>{meta.phone}</a>
+                          : <span style={{color:"#ccc"}}>—</span>}
+                      </td>
+                      <td style={{padding:"10px 12px", whiteSpace:"nowrap"}}>
+                        <span style={{
+                          display:"inline-block", padding:"2px 8px", borderRadius:10,
+                          fontSize:10, fontWeight:600, letterSpacing:"0.04em",
+                          background:`${cfg.color}22`, color:cfg.color,
+                        }}>{cfg.label}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {filtered.length === 0 && (
+              <div style={{padding:"24px", textAlign:"center", color:GREY, fontSize:13}}>No coordinators to show.</div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
