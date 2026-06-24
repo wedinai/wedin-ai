@@ -84,6 +84,32 @@ const COORDINATORS = [
   { id:"c61", name:"Jolene, Amy Jess", biz:"So Happy",             handle:"",                              region:"South Africa",  status:"coupon_sent", notes:"Coupon sent to Jolene, Amy Jess. Code: WEDIN-SOHAPPYL-A2B3DX" },
 ];
 
+// ─── COORDINATOR CONTACTS ─────────────────────────────────────────────────────
+// Phone and email — populate manually as details become available
+const COORD_CONTACT = {
+  c01:{ phone:"", email:"" }, c02:{ phone:"", email:"" }, c03:{ phone:"", email:"" },
+  c04:{ phone:"", email:"" }, c05:{ phone:"", email:"" }, c06:{ phone:"", email:"" },
+  c07:{ phone:"", email:"" }, c08:{ phone:"", email:"" }, c09:{ phone:"", email:"" },
+  c10:{ phone:"", email:"" }, c11:{ phone:"", email:"" }, c12:{ phone:"", email:"" },
+  c13:{ phone:"", email:"" }, c14:{ phone:"", email:"" }, c15:{ phone:"", email:"" },
+  c16:{ phone:"", email:"" }, c17:{ phone:"", email:"" }, c18:{ phone:"", email:"" },
+  c19:{ phone:"", email:"" }, c20:{ phone:"", email:"" }, c21:{ phone:"", email:"" },
+  c22:{ phone:"", email:"" }, c23:{ phone:"", email:"" }, c24:{ phone:"", email:"" },
+  c25:{ phone:"", email:"" }, c26:{ phone:"", email:"" }, c27:{ phone:"", email:"" },
+  c28:{ phone:"", email:"" }, c29:{ phone:"", email:"" }, c30:{ phone:"", email:"" },
+  c31:{ phone:"", email:"" }, c32:{ phone:"", email:"" }, c33:{ phone:"", email:"" },
+  c34:{ phone:"", email:"" }, c35:{ phone:"", email:"" }, c36:{ phone:"", email:"" },
+  c37:{ phone:"", email:"" }, c38:{ phone:"", email:"" }, c39:{ phone:"", email:"" },
+  c40:{ phone:"", email:"" }, c41:{ phone:"", email:"" }, c42:{ phone:"", email:"" },
+  c43:{ phone:"", email:"" }, c44:{ phone:"", email:"" }, c45:{ phone:"", email:"" },
+  c46:{ phone:"", email:"" }, c47:{ phone:"", email:"" }, c48:{ phone:"", email:"" },
+  c49:{ phone:"", email:"" }, c50:{ phone:"", email:"" }, c51:{ phone:"", email:"" },
+  c52:{ phone:"", email:"" }, c53:{ phone:"", email:"" }, c54:{ phone:"", email:"" },
+  c55:{ phone:"", email:"" }, c56:{ phone:"", email:"" }, c57:{ phone:"", email:"" },
+  c58:{ phone:"", email:"" }, c59:{ phone:"", email:"" }, c60:{ phone:"", email:"" },
+  c61:{ phone:"", email:"" },
+};
+
 const VENUES = [{"id":1,"name":"ANEW Resort Ingeli Forest","email":"ingelires@anewhotels.co.za","contact":"Shannon / Paul Simpson","type":"Forest, rustic, mountain, intimate, large-scale"},{"id":2,"name":"African Hills Safari Lodge & Spa","email":"weddings@askarilodge.co.za","contact":"Brenda Brand","type":"Safari, bushveld, historic, outdoor, rustic"},{"id":3,"name":"Ashanti Estate","email":"events@ashantiestate.co.za","contact":"Not available","type":"Tuscan-inspired, elegant, exclusive, mountain views, large-scale, intimate"},{"id":4,"name":"Au d'Hex Estate","email":"venue@audehexestate.co.za","contact":"Almari Janse Van Rensburg","type":"Wine farm, elegant, modern, indoor, outdoor"},{"id":5,"name":"Avianto","email":"info@avianto.co.za","contact":"Not available","type":"European-inspired village, estate, river setting, large-scale, intimate"},{"id":6,"name":"Babylonstoren","email":"functions@babylonstoren.com","contact":"Risa","type":"Wine farm, historic, luxury, rustic, chic, garden, intimate, family-style"},{"id":7,"name":"Bakenhof Winelands Venue","email":"info@bakenhof.co.za","contact":"Heidi","type":"Wine farm, elegant, destination, weekend celebrations"},{"id":8,"name":"Bakubung Bush Lodge","email":"bakubung@legacyhotels.com","contact":"George Mokotedi","type":"Bush, African, luxury, intimate, large-scale"},{"id":9,"name":"Belair Pavilion","email":"jason@belair.co.za","contact":"Jason Plumbly","type":"Garden, country estate, elegant, large-scale"},{"id":10,"name":"Bergwaters Eco Lodge And Spa","email":"info@bergwaters.co.za","contact":"Not available","type":"Small, intimate, picturesque, eco lodge"},{"id":11,"name":"Birkenhead House","email":"reservations@trp.travel","contact":"Wendy Jack","type":"Beach, intimate, luxury, clifftop, destination"},{"id":12,"name":"Blaauwklippen Wine Estate","email":"nanette@blaauwklippen.com","contact":"Nanette","type":"Vineyard, historic, elegant, luxury"},{"id":13,"name":"Blue Bay Lodge","email":"reservations@bluebaylodge.co.za","contact":"Cindy Thompson","type":"Beach, coastal, intimate, all-inclusive, outdoor"},{"id":14,"name":"Boschendal Wine Estate","email":"enquiries@boschendal.co.za","contact":"Not available","type":"Wine farm, historic, elegant, nature, large-scale, intimate"},{"id":15,"name":"Botlierskop Private Game Reserve","email":"info@botlierskop.co.za","contact":"Francina","type":"Safari, exotic, intimate, bush"},{"id":16,"name":"Brahman Hills","email":"weddingsales@brahmanhills.co.za","contact":"Not available","type":"Country, elegant, intimate, large-scale"},{"id":17,"name":"Brenaissance Wine & Stud Estate","email":"venue@brenaissance.co.za","contact":"Not available","type":"Wine farm, elegant, large-scale, intimate"},{"id":18,"name":"Bushman Sands Golf Lodge","email":"reservations@riverhotels.co.za","contact":"Not available","type":"Golf estate, bushveld, country, hotel"},{"id":19,"name":"Cabo Beach Club","email":"info@cabobeachclub.co.za","contact":"Not available","type":"Beach, luxury, large-scale, intimate"},{"id":20,"name":"Casa Toscana Lodge","email":"events@casatoscana.co.za","contact":"Nicky Uys","type":"Tuscan-style, outdoor, garden, intimate, large-scale, LGBT-friendly"},{"id":21,"name":"Casablanca Manor Wedding, Function And Conference Venue","email":"info@casablancamanor.co.za","contact":"Kobus And Lynn","type":"Rustic, bushveld, elegant, intimate, large-scale, garden"},{"id":22,"name":"Casterbridge Hollow Boutique Hotel","email":"reservations@casterbridgehollow.co.za","contact":"Not available","type":"Boutique hotel, elegant, romantic, intimate, large-scale"},{"id":23,"name":"Cavalli Estate","email":"events@cavalliestate.com","contact":"Tammi Smuts, Jodi Jarrett","type":"Wine farm, luxury, elegant, classic, large-scale"},{"id":24,"name":"Chez Charlene","email":"info@chezcharlene.co.za","contact":"Charlene Georgiades","type":"Boutique, elegant, classy, all-inclusive"},{"id":25,"name":"Collisheen Estate","email":"info@collisheen.co.za","contact":"Wayne Hulett","type":"Farm, elegant, garden, indoor, outdoor, intimate, large-scale"},{"id":26,"name":"Cradle Valley","email":"rynard@cradlevalley.co.za","contact":"Rynard","type":"Country, elegant, intimate, outdoor"},{"id":27,"name":"Cranford Country Lodge","email":"info@cranfordcountrylodge.co.za","contact":"Claire Culverwell","type":"Country-chic, idyllic, getaway, rustic"},{"id":28,"name":"Critchley Hackle Lodge","email":"info@critchleyhackle.co.za","contact":"Not available","type":"Country, romantic, lakeside, intimate"},{"id":29,"name":"Crystal Barn Country Estate","email":"kate@crystalbarn.co.za","contact":"Kate","type":"Country, vintage, rustic, large-scale"},{"id":30,"name":"Cybele Forest Lodge And Spa","email":"reservations@cybele.co.za","contact":"Rupert Jeffries","type":"Forest, luxury, intimate, romantic, destination"},{"id":31,"name":"De Stijl Gariep Hotel","email":"info@destijl.co.za","contact":"Not available","type":"Karoo, weekend, large-scale"},{"id":32,"name":"De Stilte","email":"info@destilte.co.za","contact":"Not available","type":"Glamping, nature, romantic, small weddings, countryside"},{"id":33,"name":"De Uijlenes","email":"weddings@deuijlenes.co.za","contact":"Not available","type":"Forest, modern-rustic, farm, intimate, large-scale, weekend getaway"},{"id":34,"name":"Delaire Graff Estate","email":"events@delaire.co.za","contact":"Not available","type":"Not available"},{"id":35,"name":"Diamant Estate","email":"info@diamantestate.com","contact":"Wilmarie Groenewald","type":"Wine farm, historic, luxury, intimate, large-scale"},{"id":36,"name":"Die Woud","email":"info@diewoud.co.za","contact":"Not available","type":"Forest, romantic, rustic, outdoor, intimate"},{"id":37,"name":"Dieu Donne Vineyards","email":"info@dieudonnevineyards.com","contact":"Not available","type":"Wine farm, elegant, scenic, romantic"},{"id":38,"name":"Du Kloof Lodge","email":"events@duklooflodge.co.za","contact":"Christiaan","type":"Destination, mountain, riverside, scenic, all-in-one"},{"id":39,"name":"Dwarsberg Trout Hideaway","email":"weddingsandevents@trouthaven.co.za","contact":"Suzanne","type":"Countryside, rustic, destination, farm"},{"id":40,"name":"Eikenhof Estate","email":"info@eikenhofestate.co.za","contact":"Not available","type":"Wine farm, boutique, elegant, rustic charm, intimate, up to 120 guests"},{"id":41,"name":"Emily Moon River Lodge","email":"events@emilymoon.co.za","contact":"Not available","type":"Luxury, river lodge, intimate, romantic, outdoor"},{"id":42,"name":"Erinvale Estate Hotel & Spa","email":"conf@erinvale.co.za","contact":"Not available","type":"Luxury, elegant, intimate, destination"},{"id":43,"name":"Fancourt Hotel","email":"reservations@fancourt.co.za","contact":"Not available","type":"Luxury, golf resort, estate, large-scale"},{"id":44,"name":"Fordoun Hotel And Spa","email":"events@fordoun.co.za","contact":"Not available","type":"Country, elegant, stylish, large-scale"},{"id":45,"name":"Four Seasons Hotel The Westcliff","email":"reservations@westcliff.co.za","contact":"Zamantungwa Nyaose","type":"Luxury, urban, garden, ballroom, elegant"},{"id":46,"name":"Galagos Country Estate","email":"web@galagos.co.za","contact":"Lichelle Prinsloo","type":"Forest, elegant, luxury, nature-inspired, rustic"},{"id":47,"name":"Glenburn Lodge & Spa","email":"weddings@glenburn.co.za","contact":"Not available","type":"Country, nature, riverfront, mountain, large-scale, intimate"},{"id":48,"name":"Grand Africa Café & Beach","email":"beach@grandafrica.co.za","contact":"Not available","type":"Beach, luxury, large-scale"},{"id":49,"name":"Grande Provence Heritage Wine Estate","email":"events@grandeprovence.co.za","contact":"Anine Bezuidenhoudt","type":"Wine farm, elegant, historic, intimate, luxury"},{"id":50,"name":"Green Leaves Country Lodge","email":"info@greenleaves.co.za","contact":"Jeannine","type":"Luxury, country, intimate, large-scale, bespoke"},{"id":51,"name":"Ground The Venue","email":"info@projectground.co.za","contact":"Robyn Cronje","type":"Farm, rustic, outdoor, garden, vineyard"},{"id":52,"name":"Hartford House","email":"events@hartford.co.za","contact":"Casey McGee","type":"Historic, elegant, romantic, estate, luxury, boutique"},{"id":53,"name":"Haycroft Farm","email":"stay@haycroftfarm.com","contact":"Pippa Richards-Edwards","type":"Country, forest, farm, exclusive"},{"id":54,"name":"Hazendal Wine Estate","email":"weddings@hazendal.co.za","contact":"Not available","type":"Wine farm, elegant, historic, countryside, luxury"},{"id":55,"name":"Highgate Ostrich Show Farm","email":"reservations@highgate.co.za","contact":"Billy Engelbrecht","type":"Rustic, intimate, large-scale, farm"},{"id":56,"name":"Holden Manz Wine Estate","email":"events@holdenmanz.com","contact":"Not available","type":"Wine farm, elegant, picturesque, outdoor"},{"id":57,"name":"INsingizi Bush Weddings And Spa","email":"hello@insingizi.co.za","contact":"Not available","type":"Bush, intimate, private, outdoor"},{"id":58,"name":"In The Woods","email":"info@inthewoods.co.za","contact":"Not available","type":"Forest, country, rustic, intimate, large-scale"},{"id":59,"name":"Inimitable Wedding Venue","email":"info@staybyinimitable.com","contact":"Zavion Kotze-Brereton","type":"Luxury, modern, large-scale"},{"id":60,"name":"Karkloof Safari Spa","email":"kirsten@karkloofsafarispa.com","contact":"Kirsten","type":"Safari, nature, private reserve, elegant"},{"id":61,"name":"Kay And Monty Vineyards","email":"hello@kayandmonty.com","contact":"Not available","type":"Wine farm, country, greenhouse, private estate"},{"id":62,"name":"Kearsney Manor","email":"info@kearsneymanor.co.za","contact":"Andrew","type":"Historic, colonial, country, heritage, garden"},{"id":63,"name":"Kloofzicht Lodge & Spa","email":"weddings@kloofzicht.co.za","contact":"Not available","type":"Nature reserve, lodge, scenic, outdoor, large-scale"},{"id":64,"name":"Kuungana Bush Lodge","email":"info@kuunganabushlodge.co.za","contact":"Michelle Janse Van Rensburg","type":"Bushveld, rustic chic, family-friendly, intimate, large-scale"},{"id":65,"name":"Kwa Maritane Bush Lodge","email":"kwamaritane@legacyhotels.co.za","contact":"Candice Morawitz","type":"Bush, intimate, large-scale, luxury"},{"id":66,"name":"L'Avenir Wine Estate","email":"functions@lavenir.co.za","contact":"Not available","type":"Wine farm, elegant, intimate, destination"},{"id":67,"name":"La Cotte Farm","email":"reception@lacottefarm.com","contact":"Not available","type":"Wine farm, historic, elegant, destination, large-scale"},{"id":68,"name":"La Merveille Function Venue","email":"info.lamerveille@gmail.com","contact":"Not available","type":"Garden, intimate, large-scale, luxury"},{"id":69,"name":"La Paris Estate","email":"events@laparis.co.za","contact":"Surine Van Tonder","type":"Luxury, intimate, large-scale, elegant, destination, outdoor, indoor"},{"id":70,"name":"La Residence","email":"info@laresidence.co.za","contact":"Not available","type":"Luxury, intimate, wine farm, exclusive, elopements"},{"id":71,"name":"Laborie Wine Estate","email":"info@laborieestate.co.za","contact":"Tanya","type":"Wine farm, historic, elegant, large-scale, intimate"},{"id":72,"name":"Lace On Timber","email":"info@laceontimber.com","contact":"Not available","type":"Modern, elegant, romantic, intimate, large-scale"},{"id":73,"name":"Lalibela Game Reserve","email":"stay@lalibela.co.za","contact":"Not available","type":"Safari, game reserve, intimate, destination"},{"id":74,"name":"Landtscap","email":"info@landtscap.co.za","contact":"Tammy","type":"Wine farm, modern, contemporary, scenic, indoor, outdoor"},{"id":75,"name":"Langkloof Roses","email":"info@langkloofroses.co.za","contact":"Not available","type":"Farm, rustic, romantic, garden"},{"id":76,"name":"Lanzerac Wine Estate","email":"events@lanzerac.co.za","contact":"Not available","type":"Wine farm, luxury, romantic, scenic"},{"id":77,"name":"Laurent At Lourensford","email":"functions@laurent.co.za","contact":"Miré De Jongh","type":"Wine farm, elegant, luxury, intimate, large-scale"},{"id":78,"name":"Lavandou Elegant Wedding Venue","email":"info@lavandou.co.za","contact":"Not available","type":"Elegant, French provincial, forest, garden, intimate"},{"id":79,"name":"Lavender Hill Country Estate","email":"info@lavenderhillestate.co.za","contact":"Not available","type":"Country estate, garden, grand, intimate"},{"id":80,"name":"Leriba Hotel And Spa","email":"sales@leriba.co.za","contact":"Not available","type":"Luxury, garden, indoor, large-scale"},{"id":81,"name":"Lieu De Grace","email":"getmarried@lieudegracevenue.co.za","contact":"Vivien","type":"Industrial chic, warehouse, destination"},{"id":82,"name":"Lord's Wines","email":"events@lordswinery.com","contact":"Not available","type":"Wine farm, country, scenic, intimate, large-scale"},{"id":83,"name":"Lynton Hall","email":"ivan@lyntonhall.co.za","contact":"Ivan","type":"Historic, garden, coastal forest, exclusive use"},{"id":84,"name":"Lythwood Lodge","email":"events@lythwood.com","contact":"John","type":"Country, mountain, forest, rustic, intimate, micro-wedding"},{"id":85,"name":"Maison Estate","email":"maison@chefswarehouse.co.za","contact":"Not available","type":"Wine farm, rustic, luxury, intimate, garden"},{"id":86,"name":"Makiti Wedding Venue","email":"info@makiti.co.za","contact":"Not available","type":"Outdoor, elegant, large-scale, intimate"},{"id":87,"name":"Mangwa Valley Game Lodge","email":"info@mangwavalley.co.za","contact":"Not available","type":"Bush, luxury, intimate, large-scale"},{"id":88,"name":"Maroupi Wedding Venue","email":"cheryl@stirlingbridge.co.za","contact":"Cheryl","type":"Rustic, coastal, romantic, scenic, large-scale"},{"id":89,"name":"Memoire Boutique Garden Venue","email":"info@memoire.co.za","contact":"Jaco","type":"Boutique, garden, luxury, elegant"},{"id":90,"name":"Midlands Saddle And Trout","email":"midlandsreservations@firstgroup-sa.co.za","contact":"Not available","type":"Countryside, intimate, rustic"},{"id":91,"name":"MolenVliet Vineyards","email":"events@molenvliet.co.za","contact":"Not available","type":"Wine farm, luxury, exclusive, elegant"},{"id":92,"name":"Mont Rouge","email":"cindy@montrouge.co.za","contact":"Cindy","type":"Farm, garden, mountain, nature"},{"id":93,"name":"Montagu Country Hotel","email":"res@montagucountryhotel.co.za","contact":"Not available","type":"Hotel, intimate, elegant, vintage, Art Deco"},{"id":94,"name":"Monte De Dios","email":"info@montededios.co.za","contact":"Annabella Porta","type":"Boutique, elegant, rustic, nature, modern, glasshouse, intimate, large-scale"},{"id":95,"name":"Montpellier Wine Estate","email":"info@montpellier.co.za","contact":"Not available","type":"Wine farm, historic, intimate, large-scale"},{"id":96,"name":"Morrells Boutique Estate","email":"info@morrells.co.za","contact":"Alicia De Greef","type":"Intimate, unique, vintage, French-style, luxury, boutique"},{"id":97,"name":"Mount Edgecombe Country Club","email":"estatereception@mountedgecombe.com","contact":"Not available","type":"Golf estate, elegant, large-scale, intimate, outdoor"},{"id":98,"name":"Mount Nelson, A Belmond Hotel","email":"reservations.mnh@belmond.com","contact":"Mandy Mavuso","type":"Luxury, historic, city, destination, intimate, large-scale"},{"id":99,"name":"Murasie Wedding Venue","email":"info@murasie.com","contact":"Leana","type":"Nature, rustic, outdoor, scenic"},{"id":100,"name":"Muratie Wine Estate","email":"info@muratie.co.za","contact":"Kim Melck","type":"Wine farm, historic, garden, intimate"},{"id":101,"name":"Nantes Estate","email":"bookings@nantesestate.com","contact":"Not available","type":"Wine farm, elegant, luxury, large-scale, intimate"},{"id":102,"name":"Netherwood Farm","email":"weddings@netherwood.co.za","contact":"Not available","type":"Farm, contemporary, country, intimate, large-scale"},{"id":103,"name":"Nooitgedacht Estate","email":"functions@nooitestate.co.za","contact":"Not available","type":"Wine farm, historic, elegant, indoor, outdoor, intimate, large-scale"},{"id":104,"name":"Oakfield Farm","email":"info@oakfield.co.za","contact":"Carl Visser","type":"Country, farm, elegant, garden"},{"id":105,"name":"Okiep Country Hotel","email":"info@okiep.co.za","contact":"Malcolm Mostert","type":"Country, banquet, private functions, intimate"},{"id":106,"name":"Old Halliwell Country Inn","email":"info@halliwell.co.za","contact":"Not available","type":"Country, garden, historic, intimate, large-scale"},{"id":107,"name":"Olive Rock Wedding And Function Venue","email":"thevenue@oliverock.co.za","contact":"Nick & Simone Stanford","type":"Outdoor, intimate, elegant, rustic, farm"},{"id":108,"name":"Olivewood Private Estate And Golf Club","email":"joinus@olivewoodestate.com","contact":"Not available","type":"Elegant, modern, luxurious, estate, golf course"},{"id":109,"name":"Ollivanders Estate","email":"info@ollivanders.co.za","contact":"Pam Cribbins","type":"Country, garden, intimate, large-scale"},{"id":110,"name":"Oranje Guest Farm","email":"info@oranjegasteplaas.co.za","contact":"Elsa","type":"Farm, rustic, elegant, mountain, large-scale"},{"id":111,"name":"Oxbow Country Estate","email":"info@oxbowestate.co.za","contact":"Michelle","type":"Country, romantic, chic, intimate, exclusive"},{"id":112,"name":"Palala Boutique Game Lodge & Spa","email":"events2@palala.co.za","contact":"Anel Matthysen","type":"Bush, luxury, romantic, exclusive"},{"id":113,"name":"Pecan Manor","email":"info@pecanmanor.co.za","contact":"Louise Venter","type":"Intimate, forest, elegant, outdoor"},{"id":114,"name":"Pezula Nature Retreat","email":"bookings@pezulanatureretreat.com","contact":"Not available","type":"Luxury, nature, intimate, large-scale, beach, elegant"},{"id":115,"name":"Pheasant Hill Boutique Hotel","email":"bookings@pheasanthill.co.za","contact":"Pieter Bezuidenhout","type":"Boutique hotel, garden, intimate, large-scale"},{"id":116,"name":"Premier Resort Mpongo Private Game Reserve","email":"info@mpongo.com","contact":"Not available","type":"Bush, luxury, wildlife, nature"},{"id":117,"name":"Providence Country Estate","email":"info@providencecountryweddings.co.za","contact":"Kevin and Fern McComb","type":"Country, romantic, elegant, farm, indoor, outdoor"},{"id":118,"name":"Red Ivory Lodge","email":"info@redivory.net","contact":"Not available","type":"Contemporary, destination, mountain, large-scale"},{"id":119,"name":"Rickety Bridge Winery","email":"functions@ricketybridge.com","contact":"Eldorét Ferreira","type":"Wine farm, elegant, intimate, outdoor"},{"id":120,"name":"Riverman Cabin Country Lodge","email":"info@rivermancabin.co.za","contact":"Linda","type":"Rustic, country, intimate, nature"},{"id":121,"name":"Riverside Country Estate","email":"info@riverside4me.co.za","contact":"Not available","type":"Country, elegant, nature, wetland"},{"id":122,"name":"Riverstone Lodge","email":"bookings@riverstonelodge.co.za","contact":"Not available","type":"Riverside, garden, intimate, nature, countryside"},{"id":123,"name":"Rosemary Hill","email":"info@rosemaryhill.co.za","contact":"Caryn Gill","type":"Farm, organic, rustic, elegant, weekend getaway"},{"id":124,"name":"Rustique Boutique Hotel","email":"events@rustique.co.za","contact":"Not available","type":"Boutique, country, intimate, year-end function"},{"id":125,"name":"Saronsberg Cellar","email":"events@saronsberg.com","contact":"Shayne Reynolds","type":"Wine farm, elegant, mountain, weekend-long"},{"id":126,"name":"Schoone Oordt Country House","email":"reservations@schooneoordt.co.za","contact":"Alison Walker","type":"Country, luxury, intimate, garden"},{"id":127,"name":"Shamwari Private Game Reserve","email":"reservations@shamwari.com","contact":"Kim Matysik","type":"Safari, luxury, bush, intimate"},{"id":128,"name":"Shepstone Gardens","email":"info@shepstonegardens.co.za","contact":"Jessica Gaisford","type":"Elegant, sophisticated, historic, garden, large-scale"},{"id":129,"name":"Shiluvari Lakeside Lodge","email":"info@shiluvari.com","contact":"Clare Girardin","type":"Lakeside, nature, cultural, intimate"},{"id":130,"name":"Simbithi Country Club","email":"events@simbithi.com","contact":"Nelisiwe Ncama","type":"Country club, eco-estate, rustic, elegant"},{"id":131,"name":"Spier Wine Farm","email":"info@spier.co.za","contact":"Hannes Loubser","type":"Wine farm, historic, outdoor, intimate, large-scale"},{"id":132,"name":"Steenberg Hotel And Spa","email":"reservations@steenberghotel.com","contact":"Not available","type":"Wine farm, luxury, historic, intimate"},{"id":133,"name":"Strandkombuis","email":"contact@strandkombuis.com","contact":"Not available","type":"Beach, rustic, seaside, intimate, large-scale"},{"id":134,"name":"Summerplace Game Reserve","email":"bookings@summerplacegamereserve.com","contact":"Simone Baber","type":"Bushveld, wilderness, weekend celebration, intimate, nature"},{"id":135,"name":"Sun Valley Wedding And Golf Venue","email":"info@sunvalleyweddings.co.za","contact":"Not available","type":"Garden, intimate, nature, golf course"},{"id":136,"name":"Tala Private Game Reserve","email":"info@tala.co.za","contact":"Not available","type":"Safari, bush, destination, traditional, intimate, large-scale"},{"id":137,"name":"Thaba Eco Hotel","email":"reservations@thabahotel.co.za","contact":"Not available","type":"Bushveld, eco-friendly, luxury, nature reserve, large-scale"},{"id":138,"name":"The Black Marlin","email":"reservations@blackmarlin.co.za","contact":"Mercia","type":"Beachfront, ocean view, restaurant, romantic"},{"id":139,"name":"The Boardwalk Hotel","email":"conventions.boardwalk@suninternational.com","contact":"Not available","type":"Luxury, large-scale, premium"},{"id":140,"name":"The Conservatory","email":"Joanne@theconservatory.co.za","contact":"Joanne","type":"Country, garden, indoor/outdoor, versatile"},{"id":141,"name":"The Forest Walk Venue","email":"theforestwalkvenue@gmail.com","contact":"Johan Bray","type":"Forest, garden, country, all-inclusive"},{"id":142,"name":"The Forum Embassy Hill","email":"info@theforum.co.za","contact":"Marelize Smit","type":"Luxury, historic, intimate, elegant, exclusive"},{"id":143,"name":"The Forum White Light","email":"info@theforum.co.za","contact":"Sarah Sokhela","type":"Country, modern, elegant, rustic, intimate"},{"id":144,"name":"The Gallery Wedding Venue","email":"info@thegalleryweddings.co.za","contact":"Not available","type":"Country, elegant, intimate, large-scale"},{"id":145,"name":"The Groves Venue","email":"kate@thegrovesvenue.co.za","contact":"Kate Bain","type":"Country, elegant, farm-style, romantic, indoor, outdoor"},{"id":146,"name":"The Homestead By Karkloof Safari Spa","email":"bookings@karkloofsafarispa.com","contact":"Kirsten","type":"Luxury, nature-immersed, safari, large-scale"},{"id":147,"name":"The Loft Coffee Company","email":"Theloftcoffee.co@gmail.com","contact":"Not available","type":"Farm, jungle, intimate"},{"id":148,"name":"The Marine Hotel","email":"reservations@collectionmcgrath.com","contact":"Not available","type":"Luxury, bespoke, elegant, intimate, seaside, coastal"},{"id":149,"name":"The Moon And Sixpence","email":"info@moonandsixpence.co.za","contact":"Cecilia Kruger","type":"Country, exquisite, private"},{"id":150,"name":"The Oyster Box Hotel","email":"weddingplanner@oysterbox.co.za","contact":"Ginny Eslick","type":"Luxury, beachfront, elegant, intimate, elaborate"},{"id":151,"name":"The Palazzo Montecasino","email":"palazzo.reservations@tsogosun.com","contact":"Catia Viegas","type":"Luxury, elegant, garden, Tuscan-inspired"},{"id":152,"name":"The Plantation","email":"bookings@theplantation.co.za","contact":"Not available","type":"Forest, elegant, romantic, fairy tale"},{"id":153,"name":"The Rosendal Country Retreat","email":"info@therosendal.co.za","contact":"Marius Becker Or Bonni Meyer","type":"Country, destination, intimate, weekend, retreat"},{"id":154,"name":"The Turbine Hotel And Spa","email":"book@turbinehotel.co.za","contact":"Not available","type":"Modern industrial, waterfront, intimate, large-scale"},{"id":155,"name":"The Twelve Apostles Hotel And Spa","email":"weddings@12apostles.co.za","contact":"Sally Shap","type":"Luxury, garden, ocean view, intimate, hotel"},{"id":156,"name":"The Venue At Morgan Bay Hotel","email":"info@morganbayhotel.co.za","contact":"Richard Warren-Smith","type":"Beach, coastal, romantic, elegant"},{"id":157,"name":"The Venue Fontana","email":"mara@thevenuefontana.co.za","contact":"Mara Fontana","type":"Rustic, elegant, farm, coastal"},{"id":158,"name":"The Venue at Wetherby","email":"info@thevenueatwetherby.co.za","contact":"Not available","type":"Timeless elegance, Midlands"},{"id":159,"name":"Tintswalo Atlantic","email":"melissa@tintswalo.com","contact":"Melissa Du Rand","type":"Luxury, intimate, seaside, boutique, romantic"},{"id":160,"name":"Tres Jolie Wedding And Function Venue","email":"info@tresjolie.co.za","contact":"Not available","type":"Country, rustic, elegant, outdoor, intimate, large-scale"},{"id":161,"name":"Tsala Treetop Lodge","email":"weddings@hunterhotels.com","contact":"Not available","type":"Forest, intimate, luxury, bespoke"},{"id":162,"name":"Umthunzi Hotel & Conference","email":"reservations@umthunzi.co.za","contact":"Not available","type":"Coastal, beach, tropical, elegant, relaxed, romantic, intimate, large-scale"},{"id":163,"name":"Val de Vie Estate","email":"simone@valdevie.co.za","contact":"Simone","type":"Luxury, wine farm, polo estate, elegant"},{"id":164,"name":"Vergelegen Wine Estate","email":"events@vergelegen.co.za","contact":"Not available","type":"Wine farm, elegant, intimate, formal, garden"},{"id":165,"name":"Victoria Yards","email":"mike@sl8.co.za","contact":"Mike Walker","type":"Industrial, urban, creative, artistic, outdoor, indoor"},{"id":166,"name":"Villa Castollini","email":"functions@castollini.co.za","contact":"Not available","type":"Luxury, glamorous, large-scale, intimate, lagoon view, beach"},{"id":167,"name":"Vivari Hotel Jala Pavilion","email":"info@vivarihotel.co.za","contact":"Not available","type":"Luxury, garden, intimate, outdoor"},{"id":168,"name":"Volmoed","email":"admin@volmoed.co.za","contact":"Not available","type":"Retreat, intimate, peaceful, nature"},{"id":169,"name":"Vondeling Wines","email":"info@vondelingwines.co.za","contact":"Hilani Van Der Merwe","type":"Wine farm, elegant, rustic charm, intimate, country style"},{"id":170,"name":"Vrede en Lust Estate","email":"functions@vnl.co.za","contact":"Not available","type":"Wine farm, elegant, historic, destination"},{"id":171,"name":"Vredenheim","email":"feestafel@vredenheim.co.za","contact":"Anne","type":"Wine farm, intimate, garden, elegant"},{"id":172,"name":"Walkersons Hotel And Spa","email":"reservations@walkersons.co.za","contact":"Not available","type":"Small, intimate, country estate, romantic"},{"id":173,"name":"Webersburg Wine Estate","email":"events@webersburg.co.za","contact":"Jolandi Viljoen","type":"Wine farm, historic, elegant, boutique, intimate, large-scale"},{"id":174,"name":"Welgelegen Cherry Estate","email":"info@cherryestate.co.za","contact":"Fanie Grobbelaar","type":"Farm, scenic, weekend destination, rustic-meets-modern"},{"id":175,"name":"Weltevreden Estate","email":"info@weltevredenestate.com","contact":"Not available","type":"Wine farm, elegant, historic, family-friendly"},{"id":176,"name":"Whispering Thorns","email":"info@whisperingthorns.com","contact":"Marinda","type":"Luxury, bushveld, glass venue, modern safari, destination, all-inclusive"},{"id":177,"name":"Zebra Country Lodge","email":"reservations@zebralodge.com","contact":"Not available","type":"Bushveld, nature reserve, country, indoor, outdoor"},{"id":178,"name":"Zimbali Resort","email":"zimbali@thecapital.co.za","contact":"Christo Van Wyk","type":"Luxury, coastal, intimate, large-scale, resort"},{"id":179,"name":"Zorgvliet Wines","email":"info@zorgvliet.com","contact":"Not available","type":"Wine farm, elegant, country, garden"}];
 
 const CONTENT_CALENDAR = [
@@ -293,11 +319,12 @@ export default function App() {
   const syncColor = { loading:GREY, saving:GOLD, synced:"#5BB87A", error:"#E05A5A" };
 
   const tabs = [
-    { id:"today",     label:"Today"        },
-    { id:"pipeline",  label:"Coordinators" },
-    { id:"venues",    label:"Venues"       },
-    { id:"content",   label:"Content"      },
-    { id:"metrics",   label:"Metrics"      },
+    { id:"today",      label:"Today"        },
+    { id:"pipeline",   label:"Coordinators" },
+    { id:"callsheet",  label:"Call Sheet"   },
+    { id:"venues",     label:"Venues"       },
+    { id:"content",    label:"Content"      },
+    { id:"metrics",    label:"Metrics"      },
   ];
 
   if (syncStatus === "loading") {
@@ -325,9 +352,10 @@ export default function App() {
         ))}
       </nav>
       <div style={S.body}>
-        {tab==="today"    && <Today    get={get} set={set} venueSent={venueSent} coordEmailed={coordEmailed} postsDone={postsDone} todayStr={todayStr} />}
-        {tab==="pipeline" && <Pipeline get={get} set={set} coordEmailed={coordEmailed} coordActivated={coordActivated} />}
-        {tab==="venues"   && <Venues   get={get} set={set} venueSent={venueSent} todayStr={todayStr} />}
+        {tab==="today"     && <Today     get={get} set={set} venueSent={venueSent} coordEmailed={coordEmailed} postsDone={postsDone} todayStr={todayStr} />}
+        {tab==="pipeline"  && <Pipeline  get={get} set={set} coordEmailed={coordEmailed} coordActivated={coordActivated} />}
+        {tab==="callsheet" && <CallSheet />}
+        {tab==="venues"    && <Venues    get={get} set={set} venueSent={venueSent} todayStr={todayStr} />}
         {tab==="content"  && <Content  get={get} set={set} postsDone={postsDone} />}
         {tab==="metrics"  && <Metrics  get={get} set={set} />}
       </div>
@@ -736,6 +764,159 @@ function Pipeline({ get, set, coordEmailed, coordActivated }) {
 
       {filtered.map(c => <OutreachCard key={c.id} c={c} onAdvance={advance} />)}
       {filtered.length===0 && <div style={{...S.card, color:GREY, fontSize:13}}>No matches.</div>}
+    </div>
+  );
+}
+
+// ─── CALL SHEET ──────────────────────────────────────────────────────────────
+const CS_STATUS = {
+  not_contacted: { label:"Todo",         color: GREY      },
+  followed:      { label:"Followed",     color: "#5B8DB8" },
+  email_1_sent:  { label:"Emailed",      color: "#B8935B" },
+  email_2_sent:  { label:"Follow-up",    color: "#E07820" },
+  replied:       { label:"In Progress",  color: "#5BB87A" },
+  activated:     { label:"Activated",    color: GOLD      },
+  not_interested:{ label:"Not interested", color:"#C0BAB5"},
+};
+const CS_ORDER = ["not_contacted","followed","email_1_sent","email_2_sent","replied","activated","not_interested"];
+const CS_ACTIVE = new Set(["not_contacted","followed","email_1_sent","email_2_sent","replied"]);
+
+function CallSheet() {
+  const [coords, setCoords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showAll, setShowAll] = useState(false);
+
+  async function load() {
+    setLoading(true); setError(null);
+    try {
+      const res = await fetch("/.netlify/functions/coordinator-outreach");
+      if (!res.ok) throw new Error(`Server error ${res.status}`);
+      const data = await res.json();
+      setCoords(data.coordinators || []);
+    } catch(e) { setError(e.message); }
+    finally { setLoading(false); }
+  }
+  useEffect(() => { load(); }, []);
+
+  async function advance(id, newStatus) {
+    setCoords(prev => prev.map(c => c.id === id ? {...c, status: newStatus} : c));
+    try {
+      const res = await fetch("/.netlify/functions/coordinator-outreach", {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ action:"update_status", id, status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.coordinator) setCoords(prev => prev.map(c => c.id === id ? data.coordinator : c));
+    } catch { load(); }
+  }
+
+  const displayed = coords
+    .filter(c => showAll || CS_ACTIVE.has(c.status))
+    .sort((a, b) => {
+      const oa = CS_ORDER.indexOf(a.status), ob = CS_ORDER.indexOf(b.status);
+      if (oa !== ob) return oa - ob;
+      return (a.biz || "").localeCompare(b.biz || "");
+    });
+
+  if (loading) return <div style={{padding:"40px 0", textAlign:"center", color:GREY, fontSize:13}}>Loading call sheet…</div>;
+  if (error) return (
+    <div style={{padding:"40px 0", textAlign:"center"}}>
+      <div style={{color:"#E05A5A", fontSize:13, marginBottom:12}}>Failed to load: {error}</div>
+      <button style={S.btn(true)} onClick={load}>Retry</button>
+    </div>
+  );
+
+  const thStyle = {
+    textAlign:"left", padding:"8px 12px",
+    fontFamily:"'DM Sans', sans-serif", fontWeight:600,
+    fontSize:10, color:GREY, letterSpacing:"0.06em",
+    textTransform:"uppercase", whiteSpace:"nowrap",
+  };
+
+  return (
+    <div style={S.section}>
+      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:12, marginBottom:20}}>
+        <div>
+          <div style={S.h2}>Call Sheet</div>
+          <div style={{...S.meta, marginTop:2}}>
+            {coords.filter(c => CS_ACTIVE.has(c.status)).length} active · {coords.length} total
+          </div>
+        </div>
+        <label style={{display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:12, color:GREY, userSelect:"none"}}>
+          <input type="checkbox" checked={showAll} onChange={e => setShowAll(e.target.checked)} style={{accentColor:GOLD}} />
+          Show activated & not interested
+        </label>
+      </div>
+
+      <div style={{overflowX:"auto", borderRadius:8, border:`1px solid ${LIGHT}`}}>
+        <table style={{width:"100%", borderCollapse:"collapse", fontSize:12, minWidth:640}}>
+          <thead>
+            <tr style={{background:LIGHT}}>
+              {["Name","Email","Instagram","Phone","Status","Action"].map(h => (
+                <th key={h} style={thStyle}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {displayed.map((c, i) => {
+              const meta = COORD_CONTACT[c.id] || { phone:"", email:"" };
+              const cfg  = CS_STATUS[c.status] || CS_STATUS.not_contacted;
+              const instaHandle = (c.handle || "").replace(/^@/, "");
+              return (
+                <tr key={c.id} style={{background: i%2===0 ? "#fff" : CREAM, borderBottom:`1px solid ${LIGHT}`}}>
+                  <td style={{padding:"10px 12px"}}>
+                    <div style={{fontFamily:"'Cormorant Garamond', Georgia, serif", fontSize:14, fontWeight:600, color:NAVY, whiteSpace:"nowrap"}}>{c.biz}</div>
+                    {c.name && <div style={{fontSize:11, color:GREY}}>{c.name}</div>}
+                  </td>
+                  <td style={{padding:"10px 12px"}}>
+                    {meta.email
+                      ? <a href={`mailto:${meta.email}`} style={{color:GOLD, textDecoration:"none"}}>{meta.email}</a>
+                      : <span style={{color:"#ccc"}}>—</span>}
+                  </td>
+                  <td style={{padding:"10px 12px", whiteSpace:"nowrap"}}>
+                    {instaHandle
+                      ? <a href={`https://instagram.com/${instaHandle}`} target="_blank" rel="noreferrer" style={{color:GOLD, textDecoration:"none"}}>@{instaHandle}</a>
+                      : <span style={{color:"#ccc"}}>—</span>}
+                  </td>
+                  <td style={{padding:"10px 12px", whiteSpace:"nowrap"}}>
+                    {meta.phone
+                      ? <a href={`tel:${meta.phone}`} style={{color:NAVY, textDecoration:"none"}}>{meta.phone}</a>
+                      : <span style={{color:"#ccc"}}>—</span>}
+                  </td>
+                  <td style={{padding:"10px 12px", whiteSpace:"nowrap"}}>
+                    <span style={{
+                      display:"inline-block", padding:"2px 8px", borderRadius:10,
+                      fontSize:10, fontWeight:600, letterSpacing:"0.04em",
+                      background:`${cfg.color}22`, color:cfg.color,
+                    }}>{cfg.label}</span>
+                  </td>
+                  <td style={{padding:"10px 12px", whiteSpace:"nowrap"}}>
+                    {c.status === "activated"
+                      ? <span style={{color:GOLD, fontSize:14}}>✓</span>
+                      : c.status === "not_interested"
+                      ? <span style={{color:"#C0BAB5", fontSize:11}}>—</span>
+                      : <div style={{display:"flex", gap:6}}>
+                          <button
+                            onClick={() => advance(c.id, "activated")}
+                            style={{padding:"3px 10px", borderRadius:6, border:`1px solid ${GOLD}`, background:GOLD, color:"#fff", fontSize:11, fontFamily:"'DM Sans',sans-serif", cursor:"pointer"}}
+                          >Replied ✓</button>
+                          <button
+                            onClick={() => advance(c.id, "not_interested")}
+                            style={{padding:"3px 10px", borderRadius:6, border:"1px solid #ddd", background:"transparent", color:GREY, fontSize:11, fontFamily:"'DM Sans',sans-serif", cursor:"pointer"}}
+                          >Not interested</button>
+                        </div>
+                    }
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {displayed.length === 0 && (
+          <div style={{padding:"24px", textAlign:"center", color:GREY, fontSize:13}}>No coordinators to show.</div>
+        )}
+      </div>
     </div>
   );
 }
